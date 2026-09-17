@@ -58,13 +58,10 @@ body{font-family:Pretendard,-apple-system,"Noto Sans KR",sans-serif;background:v
 .sum{font-size:.87rem;color:#344054;line-height:1.65;list-style:none;display:flex;flex-direction:column;gap:3px}
 .sum li{padding-left:14px;position:relative}
 .sum li::before{content:"";position:absolute;left:2px;top:.68em;width:5px;height:5px;border-radius:50%;background:var(--brand)}
-.links{margin-top:auto;display:flex;gap:8px;padding-top:8px;flex-wrap:wrap}
-.btn{font-size:.83rem;text-decoration:none;border-radius:10px;padding:8px 13px;font-weight:600}
+.links{margin-top:auto;display:flex;gap:6px;padding-top:6px;flex-wrap:wrap}
+.btn{font-size:.76rem;text-decoration:none;border-radius:8px;padding:6px 10px;font-weight:600}
 .btn.main{background:var(--brand);color:#fff}
 .btn.ghost{border:1px solid var(--line);color:#344054;background:#fff}
-.btn.affil{border:1px dashed #d9b400;color:#8a6d00;background:#fffbe8}
-/* 제휴 */
-.affil{margin:22px 0;background:#fffbe8;border:1px dashed #d9b400;border-radius:var(--r);padding:16px 18px;font-size:.88rem;color:#5a4a00;line-height:1.7}
 /* 푸터 */
 footer{margin-top:40px;text-align:center;font-size:.8rem;color:#98a2b3;line-height:2.1}
 footer a{color:#98a2b3;margin:0 7px;text-decoration:none}
@@ -97,9 +94,6 @@ footer a{color:#98a2b3;margin:0 7px;text-decoration:none}
 </div>
 <div class="meta" id="meta"></div>
 <div class="grid" id="list"></div>
-
-<div class="affil">📌 <b>합격 준비 특가</b><br>
-수험서·자소서·면접 대비 링크가 공고마다 자동 연결됩니다. (쿠팡파트너스·인강 제휴 자리 — <code>AFFIL_LINK</code> 설정 후 활성화)</div>
 </div>
 
 <footer>
@@ -109,7 +103,6 @@ footer a{color:#98a2b3;margin:0 7px;text-decoration:none}
 </footer>
 
 <script>
-const AFFIL_LINK = "#"; // TODO: 쿠팡파트너스/제휴 URL로 교체
 let JOBS = [];
 let filter = "all";
 function dday(deadline){
@@ -143,7 +136,7 @@ function render(){
 <div class="org">${j.org} · ${j.region} · 마감 ${j.deadline}</div>
 <ul class="sum">${j.summary.map(s=>`<li>${s}</li>`).join("")}</ul>
 <script type="application/ld+json">${JSON.stringify(schema)}<\/script>
-<div class="links"><a class="btn main" href="articles/${j.id}.html">해설 보기</a><a class="btn ghost" href="${j.url}" target="_blank" rel="noopener">원문 ↗</a><a class="btn affil" href="${AFFIL_LINK}" target="_blank" rel="sponsored nofollow">면접 대비 특가</a></div>
+<div class="links"><a class="btn main" href="articles/${j.id}.html">해설 보기</a><a class="btn ghost" href="${j.url}" target="_blank" rel="noopener">원문 ↗</a></div>
 </div></article>`;
   }).join("") || "<p>조건에 맞는 공고가 없습니다.</p>";
 }

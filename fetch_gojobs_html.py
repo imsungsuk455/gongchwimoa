@@ -26,6 +26,20 @@ UA = {"User-Agent": "Mozilla/5.0"}
 
 ICON_CAT = {"공공": "공공기관", "지자체": "지자체", "국가": "국가기관", "교육": "교육청"}
 
+def short_region(s):
+    s = (s or "").strip()
+    for full, short in [("서울특별시", "서울"), ("부산광역시", "부산"), ("대구광역시", "대구"),
+                        ("인천광역시", "인천"), ("광주광역시", "광주"), ("대전광역시", "대전"),
+                        ("울산광역시", "울산"), ("세종특별자치시", "세종"), ("경기도", "경기"),
+                        ("강원특별자치도", "강원"), ("강원도", "강원"), ("충청북도", "충북"),
+                        ("충청남도", "충남"), ("전북특별자치도", "전북"), ("전라북도", "전북"),
+                        ("전라남도", "전남"), ("경상북도", "경북"), ("경상남도", "경남"),
+                        ("제주특별자치도", "제주"), ("제주도", "제주")]:
+        if s.startswith(full):
+            return short
+    m = re.match(r"([가-힣]{2})", s)
+    return m.group(1) if m else (s[:2] if s else "전국")
+
 # 결과발표성 공고 제외 (채용速보 정체성 유지). 단 면접 등 다음 전형 안내 포함이면 유지.
 ANNOUNCE_RE = re.compile(r"합격자|명단|발표")
 KEEP_IF_RE = re.compile(r"면접|채용|모집|시험\s*공고|임용시험")
@@ -87,8 +101,7 @@ def enrich_and_verify(job, timeout=15):
     m = re.search(r"근무지역</th>\s*<td[^>]*?>(.+?)</td>", flat)
     if m:
         region = re.sub(r"<[^>]+>", "", m.group(1)).strip()
-        mm = re.match(r"([가-힣]{2})", region)
-        job["region"] = mm.group(1) if mm else region[:2]
+        job["region"] = short_region(region)
     m = re.search(r"채용직급</th>\s*<td[^>]*?>(.+?)</td>", flat)
     grade = ""
     if m:
@@ -99,12 +112,28 @@ def enrich_and_verify(job, timeout=15):
     if m:
         qual = re.sub(r"<[^>]+>", "", m.group(2))
         qual = re.sub(r"\s+", " ", qual).strip()[:80]
+    m = re.search(r"(전형절차|전형방법|선발방법|평가방법)</th>\s*<td[^>]*?>(.+?)</td>", flat)
+    excerpt = ""
+    if m:
+        excerpt = re.sub(r"<[^>]+>", "", m.group(2))
+        excerpt = re.sub(r"\s+", " ", excerpt).strip()[:220]
+    if len(excerpt) < 20:
+        # 폴백: 상세 본문 중 가장 긴 셀(응시자격·결격사유 등 원문 상세)을 발췌
+        cands = []
+        for cm in re.finditer(r"<td[^>]*>(.*?)</td>", flat):
+            txt = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", cm.group(1))).strip()
+            if len(txt) > 200 and re.search(r"응시|자격|전형|우대|결격|서류|면접", txt):
+                cands.append(txt)
+        if cands:
+            excerpt = max(cands, key=len)[:400]
     summ = ["접수 ~" + job["deadline"] + " 마감", "세부 조건은 원문 공고문 확인"]
     if grade:
         summ.insert(0, grade)
     if len(qual) > 12:
         summ.insert(0, qual)
     job["summary"] = summ[:3]
+    if len(excerpt) > 20:
+        job["excerpt"] = excerpt
     return job
 
 def main():

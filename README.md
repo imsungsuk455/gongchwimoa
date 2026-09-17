@@ -42,7 +42,7 @@ python -c "import json;print(len(json.load(open('jobs.json',encoding='utf-8'))))
 
 ## 4) 수익 자리
 - 애드센스: head 자동광고만 유지 (수동 ins 금지 — 승인 전 정책위반 방지)
-- 제휴: `index.html`의 `AFFIL_LINK`를 쿠팡파트너스/인강 제휴 URL로 교체 (승인 전부터 가능)
+- 제휴(쿠팡파트너스 등): 애드센스 승인 후 추가 예정. 승인 전에는 링크 없음 (심사 방해 요소 제거)
 - 타불라: 월 50만 PV 이후에 추가 검토
 
 ## 5) 전체 유지 시 운영 규칙 (정면승부용)

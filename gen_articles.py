@@ -93,9 +93,9 @@ DUTY_GUIDE = {
 }
 DEFAULT_GUIDE = "공공기관 실무의 공통분모는 직무기술서와 성실성입니다. 채용 분야의 직무기술서를 내려받아 필요 역량을 자기소개서에 그대로 녹이세요. 공공 채용은 블라인드 전형이 많아 사진·학교·출신지를 가리는 대신 직무 연관 경험의 구체성이 당락을 가릅니다."
 
-# ---- 문단 로테이션 3종 (기사별 할당, cookie-cutter 완화용) ----
-def _v(job):
-    return int(hashlib.md5(job["id"].encode()).hexdigest(), 16) % 3
+# ---- 문단 로테이션 (섹션별 독립 할당: 전체 콤보 충돌 방지) ----
+def _v(job, salt, n=3):
+    return int(hashlib.md5((job["id"] + "#" + salt).encode()).hexdigest(), 16) % n
 
 PROCESS_TEXTS = [
     "대부분 서류심사 후 면접심사 순으로 진행됩니다. 서류에서는 지원서·자기소개서의 직무 적합성을 보고, 면접에서는 실무 이해도와 근무 지속 가능성을 봅니다. 마감일({deadline}) 직전에는 접속이 몰려 원서 접수가 막히는 경우가 있으니 최소 하루 전 제출을 권합니다. 제출 후에는 접수번호·수험표 출력 여부를 반드시 확인하세요.",
@@ -111,6 +111,15 @@ INTERVIEW_TEXTS = [
     "면접은 서류에 쓴 경험의 진위 확인과 조직 적합성 검증이 목적입니다. 자기소개서에 적은 두 가지 경험을 1분 스피치로 말할 수 있게 연습하고, {org}의 최근 보도자료나 경영공시에서 핵심 사업 하나를 골라 지원 분야와 연결해 답변을 준비하세요. 마지막 질문 시간에는 근무지({region})·근무형태({type})를 감당할 수 있다는 의지를 짧게 밝히는 것이 효과적입니다. 복장은 단정하게, 도착은 30분 전에, 질문에는 결론부터 말하는 것이 공공기관 면접의 기본입니다.",
     "면접관의 질문은 두 갈래입니다. 서류 내용의 사실 관계 확인, 그리고 우리 조직에 맞을지에 대한 판단입니다. 자소서의 핵심 경험 두 개를 1분 안에 설명하는 연습을 해두고, {org}의 대표 사업 하나를 지원 분야({category})와 엮은 답변을 준비해 가세요. 마무리 질문에서는 근무지({region})와 {type} 근무가 가능하다는 뜻을 간결하게 전하는 게 좋습니다. 단정한 복장, 30분 전 도착, 결론 우선 답변이 기본 수칙입니다.",
     "면접 준비의 핵심은 자소서 방어와 기관 이해입니다. 적은 경험을 조리 있게 설명할 수 있어야 하고, {org}이 무슨 일을 하는 기관인지 한 가지 사업이라도 말할 수 있어야 합니다. 지원 분야({category}) 지식과 연결 지으면 점수가 오릅니다. 끝인사에서는 근무지({region})·{type} 조건을 수용한다는 의사를 분명히 하세요. 일찍 도착해 여유를 갖고, 두괄식으로 답하는 지원자가 좋은 인상을 남깁니다.",
+]
+# ---- 일정·급여 2종 로테이션 ----
+SCHED_TEXTS = [
+    "게시일은 {posted}, 마감은 {deadline}입니다. {left} 공공 채용은 마감일 24시간 전부터 지원자가 몰려 접수 페이지가 느려지거나 증빙 업로드가 실패하는 일이 잦습니다. 일정 운영의 정석은 이렇습니다. 첫날에는 공고문과 직무기술서를 출력해 응시자격·우대사항에 형광펜을 치고, 중간 기간에는 자기소개서 초안과 증빙 스캔을 끝내고, 마감 전날에는 접수 시스템에 미리 입력까지 마쳐 두는 것입니다. 마감 당일에 처음 접속하는 지원자가 가장 많이 탈락합니다. 접수번호가 발급되고 수험표(또는 접수확인서)가 출력돼야 접수가 끝난 것이니, 제출 후 확인증까지 꼭 챙기세요.",
+    "이번 공고의 접수 기간은 {posted}부터 {deadline}까지입니다. {left} 원서 접수는 시작일보다 마감일에 몰리는 구조라, 서버가 느려지는 마감 당일은 피하는 게 상책입니다. 권장 스케줄을 짜보면 첫째 날 공고문 정독과 지원자격 체크, 중간 날 자기소개서 작성과 증빙 준비, 마감 전날 접수 시스템 사전 입력입니다. 특히 {org} 채용은 마감 이후 추가 접수를 받지 않으니, 접수번호와 확인증 출력까지 마쳐야 비로소 지원 완료입니다.",
+]
+PAY_TEXTS = [
+    "공고문의 보수 표기는 호봉·수당·상여를 합친 기준이 아니라 기본급 기준인 경우가 많습니다. 실제 수령액은 원문의 보수·복무 조항과 동일 기관 재직자 채용 후기를 함께 봐야 가늠이 됩니다. {type} 공고라면 계약 기간, 연장·전환 조건, 4대 보험과 퇴직금 적용 여부를 원문에서 반드시 확인하세요. 근무지({region})가 도서·산간이거나 교대 근무가 포함된 경우에는 주거 지원·통근버스 조항도 체크리스트에 넣으세요.",
+    "급여표를 볼 때는 기본급과 실수령액을 구분해야 합니다. 공고문 수치는 대개 기본급이라 수당·상여가 빠진 금액입니다. {type} 모집에서는 계약 기간과 갱신 조건, 4대 보험·퇴직금 적용이 핵심 체크 항목입니다. {org} 원문의 보수 규정을 펼치고, 근무지({region})가 외곽이거나 야간·주말 근무가 있다면 주거·교통 지원 조항까지 확인한 뒤 지원서를 내세요.",
 ]
 POINT_TEXTS = [
     "이 공고의 관전 포인트는 '{tag}'입니다. {org}이 내건 조건 가운데 '{point}' 대목이 서류의 분수령이 됩니다. 해당되면 주저 없이 지원하고, 애매하면 원문 공고문의 세부 조항을 먼저 대조해 보세요. {dlabel} 일정상 오늘 내로 판단하는 게 좋습니다.",
@@ -166,7 +175,7 @@ HTML_HEAD = """<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8">
 <meta name="google-adsense-account" content="ca-pub-3484572882367046">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3484572882367046" crossorigin="anonymous"></script>
 <link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
-<style>*{{box-sizing:border-box;margin:0;padding:0}}body{{font-family:Pretendard,-apple-system,"Noto Sans KR",sans-serif;background:#f3f5fa;color:#101828;max-width:780px;margin:0 auto;padding:0 18px 90px}}article{{background:#fff;border:1px solid #e4e9f2;border-radius:20px;padding:30px 26px;margin-top:16px;box-shadow:0 6px 24px rgba(16,24,40,.07)}}h1{{font-size:1.42rem;line-height:1.5;letter-spacing:-.5px}}h2{{font-size:1.1rem;margin:30px 0 12px;padding-left:12px;border-left:5px solid #0b5fff;letter-spacing:-.3px}}p,li{{line-height:1.85;font-size:.97rem}}table{{width:100%;border-collapse:collapse;margin:16px 0;font-size:.9rem;border-radius:12px;overflow:hidden}}th,td{{border:1px solid #e2e8f2;padding:10px 12px;text-align:left}}th{{background:#eef4ff;width:112px;color:#0a2472}}ul{{margin:8px 0}}li{{margin:0 0 6px 20px}}.lead{{background:linear-gradient(135deg,#eef4ff,#f7faff);border:1px solid #d7e5ff;border-radius:14px;padding:16px 18px;margin:18px 0}}.cta{{display:block;text-align:center;background:linear-gradient(135deg,#0a4fe0,#0b5fff);color:#fff;border-radius:14px;padding:16px;margin:24px 0;text-decoration:none;font-weight:800;box-shadow:0 8px 20px rgba(11,95,255,.3)}}.back{{display:inline-block;margin:20px 0 4px;color:#0b5fff;text-decoration:none;font-weight:700;font-size:.92rem}}.rel a{{display:block;padding:12px 14px;color:#0b5fff;text-decoration:none;border:1px solid #e4e9f2;border-radius:12px;margin-bottom:8px;font-size:.9rem;background:#fbfcff}}.muted{{color:#98a2b3;font-size:.83rem;margin-top:24px;line-height:1.7}}.hero{{width:100%;border-radius:14px;margin:16px 0 6px;display:block;border:1px solid #e4e9f2}}</style>
+<style>*{{box-sizing:border-box;margin:0;padding:0}}body{{font-family:Pretendard,-apple-system,"Noto Sans KR",sans-serif;background:#f3f5fa;color:#101828;max-width:780px;margin:0 auto;padding:0 18px 90px}}article{{background:#fff;border:1px solid #e4e9f2;border-radius:20px;padding:30px 26px;margin-top:16px;box-shadow:0 6px 24px rgba(16,24,40,.07)}}h1{{font-size:1.42rem;line-height:1.5;letter-spacing:-.5px}}h2{{font-size:1.1rem;margin:30px 0 12px;padding-left:12px;border-left:5px solid #0b5fff;letter-spacing:-.3px}}p,li{{line-height:1.85;font-size:.97rem}}table{{width:100%;border-collapse:collapse;margin:16px 0;font-size:.9rem;border-radius:12px;overflow:hidden}}th,td{{border:1px solid #e2e8f2;padding:10px 12px;text-align:left}}th{{background:#eef4ff;width:112px;color:#0a2472}}ul{{margin:8px 0}}li{{margin:0 0 6px 20px}}.lead{{background:linear-gradient(135deg,#eef4ff,#f7faff);border:1px solid #d7e5ff;border-radius:14px;padding:16px 18px;margin:18px 0}}.cta{{display:block;text-align:center;background:linear-gradient(135deg,#0a4fe0,#0b5fff);color:#fff;border-radius:14px;padding:16px;margin:24px 0;text-decoration:none;font-weight:800;box-shadow:0 8px 20px rgba(11,95,255,.3)}}.back{{display:inline-block;margin:20px 0 4px;color:#0b5fff;text-decoration:none;font-weight:700;font-size:.92rem}}.rel a{{display:block;padding:12px 14px;color:#0b5fff;text-decoration:none;border:1px solid #e4e9f2;border-radius:12px;margin-bottom:8px;font-size:.9rem;background:#fbfcff}}.quote{{background:#fbfcff;border-left:5px solid #0a2472;border-radius:0 12px 12px 0;padding:14px 16px;margin:12px 0;font-size:.9rem;color:#344054}}.muted{{color:#98a2b3;font-size:.83rem;margin-top:24px;line-height:1.7}}.hero{{width:100%;border-radius:14px;margin:16px 0 6px;display:block;border:1px solid #e4e9f2}}</style>
 </head><body><a class="back" href="../">← 공취모아 홈</a><article>
 """
 
@@ -207,23 +216,41 @@ def build(job, all_jobs):
     left = "이미 마감된 공고입니다. 다음 회차를 노리세요." if d < 0 else (
         "오늘이 마감일입니다. 접수 시스템이 혼잡하니 오전 중에 제출하세요." if d == 0 else
         f"남은 기간은 약 {d}일입니다. 서류 준비에 {max(d - 1, 1)}일을 쓰고 마지막 하루는 접수·확인용으로 남겨두세요.")
-    v = _v(job)
-    proc = PROCESS_TEXTS[v].format(deadline=job["deadline"])
-    essay = ESSAY_TEXTS[v].format(category=job["category"], org=job["org"],
-                                  type=job["type"], deadline=job["deadline"])
-    iv = INTERVIEW_TEXTS[v].format(org=job["org"], category=job["category"],
-                                   region=job["region"], type=job["type"])
+    vproc = _v(job, "proc")
+    vessay = _v(job, "essay")
+    viv = _v(job, "iv")
+    vfaq = _v(job, "faq")
+    vchk = _v(job, "chk")
+    vpoint = _v(job, "point")
+    proc = PROCESS_TEXTS[vproc].format(deadline=job["deadline"])
+    essay = ESSAY_TEXTS[vessay].format(category=job["category"], org=job["org"],
+                                       type=job["type"], deadline=job["deadline"])
+    iv = INTERVIEW_TEXTS[viv].format(org=job["org"], category=job["category"],
+                                     region=job["region"], type=job["type"])
     tag0 = (job.get("tags") or [""])[0]
     sum0 = (job.get("summary") or ["지원자격"])[0]
-    point = POINT_TEXTS[v].format(tag=tag0, point=sum0, org=job["org"], dlabel=dlabel)
+    point = POINT_TEXTS[vpoint].format(tag=tag0, point=sum0, org=job["org"], dlabel=dlabel)
+    sched = SCHED_TEXTS[_v(job, "sched", 2)].format(posted=job["posted"], deadline=job["deadline"],
+                                                    left=left, org=job["org"])
+    pay = PAY_TEXTS[_v(job, "pay", 2)].format(type=job["type"], region=job["region"], org=job["org"])
     checklist = "".join(
         f"<li>{c.format(deadline=job['deadline'], dlabel=dlabel, region=job['region'], type=job['type'], org=job['org'])}</li>"
-        for c in CHECKLISTS[v]
+        for c in CHECKLISTS[vchk]
     )
+    if job.get("excerpt"):
+        excerpt_block = (
+            "<h2>원문에서 확인한 전형 방식</h2>"
+            f"<p class=\"quote\">{job['excerpt']}</p>"
+            f"<p>위 내용은 {job['org']} 원문 공고의 전형 항목을 그대로 옮긴 것입니다. "
+            "단계별 배수와 평가 요소가 적혀 있으니 본인 강점과 맞는 단계에 맞춰 준비 순서를 정하세요. "
+            "전형별 합격자 발표일도 원문에서 함께 확인하는 것이 좋습니다.</p>"
+        )
+    else:
+        excerpt_block = ""
     faq = "".join(
         f"<li><b>{q.format(deadline=job['deadline'], dlabel=dlabel, region=job['region'], type=job['type'], org=job['org'], point=sum0, tag=tag0, category=job['category'])}</b><br>"
         f"{a.format(deadline=job['deadline'], dlabel=dlabel, region=job['region'], type=job['type'], org=job['org'], point=sum0, tag=tag0, category=job['category'])}</li>"
-        for q, a in FAQ_SETS[v]
+        for q, a in FAQ_SETS[vfaq]
     )
     desc = f"{job['org']} {job['title']} 정리. 마감 {job['deadline']}({dlabel}), {job['region']}·{job['type']}. 지원자격·전형·추천대상 해설과 원문 링크."
     # 관련 공고 3개: 같은 카테고리 우선, 모자라면 마감 임박순
@@ -254,6 +281,7 @@ def build(job, all_jobs):
 <p>{point}</p>
 <h2>전형은 어떻게 진행되나</h2>
 <p>{proc}</p>
+{excerpt_block}
 <h2>이런 분께 추천해요</h2>
 <ul>
 <li>{job['region']} 근무가 가능한 분 — 통근·거주 조건이 맞는지가 1순위입니다</li>
@@ -265,7 +293,7 @@ def build(job, all_jobs):
 {checklist}
 </ul>
 <h2>모집 일정과 제출 타이밍</h2>
-<p>게시일은 {job['posted']}, 마감은 {job['deadline']}입니다. {left} 공공 채용은 마감일 24시간 전부터 지원자가 몰려 접수 페이지가 느려지거나 증빙 업로드가 실패하는 일이 잦습니다. 일정 운영의 정석은 이렇습니다. 첫날에는 공고문과 직무기술서를 출력해 응시자격·우대사항에 형광펜을 치고, 중간 기간에는 자기소개서 초안과 증빙 스캔을 끝내고, 마감 전날에는 접수 시스템에 미리 입력까지 마쳐 두는 것입니다. 마감 당일에 처음 접속하는 지원자가 가장 많이 탈락합니다. 접수번호가 발급되고 수험표(또는 접수확인서)가 출력돼야 접수가 끝난 것이니, 제출 후 확인증까지 꼭 챙기세요.</p>
+<p>{sched}</p>
 <h2>직무 이해하기: {job['category']}</h2>
 <p>{guide} {job['org']}의 이번 채용({job['type']})도 같은 잣대로 보면 됩니다. 공고 제목에 적힌 분야명과 직무기술서의 필요역량을 나란히 놓고, 본인 경험에서 겹치는 키워드를 세 개 이상 뽑아보세요. 그 세 개가 자기소개서와 면접 답변의 뼈대가 됩니다.</p>
 <h2>자기소개서 작성 팁</h2>
@@ -273,7 +301,7 @@ def build(job, all_jobs):
 <h2>면접 준비 포인트</h2>
 <p>{iv}</p>
 <h2>급여·근무조건 읽는 법</h2>
-<p>공고문의 보수 표기는 호봉·수당·상여를 합친 기준이 아니라 기본급 기준인 경우가 많습니다. 실제 수령액은 원문의 보수·복무 조항과 동일 기관 재직자 채용 후기를 함께 봐야 가늠이 됩니다. {job['type']} 공고라면 계약 기간, 연장·전환 조건, 4대 보험과 퇴직금 적용 여부를 원문에서 반드시 확인하세요. 근무지({job['region']})가 도서·산간이거나 교대 근무가 포함된 경우에는 주거 지원·통근버스 조항도 체크리스트에 넣으세요.</p>
+<p>{pay}</p>
 <h2>자주 묻는 질문</h2>
 <ul>
 {faq}
