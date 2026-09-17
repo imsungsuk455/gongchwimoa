@@ -14,7 +14,7 @@ from urllib.request import urlopen
 BASE = os.path.dirname(os.path.abspath(__file__))
 JOBS_JSON = os.path.join(BASE, "jobs.json")
 QUEUE_JSON = os.path.join(BASE, "threads_queue.json")
-SITE_URL = os.environ.get("SITE_URL", "https://your-domain/jobs/")
+SITE_URL = os.environ.get("SITE_URL", "https://gongchwimoa.org/")
 # data.go.kr 참고문서(활용신청 > 상세 ⁄ 참고문서)에서 오퍼레이션·파라미터 확인.
 # 인사혁신처 공공취업정보: base https://apis.data.go.kr/1760000/PblJobService + op /getList
 # 실측(2026-09-17): idx 오름차순 고정, 최신정렬·상세조회 없음. 일일 최신 수집은 fetch_gojobs_html.py가 담당.

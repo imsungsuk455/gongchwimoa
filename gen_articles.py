@@ -17,7 +17,7 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 JOBS_JSON = os.path.join(BASE, "jobs.json")
 ART_DIR = os.path.join(BASE, "articles")
 THUMB_DIR = os.path.join(BASE, "thumbnails")
-SITE_URL = os.environ.get("SITE_URL", "https://your-domain/jobs/")
+SITE_URL = os.environ.get("SITE_URL", "https://gongchwimoa.org/")
 ADSENSE = "ca-pub-3484572882367046"
 
 # ---- 썸네일 기본옵션 (간단형: 카테고리 색상 + 공고제목 텍스트) ----
