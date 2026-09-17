@@ -119,7 +119,10 @@ def save_jobs(jobs):
         json.dump(jobs, f, ensure_ascii=False, indent=2)
 
 def prune_expired(jobs):
-    """마감 지난 공고 + 기사/썸네일 파일 삭제. 매 실행마다 적용 (DB에 마감 보관 안 함)."""
+    """마감 지난 공고 처리. 기본(승인 전)은 유지(마감 뱃지).
+    PRUNE_EXPIRED=1일 때만 기사/썸네일 파일까지 삭제."""
+    if os.environ.get("PRUNE_EXPIRED", "") != "1":
+        return jobs, []
     today = datetime.date.today().isoformat()
     keep, dropped = [], []
     for j in jobs:
@@ -267,7 +270,9 @@ def main():
     # 스레드는 우선순위순으로 발송 버퍼에 적재 (오늘→내일 빈 슬롯). 발송은 send_queue.py가 정시에 처리.
     import quota
     allow = quota.remaining("threads", MAX_THREADS_PER_DAY)
-    picks = sorted(verified, key=priority_key)[:allow]
+    today = datetime.date.today().isoformat()
+    picks = sorted([x for x in verified if (x.get("deadline") or "") >= today],
+                   key=priority_key)[:allow]
     quota.consume("threads", len(picks))
     assigned, dropped = assign_slots(picks)
     print(f"신규 {len(verified)}건 반영. 스레드 버퍼 배정 {len(assigned)}건" +

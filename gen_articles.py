@@ -325,9 +325,12 @@ def main():
             n += 1
         print(f"썸네일 재생성 {n}건")
         return
-    # 하루 발행량: 날짜 기준 5건. 초과분은 다음날로 자동 이월.
+    # 하루 발행량: 날짜 기준 5건. 초과분은 다음날로 자동 이월. 마감분은 신규 기사화 안 함(기존 유지).
+    today = datetime.date.today().isoformat()
     missing = sorted(
-        [j for j in jobs if not os.path.exists(os.path.join(ART_DIR, j["id"] + ".html"))],
+        [j for j in jobs
+         if not os.path.exists(os.path.join(ART_DIR, j["id"] + ".html"))
+         and (j.get("deadline") or "") >= today],
         key=lambda x: x["deadline"],
     )
     targets, deferred = missing[:allow], missing[allow:]

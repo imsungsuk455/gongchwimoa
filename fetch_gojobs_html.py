@@ -171,7 +171,9 @@ def main():
     kept, pruned = prune_expired(verified + old)
     json.dump(kept, open(JOBS_JSON, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     allow = quota.remaining("threads", MAX_THREADS_PER_DAY)
-    picks = sorted(verified, key=priority_key)[:allow]
+    today = datetime.date.today().isoformat()
+    picks = sorted([x for x in verified if (x.get("deadline") or "") >= today],
+                   key=priority_key)[:allow]
     quota.consume("threads", len(picks))
     assigned, dropped = assign_slots(picks)
     print(f"신규 {len(verified)}건 반영. 스레드 버퍼 배정 {len(assigned)}건" +
