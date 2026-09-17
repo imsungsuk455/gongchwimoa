@@ -13,7 +13,7 @@ from urllib.request import Request, urlopen
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE)
-from fetch_jobs import exact_url, priority_key, assign_slots, thread_text  # noqa
+from fetch_jobs import exact_url, priority_key, assign_slots, thread_text, infer_type  # noqa
 import quota
 
 JOBS_JSON = os.path.join(BASE, "jobs.json")
@@ -36,22 +36,6 @@ def get(url, timeout=20):
         return t
     except (UnicodeDecodeError, ValueError):
         return raw.decode("euc-kr", errors="replace")
-
-def infer_type(title):
-    t = title
-    if "청년인턴" in t or "체험형" in t:
-        return "청년인턴(체험형)"
-    if "시간강사" in t:
-        return "시간강사"
-    if "기간제" in t and ("교사" in t or "교원" in t):
-        return "기간제교사"
-    if any(k in t for k in ["공무직", "무기계약", "집배원", "시설관리원", "미화", "조리원", "운전원"]):
-        return "공무직"
-    if "기간제" in t:
-        return "기간제"
-    if "임기제" in t or "개방형" in t:
-        return "임기제"
-    return "정규직"
 
 ROW_RE = re.compile(
     r'alt="([^"]+)"[^>]*>\s*</div>\s*<a[^>]*?fn_apmView\(\'020\', \'(\d+)\'\)[^>]*?>(.+?)</a>\s*</td>\s*'
@@ -118,6 +102,8 @@ def main():
             break
         fresh_all += [r for r in rows if r["id"] not in old_ids]
     print(f"목록 수집: 신규 후보 {len(fresh_all)}건")
+    today = datetime.date.today().isoformat()
+    fresh_all = [x for x in fresh_all if (x.get("deadline") or "") >= today]
     verified, rejected = [], []
     for job in fresh_all:
         ok = enrich_and_verify(job)

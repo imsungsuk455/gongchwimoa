@@ -15,9 +15,34 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 JOBS_JSON = os.path.join(BASE, "jobs.json")
 QUEUE_JSON = os.path.join(BASE, "threads_queue.json")
 SITE_URL = os.environ.get("SITE_URL", "https://your-domain/jobs/")
-# data.go.kr 상세 스펙은 신청 후 '활용신청 > 참고문서'에서 확인 (엔드포인트/파라미터가 버전별로 바뀜)
-API_ENDPOINT = os.environ.get("GOJOBS_API_ENDPOINT", "")
+# data.go.kr 참고문서(활용신청 > 상세 ⁄ 참고문서)에서 오퍼레이션·파라미터 확인.
+# 인사혁신처 공공취업정보: base https://apis.data.go.kr/1760000/PblJobService + op /getList
+# 실측(2026-09-17): idx 오름차순 고정, 최신정렬·상세조회 없음. 일일 최신 수집은 fetch_gojobs_html.py가 담당.
+# API 경로는 title 키워드 보충 수집용.
+API_ENDPOINT = os.environ.get("GOJOBS_API_ENDPOINT",
+                              "https://apis.data.go.kr/1760000/PblJobService/getList")
+API_TITLE_QUERY = os.environ.get("API_TITLE_QUERY", "")
 PAGE_SIZE = 100
+
+def infer_type(title):
+    t = title or ""
+    if "청년인턴" in t or "체험형" in t:
+        return "청년인턴(체험형)"
+    if "시간강사" in t:
+        return "시간강사"
+    if "기간제" in t and ("교사" in t or "교원" in t):
+        return "기간제교사"
+    if any(k in t for k in ["공무직", "무기계약", "집배원", "시설관리원", "미화", "조리원", "운전원"]):
+        return "공무직"
+    if "기간제" in t:
+        return "기간제"
+    if "임기제" in t or "개방형" in t:
+        return "임기제"
+    return "정규직"
+
+def ymd8(s):
+    s = (s or "").strip()
+    return s[:4] + "-" + s[4:6] + "-" + s[6:8] if len(s) == 8 and s.isdigit() else s
 
 # ---- 하루 발행량 조절 (기본값, 환경변수로 변경 가능) ----
 # 사이트 기사: 하루 5건 (마감일순). 나머지는 다음날로 자동 이월.
@@ -94,12 +119,18 @@ def save_jobs(jobs):
         json.dump(jobs, f, ensure_ascii=False, indent=2)
 
 def fetch_api(key):
-    """실제 API 호출. 스펙 확정 후 파라미터 조정 필요. 공통 패턴: serviceKey, pageNo, numOfRows, returnType."""
-    params = urlencode({"serviceKey": key, "pageNo": 1, "numOfRows": PAGE_SIZE})
-    url = f"{API_ENDPOINT}?{params}"
-    print("GET", API_ENDPOINT, f"(rows={PAGE_SIZE})")
+    """PblJobService/getList 호출. serviceKey, pageNo, numOfRows + 선택 title."""
+    params = {"serviceKey": key, "pageNo": 1, "numOfRows": PAGE_SIZE}
+    if API_TITLE_QUERY:
+        params["title"] = API_TITLE_QUERY
+    url = API_ENDPOINT + "?" + urlencode(params)
+    print("GET", API_ENDPOINT, f"(rows={PAGE_SIZE}" + (f", title={API_TITLE_QUERY}" if API_TITLE_QUERY else "") + ")")
     with urlopen(url, timeout=30) as r:
-        return r.read()
+        raw = r.read()
+    try:
+        return raw.decode("utf-8")
+    except UnicodeDecodeError:
+        return raw.decode("euc-kr", errors="replace")
 
 def exact_url(seq, source="나라일터"):
     """해당 공고로 곧장 가는 상세 URL (실측 규격).
@@ -113,27 +144,34 @@ def exact_url(seq, source="나라일터"):
     return f"https://www.gojobs.go.kr/apmView.do?empmnsn={seq}&menuNo=401&selMenuNo=400"
 
 def parse_items(raw):
-    """XML 응답 -> 표준 job dict 변환. 태그명은 실제 스펙에 맞춰 매핑."""
+    """PblJobService 응답 -> 표준 job dict. 필드: idx/title/insttname/regdate/enddate."""
+    if isinstance(raw, bytes):
+        try:
+            raw = raw.decode("utf-8")
+        except UnicodeDecodeError:
+            raw = raw.decode("euc-kr", errors="replace")
     root = ET.fromstring(raw)
     items = []
     for it in root.iter("item"):
         def g(tag):
             el = it.find(tag)
             return el.text.strip() if el is not None and el.text else ""
-        seq = g("공고ID") or g("empmnsn") or g("seq") or g("idx") or g("id")
+        seq = g("idx") or g("공고ID") or g("empmnsn") or g("seq") or g("id")
         src = g("출처") or "나라일터"
+        title = g("title") or g("공고명")
+        org = g("insttname") or g("기관명") or g("org")
         url = g("상세URL") or g("원문URL") or exact_url(seq, src) or "https://www.gojobs.go.kr/apmList.do"
         items.append({
             "id": "gojobs-" + seq,
-            "title": g("공고명") or g("title"),
-            "org": g("기관명") or g("org"),
+            "title": title,
+            "org": org,
             "category": g("기관유형") or "공공기관",
-            "type": g("채용유형") or "정규직",
-            "region": g("채용지역") or "전국",
-            "posted": g("게시일") or datetime.date.today().isoformat(),
-            "deadline": g("마감일") or g("접수마감일") or "2026-12-31",
+            "type": infer_type(title),
+            "region": "전국",
+            "posted": ymd8(g("regdate")) or g("게시일") or datetime.date.today().isoformat(),
+            "deadline": ymd8(g("enddate")) or g("마감일") or g("접수마감일") or "2026-12-31",
             "tags": [],
-            "summary": [g("응시자격")] if g("응시자격") else ["원문 공고문 확인 필수"],
+            "summary": [g("응시자격")] if g("응시자격") else ["접수 ~" + ymd8(g("enddate")) + " 마감", "세부 조건은 원문 공고문 확인"],
             "source": "나라일터",
             "url": url,
         })
@@ -182,6 +220,14 @@ def main():
     fresh = [x for x in new_items if x["id"] not in old_ids]
     if not fresh:
         print("신규 공고 0건. 갱신 없음.")
+        return
+    today = datetime.date.today().isoformat()
+    stale = [x for x in fresh if (x.get("deadline") or "") < today]
+    if stale:
+        print(f"마감경과 {len(stale)}건 제외 (오래된 데이터 유입 방지)")
+        fresh = [x for x in fresh if (x.get("deadline") or "") >= today]
+    if not fresh:
+        print("유효 신규 0건. 저장 없이 종료.")
         return
     if args.skip_verify:
         verified, rejected = fresh, []
