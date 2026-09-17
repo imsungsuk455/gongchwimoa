@@ -26,6 +26,13 @@ UA = {"User-Agent": "Mozilla/5.0"}
 
 ICON_CAT = {"공공": "공공기관", "지자체": "지자체", "국가": "국가기관", "교육": "교육청"}
 
+# 결과발표성 공고 제외 (채용速보 정체성 유지). 단 면접 등 다음 전형 안내 포함이면 유지.
+ANNOUNCE_RE = re.compile(r"합격자|명단|발표")
+KEEP_IF_RE = re.compile(r"면접|채용|모집|시험\s*공고|임용시험")
+
+def is_announcement(title):
+    return bool(ANNOUNCE_RE.search(title)) and not bool(KEEP_IF_RE.search(title))
+
 def get(url, timeout=20):
     raw = urlopen(Request(url, headers=UA), timeout=timeout).read()
     try:
@@ -49,6 +56,8 @@ def parse_list(html):
         title = re.sub(r"\s+", " ", title).strip()
         org = re.sub(r"\s+", " ", org).strip()
         if not title or not seq:
+            continue
+        if is_announcement(title):
             continue
         items.append({
             "id": "gojobs-" + seq,
@@ -81,9 +90,21 @@ def enrich_and_verify(job, timeout=15):
         mm = re.match(r"([가-힣]{2})", region)
         job["region"] = mm.group(1) if mm else region[:2]
     m = re.search(r"채용직급</th>\s*<td[^>]*?>(.+?)</td>", flat)
+    grade = ""
     if m:
         grade = re.sub(r"<[^>]+>", "", m.group(1)).strip()
-        job["summary"] = [grade[:40], "접수 ~" + job["deadline"] + " 마감", " 세부 조건은 원문 공고문 확인"]
+        grade = re.sub(r"\s+", " ", grade)[:40]
+    m = re.search(r"(응시자격|지원자격|자격요건)</th>\s*<td[^>]*?>(.+?)</td>", flat)
+    qual = ""
+    if m:
+        qual = re.sub(r"<[^>]+>", "", m.group(2))
+        qual = re.sub(r"\s+", " ", qual).strip()[:80]
+    summ = ["접수 ~" + job["deadline"] + " 마감", "세부 조건은 원문 공고문 확인"]
+    if grade:
+        summ.insert(0, grade)
+    if len(qual) > 12:
+        summ.insert(0, qual)
+    job["summary"] = summ[:3]
     return job
 
 def main():

@@ -8,80 +8,125 @@
 <link rel="canonical" href="https://your-domain/jobs/">
 <meta name="google-adsense-account" content="ca-pub-3484572882367046">
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3484572882367046" crossorigin="anonymous"></script>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
 <style>
+:root{--bg:#f3f5fa;--card:#fff;--ink:#101828;--muted:#667085;--line:#e4e9f2;
+--brand:#0b5fff;--deep:#0a2472;--danger:#e11d48;--warn:#d97706;--ok:#16a34a;--r:16px;
+--shadow:0 6px 24px rgba(16,24,40,.07)}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:Pretendard,-apple-system,"Noto Sans KR",sans-serif;background:#f4f6fa;color:#222;max-width:860px;margin:0 auto;padding:0 16px 80px}
-header{padding:28px 4px 12px}
-header h1{font-size:1.6rem}
-header h1 span{color:#0b5fff}
-header p{color:#666;margin-top:6px;font-size:.95rem}
-.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
-.tabs button{border:1px solid #dbe2ef;background:#fff;border-radius:999px;padding:8px 14px;cursor:pointer;font-size:.9rem}
-.tabs button.active{background:#0b5fff;color:#fff;border-color:#0b5fff}
-.search{display:flex;gap:8px;margin:6px 0 16px}
-.search input{flex:1;padding:11px 14px;border:1px solid #dbe2ef;border-radius:10px;font-size:1rem}
-.meta{font-size:.85rem;color:#888;margin:4px 2px 12px}
-.card{background:#fff;border:1px solid #e6ebf4;border-radius:14px;padding:16px;margin-bottom:12px;overflow:hidden}
-.thumb{width:100%;height:150px;object-fit:cover;border-radius:10px;margin-bottom:12px;background:#eef2f9}
-.card h2{font-size:1.05rem;line-height:1.45}
-.card h2 a{color:#111;text-decoration:none}
-.badge{display:inline-block;font-size:.75rem;font-weight:700;border-radius:6px;padding:3px 8px;margin-right:6px}
-.d0{background:#ff3b30;color:#fff}.d3{background:#ff9500;color:#fff}.d7{background:#0b5fff;color:#fff}.rest{background:#eef2f9;color:#445}
-.org{color:#555;font-size:.88rem;margin:6px 0}
-.sum{font-size:.9rem;color:#333;margin:8px 0 4px;line-height:1.6}
-.sum li{margin-left:18px}
-.links{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
-.links a{font-size:.85rem;text-decoration:none;border:1px solid #dbe2ef;border-radius:8px;padding:7px 12px;background:#f8faff;color:#0b5fff}
-.affil{background:#fffbe8;border:1px dashed #d9b400;border-radius:14px;padding:14px 16px;margin:18px 0;font-size:.9rem;color:#5a4a00}
-footer{margin-top:36px;font-size:.82rem;color:#888;text-align:center;line-height:2}
-footer a{color:#888;margin:0 6px}
+body{font-family:Pretendard,-apple-system,"Noto Sans KR",sans-serif;background:var(--bg);color:var(--ink);padding-bottom:90px}
+.wrap{max-width:1020px;margin:0 auto;padding:0 18px}
+/* 상단바 */
+.topbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar .wrap{display:flex;align-items:center;gap:12px;height:60px}
+.logo{font-weight:800;font-size:1.25rem;letter-spacing:-.5px;text-decoration:none;color:var(--ink)}
+.logo b{color:var(--brand)}
+.tagline{font-size:.78rem;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:3px 10px;white-space:nowrap}
+.search{margin-left:auto;flex:0 1 340px;display:flex}
+.search input{width:100%;padding:10px 14px;border:1px solid var(--line);border-radius:999px;font-size:.92rem;background:#f8fafc;font-family:inherit}
+.search input:focus{outline:2px solid var(--brand);background:#fff}
+/* 히어로 */
+.hero{margin:22px 0 6px;background:linear-gradient(135deg,#0a2472 0%,#0b5fff 70%,#38bdf8 130%);border-radius:22px;color:#fff;padding:34px 28px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-70px;top:-70px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.12)}
+.hero::before{content:"";position:absolute;right:60px;bottom:-110px;width:200px;height:200px;border-radius:50%;background:rgba(255,255,255,.08)}
+.hero h1{font-size:1.55rem;letter-spacing:-.5px;margin-bottom:8px}
+.hero p{opacity:.85;font-size:.95rem}
+.stats{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap;position:relative;z-index:1}
+.stat{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:8px 14px;font-size:.85rem}
+.stat b{font-size:1.05rem;margin-right:4px}
+/* 칩 */
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 6px}
+.chips button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;cursor:pointer;font-size:.88rem;font-family:inherit;color:#344054;transition:.15s}
+.chips button:hover{border-color:var(--brand);color:var(--brand)}
+.chips button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.meta{font-size:.82rem;color:var(--muted);margin:10px 2px 14px}
+/* 카드 그리드 */
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.hero h1{font-size:1.3rem}.tagline{display:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;transition:transform .15s}
+.card:hover{transform:translateY(-3px)}
+.thumb{width:100%;aspect-ratio:16/7.2;object-fit:cover;background:#e8edf5;display:block}
+.body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:9px;flex:1}
+.badges{display:flex;gap:6px;flex-wrap:wrap}
+.badge{font-size:.72rem;font-weight:700;border-radius:7px;padding:3px 9px;letter-spacing:-.2px}
+.d0{background:#fee2e2;color:#b91c1c}.d3{background:#ffedd5;color:#c2410c}.d7{background:#dbeafe;color:#1d4ed8}.rest{background:#eef2f7;color:#475569}
+.cat{background:#f1f5f9;color:#334155}
+.card h2{font-size:1.02rem;line-height:1.5;letter-spacing:-.3px}
+.card h2 a{color:var(--ink);text-decoration:none}
+.card h2 a:hover{color:var(--brand)}
+.org{color:var(--muted);font-size:.84rem}
+.sum{font-size:.87rem;color:#344054;line-height:1.65;list-style:none;display:flex;flex-direction:column;gap:3px}
+.sum li{padding-left:14px;position:relative}
+.sum li::before{content:"";position:absolute;left:2px;top:.68em;width:5px;height:5px;border-radius:50%;background:var(--brand)}
+.links{margin-top:auto;display:flex;gap:8px;padding-top:8px;flex-wrap:wrap}
+.btn{font-size:.83rem;text-decoration:none;border-radius:10px;padding:8px 13px;font-weight:600}
+.btn.main{background:var(--brand);color:#fff}
+.btn.ghost{border:1px solid var(--line);color:#344054;background:#fff}
+.btn.affil{border:1px dashed #d9b400;color:#8a6d00;background:#fffbe8}
+/* 제휴 */
+.affil{margin:22px 0;background:#fffbe8;border:1px dashed #d9b400;border-radius:var(--r);padding:16px 18px;font-size:.88rem;color:#5a4a00;line-height:1.7}
+/* 푸터 */
+footer{margin-top:40px;text-align:center;font-size:.8rem;color:#98a2b3;line-height:2.1}
+footer a{color:#98a2b3;margin:0 7px;text-decoration:none}
 </style>
 </head>
 <body>
-<header>
-<h1>공취모아</h1>
-<p>나라일터·잡알리오 공개정보를 마감일 순으로 정리합니다. 매일 자동 업데이트됩니다.</p>
-</header>
+<div class="topbar"><div class="wrap">
+<a class="logo" href="./">공<b>취</b>모아</a>
+<span class="tagline">공공기관 채용速보</span>
+<div class="search"><input id="q" type="search" placeholder="기관명·공고명 검색 (예: 우체국, 인턴, 영양)" aria-label="검색"></div>
+</div></div>
 
-<div class="tabs" id="tabs">
+<div class="wrap">
+<section class="hero">
+<h1>오늘의 공공 채용, 마감 순으로.</h1>
+<p>나라일터·잡알리오 공개정보를 매일 자동 정리합니다. 제목을 누르면 해설 기사를 볼 수 있어요.</p>
+<div class="stats">
+<span class="stat"><b id="stAll">–</b>전체 공고</span>
+<span class="stat"><b id="stUrgent">–</b>마감 3일 이내</span>
+<span class="stat"><b id="stIntern">–</b>청년인턴</span>
+</div>
+</section>
+
+<div class="chips" id="tabs">
 <button data-f="all" class="active">전체</button>
 <button data-f="청년인턴">청년인턴</button>
 <button data-f="교육청">교육청·교사</button>
 <button data-f="공무직">공무직·기간제</button>
 <button data-f="deadline">마감임박 3일</button>
 </div>
-
-<div class="search"><input id="q" type="search" placeholder="기관명·공고명 검색 (예: 우체국, 인턴, 영양)"></div>
 <div class="meta" id="meta"></div>
-<div id="list"></div>
+<div class="grid" id="list"></div>
 
-<div class="affil">📌 <b>제휴 자리 (승인 전부터 수익)</b><br>
-수험서·자소서·면접 대비 링크를 공고 하단에 자동 삽입합니다. 쿠팡파트너스 또는 인강 제휴 URL을 <code>AFFIL_LINK</code>에 넣으세요.<br>
-예: [2026 공기업 자소서 바이블 보기] [면접 정장 특가 보기]</div>
+<div class="affil">📌 <b>합격 준비 특가</b><br>
+수험서·자소서·면접 대비 링크가 공고마다 자동 연결됩니다. (쿠팡파트너스·인강 제휴 자리 — <code>AFFIL_LINK</code> 설정 후 활성화)</div>
+</div>
 
 <footer>
 <a href="about.html">소개</a>·<a href="privacy.html">개인정보</a>·<a href="terms.html">약관</a>·<a href="contact.html">문의</a><br>
 출처: 인사혁신처 나라일터 · 기획재정부 잡알리오 (공공데이터, 원문 링크 병기)<br>
-본 페이지는 채용정보 안내용이며, 최종 내용은 반드시 원문 공고문을 확인하세요.
+최종 내용은 반드시 원문 공고문을 확인하세요.
 </footer>
 
 <script>
 const AFFIL_LINK = "#"; // TODO: 쿠팡파트너스/제휴 URL로 교체
 let JOBS = [];
 let filter = "all";
-
 function dday(deadline){
   const t = new Date(deadline+"T23:59:59+09:00"), now = new Date();
   return Math.ceil((t-now)/86400000);
 }
+function matchFilter(j){
+  if(filter==="청년인턴") return j.category==="청년인턴"||j.type.includes("인턴");
+  if(filter==="교육청") return j.category==="교육청"||j.title.includes("교사")||j.title.includes("강사");
+  if(filter==="공무직") return ["공무직","기간제","시간강사","기간제교사"].includes(j.type)||j.category==="공무직";
+  if(filter==="deadline") return dday(j.deadline)<=3;
+  return true;
+}
 function render(){
   const q = document.getElementById("q").value.trim();
   const box = document.getElementById("list");
-  let arr = JOBS.filter(j=>j.deadline>=new Date().toISOString().slice(0,10)||true);
-  if(filter==="청년인턴") arr = arr.filter(j=>j.category==="청년인턴"||j.type.includes("인턴"));
-  if(filter==="교육청") arr = arr.filter(j=>j.category==="교육청"||j.title.includes("교사")||j.title.includes("강사"));
-  if(filter==="공무직") arr = arr.filter(j=>["공무직","기간제","시간강사","기간제교사"].includes(j.type)||j.category==="공무직");
-  if(filter==="deadline") arr = arr.filter(j=>dday(j.deadline)<=3);
+  let arr = JOBS.filter(matchFilter);
   if(q) arr = arr.filter(j=>(j.title+j.org).includes(q));
   arr.sort((a,b)=>a.deadline.localeCompare(b.deadline));
   document.getElementById("meta").textContent = "총 "+arr.length+"건 · 마감일 순 · "+new Date().toLocaleString("ko-KR")+" 기준";
@@ -92,13 +137,14 @@ function render(){
     const schema = {"@context":"https://schema.org","@type":"JobPosting","title":j.title,"hiringOrganization":{"@type":"Organization","name":j.org},"datePosted":j.posted,"validThrough":j.deadline,"employmentType":j.type,"jobLocation":{"@type":"Place","address":"KR"}};
     return `<article class="card">
 <img class="thumb" src="thumbnails/${j.id}.png" alt="${j.title}" loading="lazy">
-<span class="badge ${cls}">${label}</span><span class="badge rest">${j.category} · ${j.type}</span>
+<div class="body">
+<div class="badges"><span class="badge ${cls}">${label}</span><span class="badge cat">${j.category} · ${j.type}</span></div>
 <h2><a href="articles/${j.id}.html">${j.title}</a></h2>
-<div class="org">${j.org} · ${j.region} · 마감 ${j.deadline} · 출처 ${j.source}</div>
+<div class="org">${j.org} · ${j.region} · 마감 ${j.deadline}</div>
 <ul class="sum">${j.summary.map(s=>`<li>${s}</li>`).join("")}</ul>
 <script type="application/ld+json">${JSON.stringify(schema)}<\/script>
-<div class="links"><a href="articles/${j.id}.html">해설 기사 보기</a><a href="${j.url}" target="_blank" rel="noopener">원문 공고 보기 ↗</a><a href="${AFFIL_LINK}" target="_blank" rel="sponsored nofollow">자소서·면접 대비 특가</a></div>
-</article>`;
+<div class="links"><a class="btn main" href="articles/${j.id}.html">해설 보기</a><a class="btn ghost" href="${j.url}" target="_blank" rel="noopener">원문 ↗</a><a class="btn affil" href="${AFFIL_LINK}" target="_blank" rel="sponsored nofollow">면접 대비 특가</a></div>
+</div></article>`;
   }).join("") || "<p>조건에 맞는 공고가 없습니다.</p>";
 }
 document.getElementById("tabs").addEventListener("click",e=>{
@@ -107,7 +153,13 @@ document.getElementById("tabs").addEventListener("click",e=>{
   e.target.classList.add("active"); filter=e.target.dataset.f; render();
 });
 document.getElementById("q").addEventListener("input",render);
-fetch("jobs.json").then(r=>r.json()).then(j=>{JOBS=j;render();});
+fetch("jobs.json").then(r=>r.json()).then(j=>{
+  JOBS=j;
+  document.getElementById("stAll").textContent = j.length;
+  document.getElementById("stUrgent").textContent = j.filter(x=>dday(x.deadline)<=3).length;
+  document.getElementById("stIntern").textContent = j.filter(x=>x.category==="청년인턴"||x.type.includes("인턴")).length;
+  render();
+});
 </script>
 </body>
 </html>
