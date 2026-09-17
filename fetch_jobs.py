@@ -146,9 +146,27 @@ def thread_text(job):
         t = t[:420] + "…"
     return t + "\n원문 링크는 댓글에 👇"
 
+def verify_links(items, timeout=15):
+    """수집 단계 실측 검증: 상세 URL을 열어 기관명/공고명이 있는지 확인.
+    불일치 항목은 저장하지 않고 반환에서 제외 (번호 어긋남 원천 차단)."""
+    from urllib.request import Request, urlopen
+    good, bad = [], []
+    for j in items:
+        try:
+            req = Request(j["url"], headers={"User-Agent": "Mozilla/5.0"})
+            html = urlopen(req, timeout=timeout).read().decode("utf-8", errors="replace")
+            if j["org"][:4] in html and j["title"][:8] in html:
+                good.append(j)
+            else:
+                bad.append(j["id"])
+        except Exception:
+            bad.append(j["id"])
+    return good, bad
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--mock", action="store_true", help="API 없이 목업 1건을 신규로 가정해 큐 생성")
+    ap.add_argument("--skip-verify", action="store_true", help="링크 실측 검증 생략 (긴급시)")
     args = ap.parse_args()
     old = load_jobs()
     old_ids = {j["id"] for j in old}
@@ -165,15 +183,24 @@ def main():
     if not fresh:
         print("신규 공고 0건. 갱신 없음.")
         return
-    merged = fresh + old
+    if args.skip_verify:
+        verified, rejected = fresh, []
+    else:
+        verified, rejected = verify_links(fresh)
+        if rejected:
+            print(f"링크 불일치 {len(rejected)}건 제외: {', '.join(rejected)}", file=sys.stderr)
+    if not verified:
+        print("검증 통과 0건. 저장 없이 종료.")
+        return
+    merged = verified + old
     save_jobs(merged)
     # 스레드는 우선순위순으로 발송 버퍼에 적재 (오늘→내일 빈 슬롯). 발송은 send_queue.py가 정시에 처리.
     import quota
     allow = quota.remaining("threads", MAX_THREADS_PER_DAY)
-    picks = sorted(fresh, key=priority_key)[:allow]
+    picks = sorted(verified, key=priority_key)[:allow]
     quota.consume("threads", len(picks))
     assigned, dropped = assign_slots(picks)
-    print(f"신규 {len(fresh)}건 반영. 스레드 버퍼 배정 {len(assigned)}건" +
+    print(f"신규 {len(verified)}건 반영. 스레드 버퍼 배정 {len(assigned)}건" +
           (f" ({', '.join(s['date']+' '+s['slot'] for s in assigned)})" if assigned else "") +
           (f". 슬롯 만석으로 탈락 {len(dropped)}건" if dropped else "") + f": {QUEUE_JSON}")
 
