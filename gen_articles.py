@@ -61,8 +61,10 @@ def make_thumb(job):
     """1200x630 썸네일: 제목만 심플하게 (작은 브랜드명 + 큰 제목). PIL 로컬 생성."""
     os.makedirs(THUMB_DIR, exist_ok=True)
     W, H = 1200, 630
+    bar = CAT_COLORS.get(job.get("category", ""), "#0B5FFF")
     img = Image.new("RGB", (W, H), "#ffffff")
     dr = ImageDraw.Draw(img)
+    dr.rectangle([0, 0, 26, H], fill=bar)  # 카테고리 구분선
     f_brand = _font(FONT_REG_CANDS, 40)
     f_title = _font(FONT_BOLD_CANDS, 66)
     dr.text((100, 90), "공취모아", font=f_brand, fill="#94a3b8")
