@@ -1,1 +1,58 @@
-{"slots": [{"approved": true, "comment": "https://job.alio.go.kr/main.do", "date": "2026-09-17", "job_id": "alio-300863", "slot": "08:00", "status": "pending", "text": "📢 한국행정연구원\n「2026년 제2차 청년인턴 채용 (8명)」\n마감 2026-09-15 · 서울 · 청년인턴(체험형)\n✅ 만 15~34세 청년 / 전공 무관\n원문 링크는 댓글에 👇"}]}
+{
+  "slots": [
+    {
+      "approved": true,
+      "comment": "https://job.alio.go.kr/main.do",
+      "date": "2026-09-17",
+      "job_id": "alio-300863",
+      "slot": "08:00",
+      "status": "pending",
+      "text": "📢 한국행정연구원\n「2026년 제2차 청년인턴 채용 (8명)」\n마감 2026-09-15 · 서울 · 청년인턴(체험형)\n✅ 만 15~34세 청년 / 전공 무관\n원문 링크는 댓글에 👇"
+    },
+    {
+      "date": "2026-09-17",
+      "slot": "11:00",
+      "job_id": "gojobs-303869",
+      "text": "📢 공무원연금공단\n「사회형평적 체험형 청년인턴」\n마감 2026-10-01 · 서울 · 청년인턴(체험형)\n✅ 체험형 청년인턴&nbsp;27명 / 접수 ~2026-10-01 마감\n원문 링크는 댓글에 👇",
+      "comment": "https://www.gojobs.go.kr/apmView.do?empmnsn=303869&menuNo=401&selMenuNo=400",
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-17",
+      "slot": "14:00",
+      "job_id": "gojobs-303847",
+      "text": "📢 국립공원공단 덕유산국립공원사무소\n「[덕유산] 덕유산국립공원 가을성수기 한시인력(환경관리) 직원 채용 공고」\n마감 2026-09-21 · 전북 · 정규직\n✅ 환경관리(한시인력)&nbsp;1명 / 접수 ~2026-09-21 마감\n원문 링크는 댓글에 👇",
+      "comment": "https://www.gojobs.go.kr/apmView.do?empmnsn=303847&menuNo=401&selMenuNo=400",
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-17",
+      "slot": "17:00",
+      "job_id": "gojobs-303867",
+      "text": "📢 인천광역시 영종구\n「2026년도 제2회(재공고) 인천광역시 영종구 지방임기제공무원 채용시험 서류전형 합격자명단 공고(아동보호 전담요원)」\n마감 2026-09-22 · 인천 · 임기제\n✅ 지방시간선택제임기제 마급&nbsp;1명 / 접수 ~2026-09-22 마감\n원문 링크는 댓글에 👇",
+      "comment": "https://www.gojobs.go.kr/apmView.do?empmnsn=303867&menuNo=401&selMenuNo=400",
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-17",
+      "slot": "20:00",
+      "job_id": "gojobs-303863",
+      "text": "📢 행정안전부\n「중대범죄수사청 수사관 채용 공고」\n마감 2026-09-22 · 전국 · 정규직\n✅ 1급 수사관&nbsp;7명 / 접수 ~2026-09-22 마감\n원문 링크는 댓글에 👇",
+      "comment": "https://www.gojobs.go.kr/apmView.do?empmnsn=303863&menuNo=401&selMenuNo=400",
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-18",
+      "slot": "08:00",
+      "job_id": "gojobs-303861",
+      "text": "📢 대검찰청 서울고등검찰청 의정부지방검찰청\n「2026년도 제2차 기간제근로자(환경관리사) 서류전형 합격자 발표 및 면접시험 공고」\n마감 2026-09-22 · 경기 · 기간제\n✅ 기간제근로자(환경관리사)&nbsp;1명 / 접수 ~2026-09-22 마감\n원문 링크는 댓글에 👇",
+      "comment": "https://www.gojobs.go.kr/apmView.do?empmnsn=303861&menuNo=401&selMenuNo=400",
+      "status": "pending",
+      "approved": true
+    }
+  ]
+}

@@ -82,7 +82,7 @@ def priority_key(job):
     except Exception:
         left = 999
     urgent = 0 if 0 <= left <= 3 else 1
-    intern = 0 if job.get("category") == "청년인턴" else 1
+    intern = 0 if (job.get("category") == "청년인턴" or "인턴" in job.get("type", "")) else 1
     return (urgent, intern, job["deadline"])
 
 def load_jobs():

@@ -13,8 +13,9 @@ jobs:
           python-version: '3.12'
       - run: sudo apt-get update && sudo apt-get install -y fonts-nanum
       - run: pip install pillow
-      - name: 수집
-        run: python fetch_jobs.py
+      - name: 수집 (키 있으면 API, 없으면 HTML)
+        run: |
+          if [ -n "$DATA_GO_KR_KEY" ] && [ -n "$GOJOBS_API_ENDPOINT" ]; then python fetch_jobs.py; else python fetch_gojobs_html.py; fi
         env:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
           GOJOBS_API_ENDPOINT: ${{ secrets.GOJOBS_API_ENDPOINT }}
