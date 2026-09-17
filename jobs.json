@@ -1,5 +1,24 @@
 [
   {
+    "id": "gojobs-303871",
+    "title": "2026년 하남시 법무감사관(개방형직위) 채용시험 시행계획 재공고",
+    "org": "경기도 하남시",
+    "category": "지자체",
+    "type": "임기제",
+    "region": "경기",
+    "posted": "2026-09-17",
+    "deadline": "2026-10-08",
+    "tags": [],
+    "summary": [
+      "지방행정사무관 또는 일반임기제(개방형 5호)&nbsp;1명",
+      "접수 ~2026-10-08 마감",
+      "세부 조건은 원문 공고문 확인"
+    ],
+    "source": "나라일터",
+    "url": "https://www.gojobs.go.kr/apmView.do?empmnsn=303871&menuNo=401&selMenuNo=400",
+    "excerpt": "2026년 하남시 법무감사관(개방형직위) 채용시험 시행계획을 다음과 같이 재공고하오니 우수한 인재들의 많은 응모를 바랍니다. ○ 모집분야: 법무감사관 ○ 선발직급 : 지방행정사무관 또는 일반임기제(개방형 5호) ○ 선발인원 : 1명 ○ 자격요건 : 공고문 참고 ○ 접수기간 : 2026년 10월 1일(목) ~ 2026년 10월 8일(목), 09:00~18:00 [5일간] ○ 응시방법 : 직접, 우편 ○ 문의처 : 하남시청 인사팀(☎031-790-5382)"
+  },
+  {
     "id": "gojobs-303870",
     "title": "2026년 한국국토정보공사 신입사원 채용 공고",
     "org": "한국국토정보공사",
@@ -605,49 +624,6 @@
     "url": "https://www.gojobs.go.kr/apmView.do?empmnsn=302947&menuNo=401&selMenuNo=400"
   },
   {
-    "id": "alio-304400",
-    "title": "2026년도 예금보험공사 신입직원 채용 (35명)",
-    "org": "예금보험공사",
-    "category": "공기업",
-    "type": "정규직",
-    "region": "서울",
-    "posted": "2026-08-28",
-    "deadline": "2026-09-11",
-    "tags": [
-      "신입",
-      "35명 대규모",
-      "마감임박"
-    ],
-    "summary": [
-      "접수 ~2026-09-11 마감",
-      "세부 조건은 원문 공고문 확인"
-    ],
-    "source": "잡알리오",
-    "url": "https://job.alio.go.kr/recruitview.do?idx=304400"
-  },
-  {
-    "id": "alio-300863",
-    "title": "2026년 제2차 한국행정연구원 청년인턴 채용 (8명)",
-    "org": "한국행정연구원",
-    "category": "청년인턴",
-    "type": "청년인턴(체험형)",
-    "region": "서울",
-    "posted": "2026-09-01",
-    "deadline": "2026-09-15",
-    "tags": [
-      "청년인턴",
-      "만34세이하",
-      "행정직"
-    ],
-    "summary": [
-      "만 15~34세 청년",
-      "전공 무관",
-      "서류→면접, 간소화 가능"
-    ],
-    "source": "잡알리오",
-    "url": "https://job.alio.go.kr/recruitview.do?idx=300863"
-  },
-  {
     "id": "gojobs-302943",
     "title": "2026년 전주시 홍보담당관(개방형직위) 공개 모집",
     "org": "전북특별자치도 전주시",
@@ -668,116 +644,6 @@
     ],
     "source": "나라일터",
     "url": "https://www.gojobs.go.kr/apmView.do?empmnsn=302943&menuNo=401&selMenuNo=400"
-  },
-  {
-    "id": "gojobs-302941",
-    "title": "2026년 산림바이오센터 연구 보조 기간제근로자 모집공고",
-    "org": "충청북도 산림환경연구소",
-    "category": "지자체",
-    "type": "기간제",
-    "region": "충북",
-    "posted": "2026-09-04",
-    "deadline": "2026-09-14",
-    "tags": [
-      "연구보조",
-      "기간제",
-      "마감임박"
-    ],
-    "summary": [
-      "생물·임업 관련 전공 우대",
-      "주5일·4대보험",
-      "서류→면접"
-    ],
-    "source": "나라일터",
-    "url": "https://www.gojobs.go.kr/apmView.do?empmnsn=302941&menuNo=401&selMenuNo=400"
-  },
-  {
-    "id": "gojobs-302940",
-    "title": "전북특별자치도교육청 지방일반임기제공무원(인권침해상담·조사분야) 경력경쟁임용시험 시행 계획 공고",
-    "org": "전북특별자치도교육청",
-    "category": "교육청",
-    "type": "임기제",
-    "region": "전북",
-    "posted": "2026-09-04",
-    "deadline": "2026-09-14",
-    "tags": [
-      "교육청",
-      "인권",
-      "임기제"
-    ],
-    "summary": [
-      "인권·상담 경력 3년 이상",
-      "경력경쟁 임용",
-      "서류→면접"
-    ],
-    "source": "나라일터",
-    "url": "https://www.gojobs.go.kr/apmView.do?empmnsn=302940&menuNo=401&selMenuNo=400"
-  },
-  {
-    "id": "gojobs-302935",
-    "title": "내장산생태탐방원 기간제(수익시설) 직원 채용",
-    "org": "국립공원공단 내장산생태탐방원",
-    "category": "공공기관",
-    "type": "기간제",
-    "region": "전북",
-    "posted": "2026-09-04",
-    "deadline": "2026-09-11",
-    "tags": [
-      "국립공원",
-      "기간제",
-      "마감임박"
-    ],
-    "summary": [
-      "매표·안내·시설 지원",
-      "주말근무 가능자 우대",
-      "서류→면접"
-    ],
-    "source": "나라일터",
-    "url": "https://www.gojobs.go.kr/apmView.do?empmnsn=302935&menuNo=401&selMenuNo=400"
-  },
-  {
-    "id": "gojobs-302934",
-    "title": "2026학년도 충훈고 시간강사 채용(체육)",
-    "org": "경기도교육청 충훈고등학교",
-    "category": "교육청",
-    "type": "시간강사",
-    "region": "경기",
-    "posted": "2026-09-07",
-    "deadline": "2026-09-10",
-    "tags": [
-      "교육청",
-      "기간제교사",
-      "마감임박"
-    ],
-    "summary": [
-      "체육 교원자격증 소지자",
-      "주 N시간·방과후 포함",
-      "서류→면접"
-    ],
-    "source": "나라일터",
-    "url": "https://www.gojobs.go.kr/apmView.do?empmnsn=302934&menuNo=401&selMenuNo=400"
-  },
-  {
-    "id": "gojobs-302789",
-    "title": "2026학년도 인천중산중학교 기간제 교원 채용 공고(영양)",
-    "org": "인천광역시교육청 인천중산중학교",
-    "category": "교육청",
-    "type": "기간제교사",
-    "region": "인천",
-    "posted": "2026-09-07",
-    "deadline": "2026-09-09",
-    "tags": [
-      "교육청",
-      "영양교사",
-      "마감임박"
-    ],
-    "summary": [
-      "영양교사 자격증 필수",
-      "급식·식단 관리",
-      "서류→면접"
-    ],
-    "source": "나라일터",
-    "url": "https://www.gojobs.go.kr/apmView.do?empmnsn=302789&menuNo=401&selMenuNo=400"
   },
   {
     "id": "gojobs-302449",

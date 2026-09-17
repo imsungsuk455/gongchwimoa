@@ -13,7 +13,7 @@ from urllib.request import Request, urlopen
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE)
-from fetch_jobs import exact_url, priority_key, assign_slots, thread_text, infer_type  # noqa
+from fetch_jobs import exact_url, priority_key, assign_slots, thread_text, infer_type, prune_expired  # noqa
 import quota
 
 JOBS_JSON = os.path.join(BASE, "jobs.json")
@@ -139,6 +139,11 @@ def enrich_and_verify(job, timeout=15):
 def main():
     old = json.load(open(JOBS_JSON, encoding="utf-8"))
     old_ids = {j["id"] for j in old}
+    old, pruned = prune_expired(old)
+    if pruned:
+        print(f"마감경과 {len(pruned)}건 삭제")
+        json.dump(old, open(JOBS_JSON, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+        old_ids = {j["id"] for j in old}
     seen, fresh_all = set(), []
     for page in range(1, MAX_PAGES + 1):
         try:
@@ -163,7 +168,8 @@ def main():
     if not verified:
         print("검증 통과 0건. 저장 없이 종료.")
         return
-    json.dump(verified + old, open(JOBS_JSON, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+    kept, pruned = prune_expired(verified + old)
+    json.dump(kept, open(JOBS_JSON, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     allow = quota.remaining("threads", MAX_THREADS_PER_DAY)
     picks = sorted(verified, key=priority_key)[:allow]
     quota.consume("threads", len(picks))

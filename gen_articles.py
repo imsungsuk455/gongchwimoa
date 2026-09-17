@@ -58,26 +58,19 @@ def _wrap(draw, text, font, max_w):
     return lines
 
 def make_thumb(job):
-    """1200x630 썸네일: 카테고리 배경 + 흰 패널 + 뱃지/기관/제목/마감. PIL 로컬 생성."""
+    """1200x630 썸네일: 제목만 심플하게 (작은 브랜드명 + 큰 제목). PIL 로컬 생성."""
     os.makedirs(THUMB_DIR, exist_ok=True)
     W, H = 1200, 630
-    bg = CAT_COLORS.get(job.get("category", ""), "#0B5FFF")
-    img = Image.new("RGB", (W, H), bg)
+    img = Image.new("RGB", (W, H), "#ffffff")
     dr = ImageDraw.Draw(img)
-    dr.rounded_rectangle([48, 48, W - 48, H - 48], radius=40, fill="white")
-    f_badge = _font(FONT_BOLD_CANDS, 46)
-    f_org = _font(FONT_REG_CANDS, 44)
-    f_title = _font(FONT_BOLD_CANDS, 62)
-    f_foot = _font(FONT_BOLD_CANDS, 40)
-    x0 = 110
-    dr.text((x0, 105), f"{job['category']} · {job['region']}", font=f_badge, fill=bg)
-    dr.text((x0, 175), job["org"], font=f_org, fill="#555555")
-    lines = _wrap(dr, job["title"], f_title, W - 220)[:3]
-    y = 250
+    f_brand = _font(FONT_REG_CANDS, 40)
+    f_title = _font(FONT_BOLD_CANDS, 66)
+    dr.text((100, 90), "공취모아", font=f_brand, fill="#94a3b8")
+    lines = _wrap(dr, job["title"], f_title, W - 200)[:3]
+    y = (H - len(lines) * 92) // 2 + 20
     for ln in lines:
-        dr.text((x0, y), ln, font=f_title, fill="#111111")
-        y += 80
-    dr.text((x0, H - 145), f"마감 {job['deadline']} · 공취모아", font=f_foot, fill=bg)
+        dr.text((100, y), ln, font=f_title, fill="#101828")
+        y += 92
     out = os.path.join(THUMB_DIR, job["id"] + ".png")
     img.save(out, optimize=True)
     return out
@@ -323,6 +316,13 @@ def main():
     allow = min(quota.remaining("articles", per_day), max_run)
     jobs = json.load(open(JOBS_JSON, encoding="utf-8"))
     os.makedirs(ART_DIR, exist_ok=True)
+    if os.environ.get("RETHUMB", "") == "1":
+        n = 0
+        for j in jobs:
+            make_thumb(j)
+            n += 1
+        print(f"썸네일 재생성 {n}건")
+        return
     # 하루 발행량: 날짜 기준 5건. 초과분은 다음날로 자동 이월.
     missing = sorted(
         [j for j in jobs if not os.path.exists(os.path.join(ART_DIR, j["id"] + ".html"))],

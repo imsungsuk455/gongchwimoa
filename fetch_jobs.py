@@ -118,6 +118,23 @@ def save_jobs(jobs):
     with open(JOBS_JSON, "w", encoding="utf-8") as f:
         json.dump(jobs, f, ensure_ascii=False, indent=2)
 
+def prune_expired(jobs):
+    """마감 지난 공고 + 기사/썸네일 파일 삭제. 매 실행마다 적용 (DB에 마감 보관 안 함)."""
+    today = datetime.date.today().isoformat()
+    keep, dropped = [], []
+    for j in jobs:
+        if (j.get("deadline") or "") < today:
+            dropped.append(j["id"])
+            for p in (os.path.join(BASE, "articles", j["id"] + ".html"),
+                      os.path.join(BASE, "thumbnails", j["id"] + ".png")):
+                try:
+                    os.remove(p)
+                except OSError:
+                    pass
+        else:
+            keep.append(j)
+    return keep, dropped
+
 def fetch_api(key):
     """PblJobService/getList 호출. serviceKey, pageNo, numOfRows + 선택 title."""
     params = {"serviceKey": key, "pageNo": 1, "numOfRows": PAGE_SIZE}
@@ -207,6 +224,10 @@ def main():
     ap.add_argument("--skip-verify", action="store_true", help="링크 실측 검증 생략 (긴급시)")
     args = ap.parse_args()
     old = load_jobs()
+    old, pruned = prune_expired(old)
+    if pruned:
+        print(f"마감경과 {len(pruned)}건 삭제")
+        save_jobs(old)
     old_ids = {j["id"] for j in old}
     if args.mock:
         new_items = [dict(old[0], id=old[0]["id"] + "-new")]
@@ -239,6 +260,9 @@ def main():
         print("검증 통과 0건. 저장 없이 종료.")
         return
     merged = verified + old
+    merged, pruned = prune_expired(merged)
+    if pruned:
+        print(f"마감경과 {len(pruned)}건 삭제")
     save_jobs(merged)
     # 스레드는 우선순위순으로 발송 버퍼에 적재 (오늘→내일 빈 슬롯). 발송은 send_queue.py가 정시에 처리.
     import quota
