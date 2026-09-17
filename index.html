@@ -40,6 +40,8 @@ body{font-family:Pretendard,-apple-system,"Noto Sans KR",sans-serif;background:v
 .chips button:hover{border-color:var(--brand);color:var(--brand)}
 .chips button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
 .meta{font-size:.82rem;color:var(--muted);margin:10px 2px 14px}
+.divider{grid-column:1/-1;display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.83rem;margin:10px 2px 2px}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
 /* 카드 그리드 */
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 @media(max-width:760px){.grid{grid-template-columns:1fr}.hero h1{font-size:1.3rem}.tagline{display:none}}
@@ -121,9 +123,11 @@ function render(){
   const box = document.getElementById("list");
   let arr = JOBS.filter(matchFilter);
   if(q) arr = arr.filter(j=>(j.title+j.org).includes(q));
-  arr.sort((a,b)=>a.deadline.localeCompare(b.deadline));
-  document.getElementById("meta").textContent = "총 "+arr.length+"건 · 마감일 순 · "+new Date().toLocaleString("ko-KR")+" 기준";
-  box.innerHTML = arr.map(j=>{
+  // 유효 공고(마감일 순) 먼저, 마감된 공고는 뒤로
+  const live = arr.filter(j=>dday(j.deadline)>=0).sort((a,b)=>a.deadline.localeCompare(b.deadline));
+  const closed = arr.filter(j=>dday(j.deadline)<0).sort((a,b)=>b.deadline.localeCompare(a.deadline));
+  document.getElementById("meta").textContent = "진행중 "+live.length+"건 · 마감 "+closed.length+"건 · "+new Date().toLocaleString("ko-KR")+" 기준";
+  const card = j=>{
     const d = dday(j.deadline);
     const cls = d<=0?"d0":d<=3?"d3":d<=7?"d7":"rest";
     const label = d<0?"마감":d===0?"D-DAY":"D-"+d;
@@ -138,7 +142,10 @@ function render(){
 <script type="application/ld+json">${JSON.stringify(schema)}<\/script>
 <div class="links"><a class="btn main" href="articles/${j.id}.html">해설 보기</a><a class="btn ghost" href="${j.url}" target="_blank" rel="noopener">원문 ↗</a></div>
 </div></article>`;
-  }).join("") || "<p>조건에 맞는 공고가 없습니다.</p>";
+  };
+  const html = live.map(card).join("")
+    + (closed.length ? `<div class="divider">▼ 마감된 공고 ${closed.length}건</div>` + closed.map(card).join("") : "");
+  box.innerHTML = html || "<p>조건에 맞는 공고가 없습니다.</p>";
 }
 document.getElementById("tabs").addEventListener("click",e=>{
   if(e.target.tagName!=="BUTTON")return;
@@ -149,7 +156,7 @@ document.getElementById("q").addEventListener("input",render);
 fetch("jobs.json").then(r=>r.json()).then(j=>{
   JOBS=j;
   document.getElementById("stAll").textContent = j.length;
-  document.getElementById("stUrgent").textContent = j.filter(x=>dday(x.deadline)<=3).length;
+  document.getElementById("stUrgent").textContent = j.filter(x=>{const d=dday(x.deadline);return d>=0&&d<=3;}).length;
   document.getElementById("stIntern").textContent = j.filter(x=>x.category==="청년인턴"||x.type.includes("인턴")).length;
   render();
 });
