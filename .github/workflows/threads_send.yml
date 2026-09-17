@@ -1,0 +1,31 @@
+name: threads-send
+on:
+  schedule:
+    # 08/11/14/17/20시 KST = 23/02/05/08/11시 UTC
+    - cron: '5 23,2,5,8,11 * * *'
+  workflow_dispatch:
+    inputs:
+      slot:
+        description: '특정 슬롯만 발송 (예: 14:00)'
+        required: false
+        default: ''
+jobs:
+  send:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: 정시 발송
+        run: python send_queue.py ${{ inputs.slot && format('--slot {0}', inputs.slot) || '' }}
+        env:
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          THREADS_LIVE: '1'
+      - name: 발송 상태 커밋
+        run: |
+          git config user.name "gongchwimoa-bot"
+          git config user.email "gongchwimoa-bot@users.noreply.github.com"
+          git add threads_queue.json publish_state.json
+          git diff --cached --quiet || (git commit -m "Threads send: $(date -u +%Y-%m-%dT%H:%M)" && git push)

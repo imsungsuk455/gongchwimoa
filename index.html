@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>공취모아 | 공공기관·나라일터 채용 마감알림</title>
+<meta name="description" content="공공기관·국가·지자체·교육청 채용공고를 마감일 순으로 정리합니다. 청년인턴·공무직·기간제교사 포함. 원문 링크와 지원자격 3줄 요약 제공.">
+<link rel="canonical" href="https://your-domain/jobs/">
+<meta name="google-adsense-account" content="ca-pub-3484572882367046">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3484572882367046" crossorigin="anonymous"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Pretendard,-apple-system,"Noto Sans KR",sans-serif;background:#f4f6fa;color:#222;max-width:860px;margin:0 auto;padding:0 16px 80px}
+header{padding:28px 4px 12px}
+header h1{font-size:1.6rem}
+header h1 span{color:#0b5fff}
+header p{color:#666;margin-top:6px;font-size:.95rem}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}
+.tabs button{border:1px solid #dbe2ef;background:#fff;border-radius:999px;padding:8px 14px;cursor:pointer;font-size:.9rem}
+.tabs button.active{background:#0b5fff;color:#fff;border-color:#0b5fff}
+.search{display:flex;gap:8px;margin:6px 0 16px}
+.search input{flex:1;padding:11px 14px;border:1px solid #dbe2ef;border-radius:10px;font-size:1rem}
+.meta{font-size:.85rem;color:#888;margin:4px 2px 12px}
+.card{background:#fff;border:1px solid #e6ebf4;border-radius:14px;padding:16px;margin-bottom:12px;overflow:hidden}
+.thumb{width:100%;height:150px;object-fit:cover;border-radius:10px;margin-bottom:12px;background:#eef2f9}
+.card h2{font-size:1.05rem;line-height:1.45}
+.card h2 a{color:#111;text-decoration:none}
+.badge{display:inline-block;font-size:.75rem;font-weight:700;border-radius:6px;padding:3px 8px;margin-right:6px}
+.d0{background:#ff3b30;color:#fff}.d3{background:#ff9500;color:#fff}.d7{background:#0b5fff;color:#fff}.rest{background:#eef2f9;color:#445}
+.org{color:#555;font-size:.88rem;margin:6px 0}
+.sum{font-size:.9rem;color:#333;margin:8px 0 4px;line-height:1.6}
+.sum li{margin-left:18px}
+.links{margin-top:10px;display:flex;gap:8px;flex-wrap:wrap}
+.links a{font-size:.85rem;text-decoration:none;border:1px solid #dbe2ef;border-radius:8px;padding:7px 12px;background:#f8faff;color:#0b5fff}
+.affil{background:#fffbe8;border:1px dashed #d9b400;border-radius:14px;padding:14px 16px;margin:18px 0;font-size:.9rem;color:#5a4a00}
+footer{margin-top:36px;font-size:.82rem;color:#888;text-align:center;line-height:2}
+footer a{color:#888;margin:0 6px}
+</style>
+</head>
+<body>
+<header>
+<h1>공취모아</h1>
+<p>나라일터·잡알리오 공개정보를 마감일 순으로 정리합니다. 매일 자동 업데이트됩니다.</p>
+</header>
+
+<div class="tabs" id="tabs">
+<button data-f="all" class="active">전체</button>
+<button data-f="청년인턴">청년인턴</button>
+<button data-f="교육청">교육청·교사</button>
+<button data-f="공무직">공무직·기간제</button>
+<button data-f="deadline">마감임박 3일</button>
+</div>
+
+<div class="search"><input id="q" type="search" placeholder="기관명·공고명 검색 (예: 우체국, 인턴, 영양)"></div>
+<div class="meta" id="meta"></div>
+<div id="list"></div>
+
+<div class="affil">📌 <b>제휴 자리 (승인 전부터 수익)</b><br>
+수험서·자소서·면접 대비 링크를 공고 하단에 자동 삽입합니다. 쿠팡파트너스 또는 인강 제휴 URL을 <code>AFFIL_LINK</code>에 넣으세요.<br>
+예: [2026 공기업 자소서 바이블 보기] [면접 정장 특가 보기]</div>
+
+<footer>
+<a href="about.html">소개</a>·<a href="privacy.html">개인정보</a>·<a href="terms.html">약관</a>·<a href="contact.html">문의</a><br>
+출처: 인사혁신처 나라일터 · 기획재정부 잡알리오 (공공데이터, 원문 링크 병기)<br>
+본 페이지는 채용정보 안내용이며, 최종 내용은 반드시 원문 공고문을 확인하세요.
+</footer>
+
+<script>
+const AFFIL_LINK = "#"; // TODO: 쿠팡파트너스/제휴 URL로 교체
+let JOBS = [];
+let filter = "all";
+
+function dday(deadline){
+  const t = new Date(deadline+"T23:59:59+09:00"), now = new Date();
+  return Math.ceil((t-now)/86400000);
+}
+function render(){
+  const q = document.getElementById("q").value.trim();
+  const box = document.getElementById("list");
+  let arr = JOBS.filter(j=>j.deadline>=new Date().toISOString().slice(0,10)||true);
+  if(filter==="청년인턴") arr = arr.filter(j=>j.category==="청년인턴"||j.type.includes("인턴"));
+  if(filter==="교육청") arr = arr.filter(j=>j.category==="교육청"||j.title.includes("교사")||j.title.includes("강사"));
+  if(filter==="공무직") arr = arr.filter(j=>["공무직","기간제","시간강사","기간제교사"].includes(j.type)||j.category==="공무직");
+  if(filter==="deadline") arr = arr.filter(j=>dday(j.deadline)<=3);
+  if(q) arr = arr.filter(j=>(j.title+j.org).includes(q));
+  arr.sort((a,b)=>a.deadline.localeCompare(b.deadline));
+  document.getElementById("meta").textContent = "총 "+arr.length+"건 · 마감일 순 · "+new Date().toLocaleString("ko-KR")+" 기준";
+  box.innerHTML = arr.map(j=>{
+    const d = dday(j.deadline);
+    const cls = d<=0?"d0":d<=3?"d3":d<=7?"d7":"rest";
+    const label = d<0?"마감":d===0?"D-DAY":"D-"+d;
+    const schema = {"@context":"https://schema.org","@type":"JobPosting","title":j.title,"hiringOrganization":{"@type":"Organization","name":j.org},"datePosted":j.posted,"validThrough":j.deadline,"employmentType":j.type,"jobLocation":{"@type":"Place","address":"KR"}};
+    return `<article class="card">
+<img class="thumb" src="thumbnails/${j.id}.png" alt="${j.title}" loading="lazy">
+<span class="badge ${cls}">${label}</span><span class="badge rest">${j.category} · ${j.type}</span>
+<h2><a href="articles/${j.id}.html">${j.title}</a></h2>
+<div class="org">${j.org} · ${j.region} · 마감 ${j.deadline} · 출처 ${j.source}</div>
+<ul class="sum">${j.summary.map(s=>`<li>${s}</li>`).join("")}</ul>
+<script type="application/ld+json">${JSON.stringify(schema)}<\/script>
+<div class="links"><a href="articles/${j.id}.html">해설 기사 보기</a><a href="${j.url}" target="_blank" rel="noopener">원문 공고 보기 ↗</a><a href="${AFFIL_LINK}" target="_blank" rel="sponsored nofollow">자소서·면접 대비 특가</a></div>
+</article>`;
+  }).join("") || "<p>조건에 맞는 공고가 없습니다.</p>";
+}
+document.getElementById("tabs").addEventListener("click",e=>{
+  if(e.target.tagName!=="BUTTON")return;
+  document.querySelectorAll("#tabs button").forEach(b=>b.classList.remove("active"));
+  e.target.classList.add("active"); filter=e.target.dataset.f; render();
+});
+document.getElementById("q").addEventListener("input",render);
+fetch("jobs.json").then(r=>r.json()).then(j=>{JOBS=j;render();});
+</script>
+</body>
+</html>
