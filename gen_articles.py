@@ -161,6 +161,8 @@ FAQ_SETS = [
 HTML_HEAD = """<!DOCTYPE html><html lang="ko"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title} | 공취모아</title>
+<meta name="google-site-verification" content="HRs_kROrHp_3v5dVrhW_uaaY28DIA6CQydl-PXb8nt4" />
+<meta name="naver-site-verification" content="6f515ee1e418c0993c21b0d3c9c4abfdf9a24046" />
 <meta name="description" content="{desc}">
 <link rel="canonical" href="{canon}">
 <meta property="og:type" content="article">
@@ -326,11 +328,13 @@ def main():
         print(f"썸네일 재생성 {n}건")
         return
     # 하루 발행량: 날짜 기준 5건. 초과분은 다음날로 자동 이월. 마감분은 신규 기사화 안 함(기존 유지).
+    # 단 ALLOW_EXPIRED_ARTICLES=1이면 복구 등 일회성으로 마감분도 생성.
     today = datetime.date.today().isoformat()
+    allow_exp = os.environ.get("ALLOW_EXPIRED_ARTICLES", "") == "1"
     missing = sorted(
         [j for j in jobs
          if not os.path.exists(os.path.join(ART_DIR, j["id"] + ".html"))
-         and (j.get("deadline") or "") >= today],
+         and (allow_exp or (j.get("deadline") or "") >= today)],
         key=lambda x: x["deadline"],
     )
     targets, deferred = missing[:allow], missing[allow:]
