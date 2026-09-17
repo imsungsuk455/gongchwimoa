@@ -7,7 +7,7 @@ Plan B 수집기: API 키 없이 나라일터 목록 HTML에서 직접 수집.
 - 예의범절: 2시간 간격, 페이지당 10건·최대 3페이지(30건), Verify 실패분은 저장 안 함.
 - robots.txt에서 목록/상세 경로 차단 없음 확인됨 (2026-09-17).
 """
-import json, os, re, sys, datetime
+import json, os, re, sys, datetime, html as htmlmod
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -26,8 +26,13 @@ UA = {"User-Agent": "Mozilla/5.0"}
 
 ICON_CAT = {"공공": "공공기관", "지자체": "지자체", "국가": "국가기관", "교육": "교육청"}
 
+def clean(s, limit=0):
+    s = re.sub(r"<[^>]+>", "", s or "")
+    s = htmlmod.unescape(re.sub(r"\s+", " ", s)).strip()
+    return s[:limit] if limit else s
+
 def short_region(s):
-    s = (s or "").strip()
+    s = clean(s)
     for full, short in [("서울특별시", "서울"), ("부산광역시", "부산"), ("대구광역시", "대구"),
                         ("인천광역시", "인천"), ("광주광역시", "광주"), ("대전광역시", "대전"),
                         ("울산광역시", "울산"), ("세종특별자치시", "세종"), ("경기도", "경기"),
@@ -100,28 +105,18 @@ def enrich_and_verify(job, timeout=15):
         return None
     m = re.search(r"근무지역</th>\s*<td[^>]*?>(.+?)</td>", flat)
     if m:
-        region = re.sub(r"<[^>]+>", "", m.group(1)).strip()
-        job["region"] = short_region(region)
+        job["region"] = short_region(m.group(1))
     m = re.search(r"채용직급</th>\s*<td[^>]*?>(.+?)</td>", flat)
-    grade = ""
-    if m:
-        grade = re.sub(r"<[^>]+>", "", m.group(1)).strip()
-        grade = re.sub(r"\s+", " ", grade)[:40]
+    grade = clean(m.group(1), 40) if m else ""
     m = re.search(r"(응시자격|지원자격|자격요건)</th>\s*<td[^>]*?>(.+?)</td>", flat)
-    qual = ""
-    if m:
-        qual = re.sub(r"<[^>]+>", "", m.group(2))
-        qual = re.sub(r"\s+", " ", qual).strip()[:80]
+    qual = clean(m.group(2), 80) if m else ""
     m = re.search(r"(전형절차|전형방법|선발방법|평가방법)</th>\s*<td[^>]*?>(.+?)</td>", flat)
-    excerpt = ""
-    if m:
-        excerpt = re.sub(r"<[^>]+>", "", m.group(2))
-        excerpt = re.sub(r"\s+", " ", excerpt).strip()[:220]
+    excerpt = clean(m.group(2), 220) if m else ""
     if len(excerpt) < 20:
         # 폴백: 상세 본문 중 가장 긴 셀(응시자격·결격사유 등 원문 상세)을 발췌
         cands = []
         for cm in re.finditer(r"<td[^>]*>(.*?)</td>", flat):
-            txt = re.sub(r"\s+", " ", re.sub(r"<[^>]+>", "", cm.group(1))).strip()
+            txt = clean(cm.group(1))
             if len(txt) > 200 and re.search(r"응시|자격|전형|우대|결격|서류|면접", txt):
                 cands.append(txt)
         if cands:

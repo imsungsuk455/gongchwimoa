@@ -13,8 +13,43 @@ from urllib.request import Request, urlopen
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 QUEUE_JSON = os.path.join(BASE, "threads_queue.json")
+EDITORIAL_JSON = os.path.join(BASE, "threads_editorial.json")
+JOBS_JSON = os.path.join(BASE, "jobs.json")
+SITE_URL = os.environ.get("SITE_URL", "https://gongchwimoa.org/")
 KST = datetime.timezone(datetime.timedelta(hours=9))
 API = "https://graph.threads.net/v1.0"
+
+def sunday_digest():
+    """일요일 20시 슬롯: 이번 주 마감 TOP5 자동 생성. 없으면 None."""
+    try:
+        jobs = json.load(open(JOBS_JSON, encoding="utf-8"))
+    except Exception:
+        return None
+    today = now_kst().date()
+    upcoming = [j for j in jobs
+                if 0 <= (datetime.date.fromisoformat(j["deadline"]) - today).days <= 7]
+    upcoming.sort(key=lambda x: x["deadline"])
+    if not upcoming:
+        return None
+    lines = [f"{i+1}. {j['org']} {j['title'][:22]} (~{j['deadline'][5:]})"
+             for i, j in enumerate(upcoming[:5])]
+    text = "📅 이번 주 마감 공고 TOP5\n\n" + "\n".join(lines) + "\n\n상세 해설은 공취모아에서 👇"
+    return {"date": today.isoformat(), "slot": "20:00", "job_id": "digest",
+            "text": text, "comment": SITE_URL, "status": "pending", "approved": True}
+
+def editorial_pick():
+    """빈 슬롯용 에디토리얼 (14일 순환)."""
+    import quota
+    try:
+        bank = json.load(open(EDITORIAL_JSON, encoding="utf-8"))["posts"]
+    except Exception:
+        return None
+    if not bank:
+        return None
+    i = quota.next_round_robin("editorial_idx", len(bank))
+    p = bank[i]
+    return {"date": now_kst().date().isoformat(), "slot": "", "job_id": f"editorial-{i}",
+            "text": p["text"], "comment": p.get("comment"), "status": "pending", "approved": True}
 
 def now_kst():
     return datetime.datetime.now(KST)
@@ -74,6 +109,17 @@ def main():
            and s.get("date") == today
            and (s.get("slot") == args.slot if args.slot else s.get("slot", "") <= cur)]
     if not due:
+        # 3단 폴백: 일요일 다이제스트 → 에디토리얼. 빈 슬롯 방치 안 함.
+        if (not args.slot or args.slot == "20:00") and now_kst().weekday() == 6:
+            d = sunday_digest()
+            if d:
+                due = [d]
+        if not due:
+            e = editorial_pick()
+            if e:
+                e["slot"] = args.slot or cur
+                due = [e]
+    if not due:
         print(f"발송 대상 없음 (오늘 {today}, 기준 {args.slot or cur}).")
         return
     if not live:
@@ -89,7 +135,7 @@ def main():
     for s in due:
         try:
             mid = publish_text(uid, token, s["text"])
-            rid = publish_reply(uid, token, mid, s["comment"])
+            rid = publish_reply(uid, token, mid, s["comment"]) if s.get("comment") else None
             s["status"] = "posted"
             s["post_id"] = mid
             if rid:

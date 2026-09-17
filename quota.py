@@ -30,3 +30,12 @@ def consume(kind, n):
     s[kind] = int(s.get(kind, 0)) + n
     with open(STATE, "w", encoding="utf-8") as f:
         json.dump(s, f, ensure_ascii=False, indent=2)
+
+def next_round_robin(key, size):
+    """에디토리얼 순환 인덱스. 0..size-1 순환."""
+    s = _load()
+    i = int(s.get(key, 0)) % max(size, 1)
+    s[key] = i + 1
+    with open(STATE, "w", encoding="utf-8") as f:
+        json.dump(s, f, ensure_ascii=False, indent=2)
+    return i
