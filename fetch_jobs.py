@@ -102,12 +102,17 @@ def assign_slots(picks):
         json.dump(buf, f, ensure_ascii=False, indent=2)
     return assigned, dropped
 
-# 스레드 발송 제외: 학교 계열 (학교 채용은 수요·흥미도 낮아 스레드 도배 방지).
-# 사이트에는 그대로 반영되고, 스레드 큐 배정 단계에서만 걸러진다.
-SCHOOL_RE = re.compile(r"초등학교|중학교|고등학교|대학교|학교\s|유치원|교육청")
+# 학교 교직 계열 채용 제외 (시간강사·기간제교원·계약제교원).
+# 교육공무직원(시설관리·배식), 대학 계열(대학교·연구직)은 유지. 사이트·스레드 공통으로 수집 단계에서 거른다.
+SCHOOL_RE = re.compile(r"초등학교|중학교|고등학교|유치원|특수학교|학교\b")
+TEACHING_RE = re.compile(r"시간강사|기간제교원|기간제교사|계약제교원|계약제교사|교원|강사")
 
 def is_school_job(job):
-    return bool(SCHOOL_RE.search(job.get("org", "") + " " + job.get("title", "")))
+    org = job.get("org", "")
+    if "대학" in org:
+        return False  # 대학 계열(교원대·예술종합대 등)은 제외 대상 아님
+    text = org + " " + job.get("title", "")
+    return bool(SCHOOL_RE.search(text)) and bool(TEACHING_RE.search(text))
 
 def priority_key(job):
     """스레드 우선순위: 정규직 우선 → 마감임박 → 청년인턴 → 마감일순."""
@@ -337,6 +342,11 @@ def main():
     merged, pruned = prune_expired(merged)
     if pruned:
         print(f"마감경과 {len(pruned)}건 삭제")
+    # 학교 교직 계열(시간강사·기간제교원·계약제교원)은 사이트·스레드 모두에서 제외
+    n_school = sum(1 for x in merged if is_school_job(x))
+    merged = [x for x in merged if not is_school_job(x)]
+    if n_school:
+        print(f"학교 교직 계열 {n_school}건 제외 (사이트 미반영)")
     save_jobs(merged)
     # 스레드는 우선순위순으로 발송 버퍼에 적재 (오늘→내일 빈 슬롯). 발송은 send_queue.py가 정시에 처리.
     # 사이트는 전부 반영, 스레드는 정규직 우선 + 학교 제외 상위 10건만.

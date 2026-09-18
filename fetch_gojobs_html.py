@@ -169,6 +169,10 @@ def main():
         print("검증 통과 0건. 저장 없이 종료.")
         return
     kept, pruned = prune_expired(verified + old)
+    n_school = sum(1 for x in kept if is_school_job(x))
+    kept = [x for x in kept if not is_school_job(x)]
+    if n_school:
+        print(f"학교 교직 계열 {n_school}건 제외 (사이트 미반영)")
     json.dump(kept, open(JOBS_JSON, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     allow = quota.remaining("threads", MAX_THREADS_PER_DAY)
     today = datetime.date.today().isoformat()
