@@ -13,7 +13,7 @@ from urllib.request import Request, urlopen
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE)
-from fetch_jobs import exact_url, priority_key, assign_slots, thread_text, infer_type, prune_expired, is_school_job  # noqa
+from fetch_jobs import exact_url, priority_key, assign_slots, thread_text, infer_type, prune_expired, is_school_job, extract_pay  # noqa
 import quota
 
 JOBS_JSON = os.path.join(BASE, "jobs.json")
@@ -137,6 +137,9 @@ def enrich_and_verify(job, timeout=15):
     job["summary"] = summ[:3]
     if len(excerpt) > 20:
         job["excerpt"] = excerpt
+    pay = extract_pay(flat)  # 페이지 본문 급여 금액 (보 수/월 N원/만원 패턴)
+    if pay:
+        job["pay"] = pay
     return job
 
 def main():

@@ -114,16 +114,40 @@ def is_school_job(job):
     text = org + " " + job.get("title", "")
     return bool(SCHOOL_RE.search(text)) and bool(TEACHING_RE.search(text))
 
+PAY_CTX_RE = re.compile(r"(보\s*수|급\s*여|연\s*봉|초\s*봉|월\s*급|수\s*당|임\s*금|기본급|월|연봉|급여)")
+
+def extract_pay(text):
+    """페이지 텍스트에서 급여 금액 추출 → '월급 298만원' / '연봉 4500만원' / None.
+    조건: 금액 앞 30자 안에 급여 키워드 있어야 (예산·날짜 오탐 방지)."""
+    if not text:
+        return None
+    for m in re.finditer(r"(\d{1,3}(?:,\d{3})+)\s*(원|만원)", text):
+        s, e = m.span()
+        if re.search(r"(19|20)\d{2}", text[max(0, s - 12):s]):
+            continue  # 연도 오탐
+        ctx = text[max(0, s - 30):e + 5]
+        if not PAY_CTX_RE.search(ctx):
+            continue
+        amt = int(m.group(1).replace(",", ""))
+        man = amt // 10000 if m.group(2) == "원" else amt
+        if man < 10:  # 10만원 미만은 시급/일급 조각일 가능 → 제외
+            continue
+        period = "연봉" if re.search(r"연봉|연\s*\(?\d", ctx) else "월급"
+        return f"{period} {man}만원"
+    return None
+
 SALARY_RE = re.compile(r"(?:연봉|초봉|급여|보수|월급|수당|임금)\s*[:：]?\s*\d[\d,]*\s*(?:만원|원|만|천원)")
 
 def has_salary(job):
-    """공고에 급여/연봉 금액이 명시됐는지 (excerpt·summary·title)."""
+    """공고에 급여/연봉 금액이 명시됐는지 (pay 필드 우선, 없으면 텍스트 패턴)."""
+    if job.get("pay"):
+        return True
     text = " ".join([
         job.get("excerpt", "") or "",
         " ".join(job.get("summary", [])),
         job.get("title", "") or "",
     ])
-    return bool(SALARY_RE.search(text))
+    return bool(SALARY_RE.search(text) or extract_pay(text))
 
 def priority_key(job):
     """스레드 우선순위: 급여 명시 → 정규직 → 마감임박 → 마감일순."""
@@ -235,7 +259,9 @@ BENEFIT_RE = [
 ]
 
 def extract_benefit(job):
-    """공고 최대 이점 1~2개 추출. 정규직/공무직은 구조적 이점(정년보장) 포함."""
+    """공고 최대 이점 1~2개 추출. pay(급여 금액) 최우선, 정규직/공무직은 구조적 이점(정년보장) 포함."""
+    if job.get("pay"):
+        return job["pay"]
     text = " ".join([
         job.get("excerpt", "") or "",
         " ".join(job.get("summary", [])),
