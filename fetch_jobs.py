@@ -279,31 +279,26 @@ def extract_benefit(job):
     return ", ".join(found[:2]) if found else None
 
 def thread_text(job):
+    """스레드 본문: 첫줄 "고용형태", 빈줄 1개, 제목+마침말(마감일에 맞게)."""
     d = job["deadline"]
     try:
         days = (datetime.date.fromisoformat(d) - datetime.date.today()).days
     except Exception:
         days = 99
     if days <= 0:
-        hook = "오늘 마감!"
+        ending = "오늘 마감"
     elif days == 1:
-        hook = "내일 마감!"
+        ending = "내일 마감"
     elif days <= 3:
-        hook = f"마감 임박 D-{days}!"
+        ending = f"마감 D-{days}"
     else:
-        benefit = extract_benefit(job)
-        hook = benefit or {"정규직": "정규직 채용",
-                           "공무직": "공무직 채용",
-                           "임기제": "임기제 채용",
-                           "기간제": "기간제 채용",
-                           "시간강사": "시간강사 모집",
-                           "청년인턴": "청년인턴 모집"}.get(job.get("type", ""), "공공 채용")
+        ending = "모집중"
     title = job["title"].strip()
-    if len(title) > 42:
-        cut = title[:42]
+    if len(title) > 40:
+        cut = title[:40]
         sp = cut.rfind(" ")
         title = (cut[:sp] if sp > 20 else cut).rstrip() + "…"
-    return f"{hook}\n{title} 떴다!"
+    return f"\"{job.get('type', '채용')}\"\n\n{title} {ending}"
 
 # 결과발표성 공고 제외 (채용速보 정체성 유지).
 # 합격자 발표/면접 안내는 다음 전형 안내지 채용이 아니므로, 채용 키워드가 섞여 있어도 제외한다.
