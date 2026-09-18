@@ -114,16 +114,27 @@ def is_school_job(job):
     text = org + " " + job.get("title", "")
     return bool(SCHOOL_RE.search(text)) and bool(TEACHING_RE.search(text))
 
+SALARY_RE = re.compile(r"(?:연봉|초봉|급여|보수|월급|수당|임금)\s*[:：]?\s*\d[\d,]*\s*(?:만원|원|만|천원)")
+
+def has_salary(job):
+    """공고에 급여/연봉 금액이 명시됐는지 (excerpt·summary·title)."""
+    text = " ".join([
+        job.get("excerpt", "") or "",
+        " ".join(job.get("summary", [])),
+        job.get("title", "") or "",
+    ])
+    return bool(SALARY_RE.search(text))
+
 def priority_key(job):
-    """스레드 우선순위: 정규직 우선 → 마감임박 → 청년인턴 → 마감일순."""
+    """스레드 우선순위: 급여 명시 → 정규직 → 마감임박 → 마감일순."""
     try:
         left = (datetime.date.fromisoformat(job["deadline"]) - datetime.date.today()).days
     except Exception:
         left = 999
+    salary = 0 if has_salary(job) else 1
     regular = 0 if job.get("type") == "정규직" else 1
     urgent = 0 if 0 <= left <= 3 else 1
-    intern = 0 if (job.get("category") == "청년인턴" or "인턴" in job.get("type", "")) else 1
-    return (regular, urgent, intern, job["deadline"])
+    return (salary, regular, urgent, left, job["deadline"])
 
 def load_jobs():
     with open(JOBS_JSON, encoding="utf-8") as f:

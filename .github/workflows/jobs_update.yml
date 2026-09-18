@@ -27,6 +27,12 @@ jobs:
         run: python gen_articles.py
       - name: AdSense 사전점검 (게이트)
         run: python check_adsense.py
+      - name: 스레드 정시 발송 (수집 연동)
+        run: python send_queue.py
+        env:
+          THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
+          THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          THREADS_LIVE: '1'
       - name: 커밋/푸시
         run: |
           git config user.name "gongchwimoa-bot"
