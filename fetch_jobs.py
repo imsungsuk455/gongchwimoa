@@ -288,7 +288,7 @@ def thread_hook(job):
     if job.get("pay"):
         return job["pay"]
     if job.get("region") in CAPITAL_RE:
-        return job["region"]
+        return job["region"] + " 근무"
     try:
         days = (datetime.date.fromisoformat(job["deadline"]) - datetime.date.today()).days
     except Exception:
