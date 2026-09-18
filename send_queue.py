@@ -45,7 +45,7 @@ def sunday_digest():
             "text": text, "comment": SITE_URL, "status": "pending", "approved": True}
 
 def editorial_pick():
-    """빈 슬롯용 에디토리얼 (14일 순환)."""
+    """빈 슬롯용 에디토리얼. 요일 코너(weekday) 우선, 없으면 전체 순환. 당일 중복 금지."""
     import quota
     try:
         bank = json.load(open(EDITORIAL_JSON, encoding="utf-8"))["posts"]
@@ -53,9 +53,25 @@ def editorial_pick():
         return None
     if not bank:
         return None
-    i = quota.next_round_robin("editorial_idx", len(bank))
-    p = bank[i]
-    return {"date": now_kst().date().isoformat(), "slot": "", "job_id": f"editorial-{i}",
+    today = now_kst().date().isoformat()
+    try:
+        done = {s.get("job_id") for s in load().get("slots", [])
+                if s.get("date") == today and s.get("status") == "posted"}
+    except Exception:
+        done = set()
+    wd = now_kst().weekday()
+    wd_posts = [(i, p) for i, p in enumerate(bank) if p.get("weekday") == wd
+                and f"editorial-{i}" not in done]
+    if wd_posts:
+        k = quota.next_round_robin(f"editorial_wd{wd}", len(wd_posts))
+        i, p = wd_posts[k]
+    else:
+        rest = [(i, p) for i, p in enumerate(bank) if f"editorial-{i}" not in done]
+        if not rest:
+            rest = [(i, p) for i, p in enumerate(bank)]
+        i = quota.next_round_robin("editorial_idx", len(rest))
+        i, p = rest[i]
+    return {"date": today, "slot": "", "job_id": f"editorial-{i}",
             "text": p["text"], "comment": p.get("comment"), "status": "pending", "approved": True}
 
 def now_kst():
