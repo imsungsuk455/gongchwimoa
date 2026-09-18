@@ -280,11 +280,15 @@ def thread_text(job):
     return f"{hook}\n{title} 떴다!"
 
 # 결과발표성 공고 제외 (채용速보 정체성 유지).
-# 합격자 발표/면접 안내는 다음 전형 안내지 채용이 아니므로, 면접 언급이 있어도 제외한다.
+# 합격자 발표/면접 안내는 다음 전형 안내지 채용이 아니므로, 채용 키워드가 섞여 있어도 제외한다.
 ANNOUNCE_RE = re.compile(r"합격자|명단|발표|안내")
-KEEP_IF_RE = re.compile(r"채용\s*공고|모집\s*공고|채용시험\s*(?:시행)?계획|임용시험|신규\s*채용")
+KEEP_IF_RE = re.compile(r"채용\s*공고|모집\s*공고|채용시험\s*(?:시행)?계획|신규\s*채용")
+# 강한 결과성 패턴: 있으면 무조건 제외 (예: [합격자발표] ... 경력경쟁임용시험 서류전형 합격자 및 면접시험 장소 공고)
+STRONG_RESULT_RE = re.compile(r"합격자\s*(?:발표|명단)|서류전형\s*합격자|최종합격자|면접(?:시험)?\s*(?:장소|대상자)|채용결과|합격자발표")
 
 def is_announcement(title):
+    if STRONG_RESULT_RE.search(title):
+        return True
     return bool(ANNOUNCE_RE.search(title)) and not bool(KEEP_IF_RE.search(title))
 
 def verify_links(items, timeout=15):
