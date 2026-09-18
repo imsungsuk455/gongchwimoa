@@ -280,6 +280,20 @@ def extract_benefit(job):
 
 CAPITAL_RE = {"서울", "경기", "인천"}
 
+def short_title(title, limit=44):
+    """스레드용 제목 요약: 상세 괄호·수식어 제거 후 그래도 길면 단어 단위로 자름."""
+    t = (title or "").strip()
+    t = re.sub(r"\([^)]*(모집분야|모집인원|분야\s*:|직급|직위)[^)]*\)", "", t)
+    t = re.sub(r"\((나급|다급|라급|마급|가급)\)", "", t)
+    t = t.replace("경력경쟁채용시험 공고", "채용 공고").replace("경력경쟁채용시험", "채용")
+    t = t.replace("경력경쟁임용시험", "임용시험").replace("공개모집 공고", "공개모집")
+    t = re.sub(r"\s+", " ", t).strip()
+    if len(t) > limit:
+        cut = t[:limit]
+        sp = cut.rfind(" ")
+        t = (cut[:sp] if sp > 20 else cut).rstrip() + "…"
+    return t
+
 def thread_hook(job):
     """첫줄 후크 우선순위: 정규직 → 급여 → 서울·수도권 → 마감3일이내 → 없음.
     기간제는 강조하지 않음 (해당 없으면 첫줄 생략)."""
@@ -312,11 +326,7 @@ def thread_text(job):
     urgent = "오늘 마감" if days <= 0 else ("내일 마감" if days == 1
             else (f"마감 D-{days}" if days <= 3 else None))
     ending = "모집중" if (hook == urgent and urgent) else (urgent or "모집중")
-    title = job["title"].strip()
-    if len(title) > 40:
-        cut = title[:40]
-        sp = cut.rfind(" ")
-        title = (cut[:sp] if sp > 20 else cut).rstrip() + "…"
+    title = short_title(job.get("title", ""))
     body = f"{title} {ending}"
     return f"\"{hook}\"\n\n{body}" if hook else body
 
