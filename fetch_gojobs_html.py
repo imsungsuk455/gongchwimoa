@@ -21,7 +21,7 @@ QUEUE_JSON = os.path.join(BASE, "threads_queue.json")
 LIST_URL = "https://www.gojobs.go.kr/apmList.do"
 MAX_PAGES = int(os.environ.get("GOJOBS_PAGES", "3"))
 ARTICLES_PER_DAY = int(os.environ.get("ARTICLES_PER_DAY", "5"))
-MAX_THREADS_PER_DAY = int(os.environ.get("MAX_THREADS_PER_DAY", "5"))
+MAX_THREADS_PER_DAY = int(os.environ.get("MAX_THREADS_PER_DAY", "10"))
 UA = {"User-Agent": "Mozilla/5.0"}
 
 ICON_CAT = {"공공": "공공기관", "지자체": "지자체", "국가": "국가기관", "교육": "교육청"}

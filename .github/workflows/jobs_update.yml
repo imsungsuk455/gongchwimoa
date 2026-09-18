@@ -23,7 +23,7 @@ jobs:
           GOJOBS_API_ENDPOINT: ${{ secrets.GOJOBS_API_ENDPOINT }}
           SITE_URL: ${{ secrets.SITE_URL }}
           ARTICLES_PER_DAY: '5'
-          MAX_THREADS_PER_DAY: '5'
+          MAX_THREADS_PER_DAY: '10'
       - name: 기사+썸네일 생성
         run: python gen_articles.py
       - name: AdSense 사전점검 (게이트)

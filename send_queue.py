@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 """
 스레드 정시 발송기. 수집(fetch_jobs.py)과 분리 동작.
-- GitHub Actions cron을 5개 슬롯(기본 08/11/14/17/20시 KST)에 걸고 실행.
-- 해당 슬롯의 pending 1건을 발행하고 posted로 표시. 빈 슬롯이면 skip.
+- GitHub Actions cron을 최대 10개 슬롯(기본 07:00~20:30 KST)에 걸고 실행.
+- 해당 슬롯의 pending 1건을 발행하고 posted로 표시. 빈 슬롯이면 skip (콘텐츠성 글 없음).
+- 공고 → 사이트 기사 업로드 → 스레드 글로만 자동 배포. 링크는 댓글로 내 사이트 기사.
 - 기본 --dry-run (발행 없이 출력만). 실제 발송은 --live + 환경변수 필요.
-- 방식은 testlab threads_publish.py와 동일 (본문 → 댓글에 원문링크).
 """
 import argparse, json, os, sys, time, datetime, re
 from urllib.parse import urlencode
@@ -132,19 +132,7 @@ def main():
            and s.get("date") == today
            and (s.get("slot") == args.slot if args.slot else s.get("slot", "") <= cur)]
     if not due:
-        # 3단 폴백: 일요일 다이제스트(20시 슬롯 전용) → 에디토리얼. 빈 슬롯 방치 안 함.
-        # 21시 콘텐츠 슬롯은 다이제스트 대신 에디토리얼만 (일요일 중복 발행 방지).
-        if args.slot in ("", "20:00") and "20:00" <= cur < "21:00" and now_kst().weekday() == 6:
-            d = sunday_digest()
-            if d:
-                due = [d]
-        if not due:
-            e = editorial_pick()
-            if e:
-                e["slot"] = args.slot or cur
-                due = [e]
-    if not due:
-        print(f"발송 대상 없음 (오늘 {today}, 기준 {args.slot or cur}).")
+        print(f"발송 대상 없음 (오늘 {today}, 기준 {args.slot or cur}). 빈 슬롯은 skip.")
         return
     if not live:
         for s in due:

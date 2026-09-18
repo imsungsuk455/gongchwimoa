@@ -10,7 +10,7 @@
 > | GitHub repo | `imsungsuk455/gongchwimoa` | `imsungsuk455/testlab` |
 > | 시크릿 저장소 | gongchwimoa repo secrets | testlab repo secrets |
 > | 발행 워크플로 | `.github/workflows/threads_send.yml` | `site/.github/workflows/threads_daily.yml` |
-> | 발행 시간 | 08/11/14/17/20시(공고) + 21시(콘텐츠) KST | 테스터랩 마케팅 시간 (06/09/12/15/18/21 등) |
+> | 발행 시간 | 07:00/08:30/10:00/11:30/13:00/14:30/16:00/17:30/19:00/20:30 KST (공고 알림 최대 10개) | 테스터랩 마케팅 시간 (06/09/12/15/18/21 등) |
 > | 토큰 소스 | 이 레포의 THREADS_ACCESS_TOKEN | testlab-publisher 스킬 `.env` + testlab repo secrets |
 >
 > - 각 repo의 `THREADS_ACCESS_TOKEN`/`THREADS_USER_ID` 시크릿은 **그 계정 전용**이다.
@@ -53,9 +53,9 @@ python -c "import json;print(len(json.load(open('jobs.json',encoding='utf-8'))))
   → send_queue.py (08/11/14/17/20시 KST): 해당 슬롯 pending 1건 발송 + 댓글에 원문링크
 ```
 
-- 버퍼가 비어있는 슬롯 시간에는 skip (억지 발송 없음)
-- 오늘 5슬롯이 다 차면 내일 슬롯으로 자동 이월, 내일까지 차면 탈락 로그
-- 발송 테스트: `python send_queue.py --slot 14:00` (dry-run). 실제 발송만 `--live`
+- 버퍼가 비어있는 슬롯 시간에는 skip (억지 발송 없음, 콘텐츠성 글 없음 — 공고 알림 전용)
+- 오늘 슬롯이 다 차면 내일 슬롯으로 자동 이월, 내일까지 차면 탈락 로그
+- 발송 테스트: `python send_queue.py --slot 14:30` (dry-run). 실제 발송만 `--live`
 
 ## 4) 수익 자리
 - 애드센스: head 자동광고만 유지 (수동 ins 금지 — 승인 전 정책위반 방지)
@@ -72,6 +72,6 @@ python -c "import json;print(len(json.load(open('jobs.json',encoding='utf-8'))))
 | 채널 | 캡 | 우선순위 | 변경법 |
 |---|---|---|---|
 | 사이트 기사 | 하루 **5건** | 마감일순 | `ARTICLES_PER_DAY` 환경변수 |
-| 스레드 | 하루 **5건** | 마감임박 ≤3일 > 청년인턴 > 마감일순 | `MAX_THREADS_PER_DAY` 환경변수 |
+| 스레드 | 하루 **10건** (공고 알림 전용) | 마감임박 ≤3일 > 청년인턴 > 마감일순 | `MAX_THREADS_PER_DAY` 환경변수 |
 - 날짜 기준(KST)으로 집계하며 `publish_state.json`에 기록. 초과분은 다음날로 자동 이월 (누락 없음)
 - cron이 하루 12번 돌아도 일 5건을 넘지 않음. 검증됨: 7건 대기 시 5건 생성+2건 이월 → 당일 재실행 0건 → 다음날 2건 처리
