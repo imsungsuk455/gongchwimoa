@@ -1,5 +1,22 @@
 # 공취모아 (프로토타입)
 
+> ⚠️ **Threads 계정 분리 (필독 — 새 세션에서 혼동 금지)**
+> 공취모아와 테스터랩은 서로 다른 Threads 계정·GitHub repo·시크릿을 쓴다. 절대 섞지 않는다.
+>
+> | 항목 | 공취모아 | 테스터랩 |
+> |---|---|---|
+> | Threads 계정 | `@gongchwimoa` | `@testerlab45` |
+> | Threads 사용자 ID | `39460061993584477` | `28333507396311730` |
+> | GitHub repo | `imsungsuk455/gongchwimoa` | `imsungsuk455/testlab` |
+> | 시크릿 저장소 | gongchwimoa repo secrets | testlab repo secrets |
+> | 발행 워크플로 | `.github/workflows/threads_send.yml` | `site/.github/workflows/threads_daily.yml` |
+> | 발행 시간 | 08/11/14/17/20시(공고) + 21시(콘텐츠) KST | 테스터랩 마케팅 시간 (06/09/12/15/18/21 등) |
+> | 토큰 소스 | 이 레포의 THREADS_ACCESS_TOKEN | testlab-publisher 스킬 `.env` + testlab repo secrets |
+>
+> - 각 repo의 `THREADS_ACCESS_TOKEN`/`THREADS_USER_ID` 시크릿은 **그 계정 전용**이다.
+> - 한 세션에서 두 계정을 다루면 안 되고, 스레드 발행 전에 반드시 대상 계정(사용자 ID)을 확인한다.
+> - 21:00대에 양쪽이 비슷한 시각에 발행될 수 있으나 계정이 달라 충돌 없음 (실측 확인됨).
+
 공공기관 전체 유지 방향으로 만든 자동화 프로토타입입니다.
 전체 목록이 기본이되, 내부에 특화 탭(청년인턴 / 교육청·교사 / 공무직·기간제 / 마감임박 3일)을 넣어 정면승부 + 틈새를 동시에 노립니다.
 

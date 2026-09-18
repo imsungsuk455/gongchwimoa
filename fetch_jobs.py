@@ -89,7 +89,7 @@ def assign_slots(picks):
                     used.add((d, slot))
                     assigned.append({"date": d, "slot": slot, "job_id": j["id"],
                                      "text": thread_text(j),
-                                     "comment": f"자세한 사항 확인하러 가기 ▽\n{j['url']}",
+                                     "comment": f"자세한 사항 확인하러 가기 ▽\n{SITE_URL}articles/{j['id']}.html",
                                      "status": "pending", "approved": True})
                     placed = True
                     break
