@@ -278,27 +278,47 @@ def extract_benefit(job):
         found.append("정년보장")
     return ", ".join(found[:2]) if found else None
 
+CAPITAL_RE = {"서울", "경기", "인천"}
+
+def thread_hook(job):
+    """첫줄 후크 우선순위: 정규직 → 급여 → 서울·수도권 → 마감3일이내 → 없음.
+    기간제는 강조하지 않음 (해당 없으면 첫줄 생략)."""
+    if job.get("type") == "정규직":
+        return "정규직"
+    if job.get("pay"):
+        return job["pay"]
+    if job.get("region") in CAPITAL_RE:
+        return job["region"]
+    try:
+        days = (datetime.date.fromisoformat(job["deadline"]) - datetime.date.today()).days
+    except Exception:
+        return None
+    if days <= 0:
+        return "오늘 마감"
+    if days == 1:
+        return "내일 마감"
+    if days <= 3:
+        return f"마감 D-{days}"
+    return None
+
 def thread_text(job):
-    """스레드 본문: 첫줄 "고용형태", 빈줄 1개, 제목+마침말(마감일에 맞게)."""
+    """스레드 본문: "후크"(있을 때만) + 빈줄 + 제목+마침말. 후크와 마침말 중복 방지."""
+    hook = thread_hook(job)
     d = job["deadline"]
     try:
         days = (datetime.date.fromisoformat(d) - datetime.date.today()).days
     except Exception:
         days = 99
-    if days <= 0:
-        ending = "오늘 마감"
-    elif days == 1:
-        ending = "내일 마감"
-    elif days <= 3:
-        ending = f"마감 D-{days}"
-    else:
-        ending = "모집중"
+    urgent = "오늘 마감" if days <= 0 else ("내일 마감" if days == 1
+            else (f"마감 D-{days}" if days <= 3 else None))
+    ending = "모집중" if (hook == urgent and urgent) else (urgent or "모집중")
     title = job["title"].strip()
     if len(title) > 40:
         cut = title[:40]
         sp = cut.rfind(" ")
         title = (cut[:sp] if sp > 20 else cut).rstrip() + "…"
-    return f"\"{job.get('type', '채용')}\"\n\n{title} {ending}"
+    body = f"{title} {ending}"
+    return f"\"{hook}\"\n\n{body}" if hook else body
 
 # 결과발표성 공고 제외 (채용速보 정체성 유지).
 # 합격자 발표/면접 안내는 다음 전형 안내지 채용이 아니므로, 채용 키워드가 섞여 있어도 제외한다.
