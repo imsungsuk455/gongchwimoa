@@ -254,6 +254,14 @@ def thread_text(job):
         title = (cut[:sp] if sp > 20 else cut).rstrip() + "…"
     return f"{hook}\n{title} 떴다!"
 
+# 결과발표성 공고 제외 (채용速보 정체성 유지).
+# 합격자 발표/면접 안내는 다음 전형 안내지 채용이 아니므로, 면접 언급이 있어도 제외한다.
+ANNOUNCE_RE = re.compile(r"합격자|명단|발표|안내")
+KEEP_IF_RE = re.compile(r"채용\s*공고|모집\s*공고|채용시험\s*(?:시행)?계획|임용시험|신규\s*채용")
+
+def is_announcement(title):
+    return bool(ANNOUNCE_RE.search(title)) and not bool(KEEP_IF_RE.search(title))
+
 def verify_links(items, timeout=15):
     """수집 단계 실측 검증: 상세 URL을 열어 기관명/공고명이 있는지 확인.
     불일치 항목은 저장하지 않고 반환에서 제외 (번호 어긋남 원천 차단)."""
@@ -295,6 +303,10 @@ def main():
     if not fresh:
         print("신규 공고 0건. 갱신 없음.")
         return
+    announce = [x for x in fresh if is_announcement(x["title"])]
+    if announce:
+        print(f"결과발표성 공고 {len(announce)}건 제외: {', '.join(x['id'] for x in announce)}", file=sys.stderr)
+        fresh = [x for x in fresh if not is_announcement(x["title"])]
     today = datetime.date.today().isoformat()
     stale = [x for x in fresh if (x.get("deadline") or "") < today]
     if stale:

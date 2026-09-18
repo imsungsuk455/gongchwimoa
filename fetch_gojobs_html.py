@@ -45,9 +45,10 @@ def short_region(s):
     m = re.match(r"([가-힣]{2})", s)
     return m.group(1) if m else (s[:2] if s else "전국")
 
-# 결과발표성 공고 제외 (채용速보 정체성 유지). 단 면접 등 다음 전형 안내 포함이면 유지.
-ANNOUNCE_RE = re.compile(r"합격자|명단|발표")
-KEEP_IF_RE = re.compile(r"면접|채용|모집|시험\s*공고|임용시험")
+# 결과발표성 공고 제외 (채용速보 정체성 유지).
+# 합격자 발표/면접 안내는 다음 전형 안내지 채용이 아니므로, 면접 언급이 있어도 제외한다.
+ANNOUNCE_RE = re.compile(r"합격자|명단|발표|안내")
+KEEP_IF_RE = re.compile(r"채용\s*공고|모집\s*공고|채용시험\s*(?:시행)?계획|임용시험|신규\s*채용")
 
 def is_announcement(title):
     return bool(ANNOUNCE_RE.search(title)) and not bool(KEEP_IF_RE.search(title))
