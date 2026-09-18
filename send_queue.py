@@ -18,6 +18,8 @@ JOBS_JSON = os.path.join(BASE, "jobs.json")
 SITE_URL = os.environ.get("SITE_URL", "https://gongchwimoa.org/")
 KST = datetime.timezone(datetime.timedelta(hours=9))
 API = "https://graph.threads.net/v1.0"
+# 하루 실제 발송 상한 (배정 쿼터와 별개. 어제 밀린 분 포함, 금일 posted+발송 합계 기준)
+POSTS_PER_DAY = int(os.environ.get("MAX_POSTS_PER_DAY", "10"))
 
 def sunday_digest():
     """일요일 20시 슬롯: 이번 주 마감 TOP5 자동 생성. 없으면 None."""
@@ -127,16 +129,27 @@ def main():
     buf = load()
     today = now_kst().date().isoformat()
     cur = now_kst().strftime("%H:%M")
-    due = [s for s in buf.get("slots", [])
+    due = sorted([s for s in buf.get("slots", [])
            if s.get("status") == "pending" and s.get("approved", True)
            and s.get("date") == today
-           and (s.get("slot") == args.slot if args.slot else s.get("slot", "") <= cur)]
-    if not due:
+           and (s.get("slot") == args.slot if args.slot else s.get("slot", "") <= cur)],
+           key=lambda s: s.get("slot", ""))
+    over = []
+    if not args.slot:
+        # 일일 발송 상한: 금일 posted + 이번 발송 합계가 POSTS_PER_DAY를 넘지 않음. 초과분은 skip(영구).
+        posted_today = sum(1 for s in buf.get("slots", [])
+                           if s.get("status") == "posted" and s.get("date") == today)
+        budget = max(POSTS_PER_DAY - posted_today, 0)
+        if len(due) > budget:
+            over, due = due[budget:], due[:budget]
+    if not due and not over:
         print(f"발송 대상 없음 (오늘 {today}, 기준 {args.slot or cur}). 빈 슬롯은 skip.")
         return
     if not live:
         for s in due:
             print(f"[dry-run] {s['date']} {s['slot']} {s['job_id']}\n{s['text']}\n→ 댓글: {s['comment']}\n")
+        for s in over:
+            print(f"[dry-run] 상한 초과로 skip 예정: {s['date']} {s['slot']} {s['job_id']}")
         print("실제 발송은 --live (THREADS_ACCESS_TOKEN / THREADS_USER_ID 필요).")
         return
     uid = os.environ.get("THREADS_USER_ID", "")
@@ -144,6 +157,9 @@ def main():
     if not uid or not token:
         print("THREADS_USER_ID / THREADS_ACCESS_TOKEN 미설정.", file=sys.stderr)
         sys.exit(2)
+    for s in over:
+        s["status"] = "skipped"
+        print(f"상한 초과 skip: {s['slot']} {s['job_id']}")
     for s in due:
         try:
             mid = publish_text(uid, token, s["text"])
