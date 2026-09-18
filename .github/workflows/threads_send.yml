@@ -9,6 +9,8 @@ on:
         description: '특정 슬롯만 발송 (예: 14:00)'
         required: false
         default: ''
+permissions:
+  contents: write
 jobs:
   send:
     runs-on: ubuntu-latest
@@ -18,11 +20,11 @@ jobs:
         with:
           python-version: '3.12'
       - name: 정시 발송
-        # 토큰 등록 전까지는 dry-run (실패 없음). 토큰 등록 후 THREADS_LIVE=1 추가.
         run: python send_queue.py ${{ inputs.slot && format('--slot {0}', inputs.slot) || '' }}
         env:
           THREADS_USER_ID: ${{ secrets.THREADS_USER_ID }}
           THREADS_ACCESS_TOKEN: ${{ secrets.THREADS_ACCESS_TOKEN }}
+          THREADS_LIVE: '1'
       - name: 발송 상태 커밋
         run: |
           git config user.name "gongchwimoa-bot"
