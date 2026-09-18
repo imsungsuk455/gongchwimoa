@@ -7,7 +7,7 @@
 - 기본 --dry-run (발행 없이 출력만). 실제 발송은 --live + 환경변수 필요.
 - 방식은 testlab threads_publish.py와 동일 (본문 → 댓글에 원문링크).
 """
-import argparse, json, os, sys, time, datetime
+import argparse, json, os, sys, time, datetime, re
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -31,8 +31,15 @@ def sunday_digest():
     upcoming.sort(key=lambda x: x["deadline"])
     if not upcoming:
         return None
-    lines = [f"{i+1}. {j['org']} {j['title'][:22]} (~{j['deadline'][5:]})"
-             for i, j in enumerate(upcoming[:5])]
+    lines = []
+    for i, j in enumerate(upcoming[:5], 1):
+        org = (j.get("org") or "").strip()
+        short = org.split()[-1] if org else ""
+        t = j.get("title") or ""
+        for u in sorted(org.split(), key=len, reverse=True):
+            t = t.replace(u, "")
+        t = re.sub(r"\s+", " ", t).strip(" -·")
+        lines.append(f"{i}. {short} {t[:28]} (~{j['deadline'][5:]})")
     text = "📅 이번 주 마감 공고 TOP5\n\n" + "\n".join(lines) + "\n\n상세 해설은 공취모아에서 👇"
     return {"date": today.isoformat(), "slot": "20:00", "job_id": "digest",
             "text": text, "comment": SITE_URL, "status": "pending", "approved": True}

@@ -199,10 +199,11 @@ def parse_items(raw):
 
 def thread_text(job):
     d = job["deadline"]
-    t = f"📢 {job['org']}\n「{job['title']}」\n마감 {d} · {job['region']} · {job['type']}\n✅ " + " / ".join(job["summary"][:2])
-    if len(t) > 420:
-        t = t[:420] + "…"
-    return t + "\n원문 링크는 댓글에 👇"
+    title = job["title"].strip()
+    if len(title) > 55:
+        title = title[:55].rstrip() + "…"
+    t = f"📢 {title}\n\n{job['type']} · 마감 {d}\n상세 내용은 댓글 링크로 확인 👇"
+    return t[:420]
 
 def verify_links(items, timeout=15):
     """수집 단계 실측 검증: 상세 URL을 열어 기관명/공고명이 있는지 확인.
