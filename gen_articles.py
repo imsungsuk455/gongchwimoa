@@ -314,10 +314,6 @@ def build(job, all_jobs):
 def main():
     import sys
     sys.path.insert(0, BASE)
-    import quota
-    max_run = int(os.environ.get("MAX_NEW_PER_RUN", "15"))
-    per_day = int(os.environ.get("ARTICLES_PER_DAY", "5"))
-    allow = min(quota.remaining("articles", per_day), max_run)
     jobs = json.load(open(JOBS_JSON, encoding="utf-8"))
     os.makedirs(ART_DIR, exist_ok=True)
     if os.environ.get("RETHUMB", "") == "1":
@@ -327,8 +323,9 @@ def main():
             n += 1
         print(f"썸네일 재생성 {n}건")
         return
-    # 하루 발행량: 날짜 기준 5건. 초과분은 다음날로 자동 이월. 마감분은 신규 기사화 안 함(기존 유지).
-    # 단 ALLOW_EXPIRED_ARTICLES=1이면 복구 등 일회성으로 마감분도 생성.
+    # 누락분 전부 즉시 생성 (캡 없음). 템플릿 생성이라 즉시·무료.
+    # 목록(index.html)과 기사가 항상 1:1로 맞아 링크가 빈 페이지로 가는 문제를 원천 차단.
+    # 마감분은 신규 기사화 안 함(기존 유지). ALLOW_EXPIRED_ARTICLES=1이면 복구용으로 마감분도 생성.
     today = datetime.date.today().isoformat()
     allow_exp = os.environ.get("ALLOW_EXPIRED_ARTICLES", "") == "1"
     missing = sorted(
@@ -337,13 +334,12 @@ def main():
          and (allow_exp or (j.get("deadline") or "") >= today)],
         key=lambda x: x["deadline"],
     )
-    targets, deferred = missing[:allow], missing[allow:]
+    targets = missing
     for j in targets:
         make_thumb(j)
         p = os.path.join(ART_DIR, j["id"] + ".html")
         with open(p, "w", encoding="utf-8") as f:
             f.write(build(j, jobs))
-    quota.consume("articles", len(targets))
     # sitemap 갱신
     today = datetime.date.today().isoformat()
     urls = [f"  <url><loc>{SITE_URL}</loc><lastmod>{today}</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>"]
@@ -351,7 +347,7 @@ def main():
         urls.append(f"  <url><loc>{SITE_URL}articles/{j['id']}.html</loc><lastmod>{today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>")
     with open(os.path.join(BASE, "sitemap.xml"), "w", encoding="utf-8") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(urls) + "\n</urlset>")
-    print(f"신규 기사 {len(targets)}건 + 썸네일 {len(targets)}건 + sitemap 갱신 완료." + (f" (이월 {len(deferred)}건)" if deferred else ""))
+    print(f"신규 기사 {len(targets)}건 + 썸네일 {len(targets)}건 + sitemap 갱신 완료.")
 
 if __name__ == "__main__":
     main()
