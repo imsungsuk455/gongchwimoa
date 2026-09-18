@@ -111,16 +111,20 @@ def enrich_and_verify(job, timeout=15):
     m = re.search(r"(응시자격|지원자격|자격요건)</th>\s*<td[^>]*?>(.+?)</td>", flat)
     qual = clean(m.group(2), 80) if m else ""
     m = re.search(r"(전형절차|전형방법|선발방법|평가방법)</th>\s*<td[^>]*?>(.+?)</td>", flat)
-    excerpt = clean(m.group(2), 220) if m else ""
+    excerpt = clean(m.group(2), 600) if m else ""
     if len(excerpt) < 20:
-        # 폴백: 상세 본문 중 가장 긴 셀(응시자격·결격사유 등 원문 상세)을 발췌
-        cands = []
+        # 폴백: 상세 본문 셀 발췌 — 보수·수당·급여(훅 재료) 셀 우선, 없으면 가장 긴 상세 셀
+        cands, pay = [], []
         for cm in re.finditer(r"<td[^>]*>(.*?)</td>", flat):
             txt = clean(cm.group(1))
-            if len(txt) > 200 and re.search(r"응시|자격|전형|우대|결격|서류|면접", txt):
+            if len(txt) > 100 and re.search(r"응시|자격|전형|우대|결격|서류|면접|보수|수당|급여|연봉", txt):
                 cands.append(txt)
-        if cands:
-            excerpt = max(cands, key=len)[:400]
+            if re.search(r"보수|수당|급여|연봉|임금", txt):
+                pay.append(txt)
+        if pay:
+            excerpt = max(pay, key=len)[:600]
+        elif cands:
+            excerpt = max(cands, key=len)[:600]
     summ = ["접수 ~" + job["deadline"] + " 마감", "세부 조건은 원문 공고문 확인"]
     if grade:
         summ.insert(0, grade)

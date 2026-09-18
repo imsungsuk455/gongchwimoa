@@ -7,7 +7,7 @@
 - GitHub Actions cron(2시간 간격 권장)에서 실행 -> jobs.json 갱신 -> sitemap.xml 갱신 -> threads_queue.json(신규분) 생성
 - 신규분 스레드 발송은 testlab 스킬의 threads_publish.py 방식을 재사용 (500자 이내, 댓글에 원문링크)
 """
-import argparse, json, os, sys, datetime, xml.etree.ElementTree as ET
+import argparse, json, os, sys, datetime, re, xml.etree.ElementTree as ET
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
@@ -198,6 +198,35 @@ def parse_items(raw):
         })
     return [x for x in items if x["title"] and x["id"] != "gojobs-"]
 
+BENEFIT_RE = [
+    (re.compile(r"(?:초봉|연봉|급여|보수)\s*(\d[\d,]*만원)"), lambda m: f"초봉 {m.group(1)}"),
+    (re.compile(r"(\d[\d,]*만원)\s*(?:이상|~)"), lambda m: f"연봉 {m.group(1)} 이상"),
+    (re.compile(r"(?:수당|보수|급여)\s*[:：]\s*(\d[\d,]*원)/시간"), lambda m: f"시간당 {m.group(1)}"),
+    (re.compile(r"월\s*(\d[\d,]*원)"), lambda m: f"월급 {m.group(1)}"),
+    (re.compile(r"정년"), lambda m: "정년보장"),
+    (re.compile(r"주\s*5일"), lambda m: "주 5일 근무"),
+    (re.compile(r"(?:경력|전공)\s*무관"), lambda m: "경력 무관"),
+    (re.compile(r"임기\s*(\d+)\s*년"), lambda m: f"임기 {m.group(1)}년"),
+]
+
+def extract_benefit(job):
+    """공고 최대 이점 1~2개 추출. 정규직/공무직은 구조적 이점(정년보장) 포함."""
+    text = " ".join([
+        job.get("excerpt", "") or "",
+        " ".join(job.get("summary", [])),
+        job["title"],
+    ])
+    found = []
+    for rx, fmt in BENEFIT_RE:
+        m = rx.search(text)
+        v = fmt(m) if m else None
+        if v and v not in found:
+            found.append(v)
+    jt = job.get("type", "")
+    if jt in ("정규직", "공무직") and "정년보장" not in found:
+        found.append("정년보장")
+    return ", ".join(found[:2]) if found else None
+
 def thread_text(job):
     d = job["deadline"]
     try:
@@ -211,12 +240,13 @@ def thread_text(job):
     elif days <= 3:
         hook = f"마감 임박 D-{days}!"
     else:
-        hook = {"정규직": "정규직, 정년보장",
-                "공무직": "공무직, 정년보장",
-                "임기제": "임기제 채용",
-                "기간제": "기간제 채용",
-                "시간강사": "시간강사 모집",
-                "청년인턴": "청년인턴 모집"}.get(job.get("type", ""), f"{job.get('type','공공')} 채용")
+        benefit = extract_benefit(job)
+        hook = benefit or {"정규직": "정규직 채용",
+                           "공무직": "공무직 채용",
+                           "임기제": "임기제 채용",
+                           "기간제": "기간제 채용",
+                           "시간강사": "시간강사 모집",
+                           "청년인턴": "청년인턴 모집"}.get(job.get("type", ""), "공공 채용")
     title = job["title"].strip()
     if len(title) > 42:
         cut = title[:42]
