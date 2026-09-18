@@ -132,8 +132,9 @@ def main():
            and s.get("date") == today
            and (s.get("slot") == args.slot if args.slot else s.get("slot", "") <= cur)]
     if not due:
-        # 3단 폴백: 일요일 다이제스트 → 에디토리얼. 빈 슬롯 방치 안 함.
-        if (not args.slot or args.slot == "20:00") and now_kst().weekday() == 6:
+        # 3단 폴백: 일요일 다이제스트(20시 슬롯 전용) → 에디토리얼. 빈 슬롯 방치 안 함.
+        # 21시 콘텐츠 슬롯은 다이제스트 대신 에디토리얼만 (일요일 중복 발행 방지).
+        if args.slot in ("", "20:00") and "20:00" <= cur < "21:00" and now_kst().weekday() == 6:
             d = sunday_digest()
             if d:
                 due = [d]
