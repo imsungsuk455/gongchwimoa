@@ -88,7 +88,8 @@ def assign_slots(picks):
                 if (d, slot) not in used:
                     used.add((d, slot))
                     assigned.append({"date": d, "slot": slot, "job_id": j["id"],
-                                     "text": thread_text(j), "comment": j["url"],
+                                     "text": thread_text(j),
+                                     "comment": f"자세한 사항 확인하러 가기 ▽\n{j['url']}",
                                      "status": "pending", "approved": True})
                     placed = True
                     break
@@ -199,11 +200,29 @@ def parse_items(raw):
 
 def thread_text(job):
     d = job["deadline"]
+    try:
+        days = (datetime.date.fromisoformat(d) - datetime.date.today()).days
+    except Exception:
+        days = 99
+    if days <= 0:
+        hook = "오늘 마감!"
+    elif days == 1:
+        hook = "내일 마감!"
+    elif days <= 3:
+        hook = f"마감 임박 D-{days}!"
+    else:
+        hook = {"정규직": "정규직, 정년보장",
+                "공무직": "공무직, 정년보장",
+                "임기제": "임기제 채용",
+                "기간제": "기간제 채용",
+                "시간강사": "시간강사 모집",
+                "청년인턴": "청년인턴 모집"}.get(job.get("type", ""), f"{job.get('type','공공')} 채용")
     title = job["title"].strip()
-    if len(title) > 55:
-        title = title[:55].rstrip() + "…"
-    t = f"📢 {title}\n\n{job['type']} · 마감 {d}\n상세 내용은 댓글 링크로 확인 👇"
-    return t[:420]
+    if len(title) > 42:
+        cut = title[:42]
+        sp = cut.rfind(" ")
+        title = (cut[:sp] if sp > 20 else cut).rstrip() + "…"
+    return f"{hook}\n{title} 떴다!"
 
 def verify_links(items, timeout=15):
     """수집 단계 실측 검증: 상세 URL을 열어 기관명/공고명이 있는지 확인.
