@@ -1,8 +1,9 @@
 name: threads-send
 on:
   schedule:
-    # 08/11/14/17/20시 KST = 23/02/05/08/11시 UTC
-    - cron: '5 23,2,5,8,11 * * *'
+    # 08/11/14/17/20시 KST = 23/02/05/08/11시 UTC (공고)
+    # 21시 KST = 12시 UTC (팔로워 콘텐츠 전용)
+    - cron: '5 23,2,5,8,11,12 * * *'
   workflow_dispatch:
     inputs:
       slot:
