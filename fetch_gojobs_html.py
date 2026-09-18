@@ -13,7 +13,7 @@ from urllib.request import Request, urlopen
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE)
-from fetch_jobs import exact_url, priority_key, assign_slots, thread_text, infer_type, prune_expired  # noqa
+from fetch_jobs import exact_url, priority_key, assign_slots, thread_text, infer_type, prune_expired, is_school_job  # noqa
 import quota
 
 JOBS_JSON = os.path.join(BASE, "jobs.json")
@@ -172,8 +172,11 @@ def main():
     json.dump(kept, open(JOBS_JSON, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     allow = quota.remaining("threads", MAX_THREADS_PER_DAY)
     today = datetime.date.today().isoformat()
-    picks = sorted([x for x in verified if (x.get("deadline") or "") >= today],
-                   key=priority_key)[:allow]
+    pool = [x for x in verified if (x.get("deadline") or "") >= today and not is_school_job(x)]
+    skipped = len(verified) - len(pool)
+    picks = sorted(pool, key=priority_key)[:allow]
+    if skipped:
+        print(f"스레드 제외(학교) {skipped}건. 사이트에는 반영됨.")
     quota.consume("threads", len(picks))
     assigned, dropped = assign_slots(picks)
     print(f"신규 {len(verified)}건 반영. 스레드 버퍼 배정 {len(assigned)}건" +

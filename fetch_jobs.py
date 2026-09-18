@@ -102,14 +102,23 @@ def assign_slots(picks):
         json.dump(buf, f, ensure_ascii=False, indent=2)
     return assigned, dropped
 
+# 스레드 발송 제외: 학교 계열 (학교 채용은 수요·흥미도 낮아 스레드 도배 방지).
+# 사이트에는 그대로 반영되고, 스레드 큐 배정 단계에서만 걸러진다.
+SCHOOL_RE = re.compile(r"초등학교|중학교|고등학교|대학교|학교\s|유치원|교육청")
+
+def is_school_job(job):
+    return bool(SCHOOL_RE.search(job.get("org", "") + " " + job.get("title", "")))
+
 def priority_key(job):
+    """스레드 우선순위: 정규직 우선 → 마감임박 → 청년인턴 → 마감일순."""
     try:
         left = (datetime.date.fromisoformat(job["deadline"]) - datetime.date.today()).days
     except Exception:
         left = 999
+    regular = 0 if job.get("type") == "정규직" else 1
     urgent = 0 if 0 <= left <= 3 else 1
     intern = 0 if (job.get("category") == "청년인턴" or "인턴" in job.get("type", "")) else 1
-    return (urgent, intern, job["deadline"])
+    return (regular, urgent, intern, job["deadline"])
 
 def load_jobs():
     with open(JOBS_JSON, encoding="utf-8") as f:
@@ -330,11 +339,15 @@ def main():
         print(f"마감경과 {len(pruned)}건 삭제")
     save_jobs(merged)
     # 스레드는 우선순위순으로 발송 버퍼에 적재 (오늘→내일 빈 슬롯). 발송은 send_queue.py가 정시에 처리.
+    # 사이트는 전부 반영, 스레드는 정규직 우선 + 학교 제외 상위 10건만.
     import quota
     allow = quota.remaining("threads", MAX_THREADS_PER_DAY)
     today = datetime.date.today().isoformat()
-    picks = sorted([x for x in verified if (x.get("deadline") or "") >= today],
-                   key=priority_key)[:allow]
+    pool = [x for x in verified if (x.get("deadline") or "") >= today and not is_school_job(x)]
+    skipped = len(verified) - len(pool)
+    picks = sorted(pool, key=priority_key)[:allow]
+    if skipped:
+        print(f"스레드 제외(학교) {skipped}건. 사이트에는 반영됨.")
     quota.consume("threads", len(picks))
     assigned, dropped = assign_slots(picks)
     print(f"신규 {len(verified)}건 반영. 스레드 버퍼 배정 {len(assigned)}건" +
