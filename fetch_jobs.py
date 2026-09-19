@@ -105,7 +105,7 @@ def assign_slots(picks):
 # 학교 교직 계열 채용 제외 (시간강사·기간제교원·계약제교원).
 # 교육공무직원(시설관리·배식), 대학 계열(대학교·연구직)은 유지. 사이트·스레드 공통으로 수집 단계에서 거른다.
 SCHOOL_RE = re.compile(r"초등학교|중학교|고등학교|유치원|특수학교|학교\b")
-TEACHING_RE = re.compile(r"시간강사|기간제교원|기간제교사|계약제교원|계약제교사|교원|강사")
+TEACHING_RE = re.compile(r"시간강사|기간제\s*교[사원]|계약제\s*교[사원]|교원|강사")
 
 def is_school_job(job):
     org = job.get("org", "")
