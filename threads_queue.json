@@ -20,15 +20,6 @@
     },
     {
       "date": "2026-09-19",
-      "slot": "07:00",
-      "job_id": "alio-305098",
-      "text": "\"정규직\"\n\n[덕유산] 덕유산국립공원 가을성수기 한시인력(환경관리) 직원 채용 공고 마감 D-2",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305098.html",
-      "status": "paused",
-      "approved": true
-    },
-    {
-      "date": "2026-09-19",
       "slot": "08:30",
       "job_id": "gojobs-303873",
       "text": "\"정규직\"\n\n한국법령정보원 직원(법령연계실 연구직) 신규인력 인재 채용 공고 모집중",
@@ -40,74 +31,32 @@
     },
     {
       "date": "2026-09-19",
-      "slot": "08:30",
-      "job_id": "alio-305093",
-      "text": "\"정규직\"\n\n한전KPS(주) 부산사업소 '26년 5차 단기노무원 모집 마감 D-2",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305093.html",
-      "status": "paused",
-      "approved": true
-    },
-    {
-      "date": "2026-09-19",
-      "slot": "10:00",
-      "job_id": "alio-305088",
-      "text": "\"정규직\"\n\n한전KPS(주) 삼천포사업처 단기노무원(기계 단순보조) 채용(제51차) 마감 D-2",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305088.html",
-      "status": "paused",
-      "approved": true
-    },
-    {
-      "date": "2026-09-19",
-      "slot": "11:30",
-      "job_id": "alio-305084",
-      "text": "\"정규직\"\n\n한전KPS(주)동해사업소 동해1호기 계획예방정비공사(간이) 단기노무원 채용공고 마감 D-2",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305084.html",
-      "status": "paused",
-      "approved": true
-    },
-    {
-      "date": "2026-09-19",
-      "slot": "13:00",
-      "job_id": "alio-305081",
-      "text": "\"정규직\"\n\n한전KPS(주) 무주양수사업소 청평수력 3호기 A급 계획예방정비공사 단기노무원… 마감 D-2",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305081.html",
-      "status": "paused",
-      "approved": true
-    },
-    {
-      "date": "2026-09-19",
-      "slot": "14:30",
-      "job_id": "alio-305126",
-      "text": "\"정규직\"\n\n한전KPS(주) 대외사업센터 단기노무원 채용 공고(하남 SK위례) 마감 D-3",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305126.html",
-      "status": "paused",
-      "approved": true
-    },
-    {
-      "date": "2026-09-19",
-      "slot": "16:00",
-      "job_id": "alio-305097",
-      "text": "\"정규직\"\n\n2026년 9월 제3차 임시직원 모집 공고(원무지원(기계설비), 의공직,… 마감 D-3",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305097.html",
-      "status": "paused",
-      "approved": true
-    },
-    {
-      "date": "2026-09-19",
       "slot": "17:30",
-      "job_id": "alio-305094",
-      "text": "\"정규직\"\n\n[새만금환경생태단지관리단] 2026년 4차 한시인력(환경관리) 직원 채용 마감 D-3",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305094.html",
-      "status": "paused",
+      "job_id": "gojobs-302947",
+      "org": "재단법인 인천연구원",
+      "text": "\"연구직 정규채용\"\n\n2026년도 제3차 인천연구원 직원(연구직) 공개채용 마감 D-3",
+      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-302947.html",
+      "status": "pending",
       "approved": true
     },
     {
       "date": "2026-09-19",
       "slot": "19:00",
-      "job_id": "alio-305086",
-      "text": "\"정규직\"\n\n[지리산전북] 지리산국립공원전북사무소 한시인력(수익시설, 환경관리) 채용 마감 D-3",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305086.html",
-      "status": "paused",
+      "job_id": "gojobs-303833",
+      "org": "그랜드코리아레저(주)",
+      "text": "\"임원 공개모집\"\n\n그랜드코리아레저(주) 상임감사 공개모집 모집중",
+      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-303833.html",
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-19",
+      "slot": "20:30",
+      "job_id": "gojobs-303938",
+      "org": "한국국제협력단",
+      "text": "\"이사장 공모\"\n\n한국국제협력단 임원(이사장) 공모 모집중",
+      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-303938.html",
+      "status": "pending",
       "approved": true
     }
   ]

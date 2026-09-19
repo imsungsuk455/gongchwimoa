@@ -32,6 +32,9 @@ def infer_type(title):
         return "시간강사"
     if "기간제" in t and ("교사" in t or "교원" in t):
         return "기간제교사"
+    # 일용직 계열 (스킬 규칙: 단기노무/한시인력/일용/계절 → "정규직" 오표기 금지)
+    if any(k in t for k in ["단기노무원", "한시인력", "일용직", "일용", "계절근로", "한시적"]):
+        return "일용직"
     if any(k in t for k in ["공무직", "무기계약", "집배원", "시설관리원", "미화", "조리원", "운전원"]):
         return "공무직"
     if "기간제" in t:
@@ -73,21 +76,33 @@ def load_buffer():
     return buf
 
 def assign_slots(picks):
-    """신규분을 오늘→내일 빈 슬롯에 순서대로 배정. 둘 다 차면 초과분은 탈락(로그)."""
+    """신규분을 오늘→내일 빈 슬롯에 순서대로 배정. 둘 다 차면 초과분은 탈락(로그).
+    같은 기관은 하루 1건만 (스레드 도배 방지, 스킬 규칙)."""
     buf = load_buffer()
     today = _today()
     tomorrow = (datetime.datetime.now(KST).date() + datetime.timedelta(days=1)).isoformat()
     # 이틀 지난 발송완료는 정리
     buf["slots"] = [s for s in buf["slots"] if not (s.get("status") == "posted" and s.get("date", "") < today)]
     used = {(s.get("date"), s.get("slot")) for s in buf["slots"] if s.get("status") == "pending"}
+    # 오늘 이미 배정된 기관 (같은 기관 하루 1건 제한)
+    org_today = set()
+    for s in buf["slots"]:
+        if s.get("date") == today and s.get("status") == "pending":
+            org_today.add(s.get("org"))
     assigned, dropped = [], []
     for j in picks:
+        org = (j.get("org") or "").strip()
+        if org and org in org_today:
+            dropped.append(j["id"] + " (기관중복)")
+            continue
         placed = False
         for d in (today, tomorrow):
             for slot in THREAD_SLOTS:
                 if (d, slot) not in used:
                     used.add((d, slot))
-                    assigned.append({"date": d, "slot": slot, "job_id": j["id"],
+                    if d == today and org:
+                        org_today.add(org)
+                    assigned.append({"date": d, "slot": slot, "job_id": j["id"], "org": org,
                                      "text": thread_text(j),
                                      "comment": f"자세한 사항 확인하러 가기 ▽\n{SITE_URL}articles/{j['id']}.html",
                                      "status": "pending", "approved": True})
@@ -150,15 +165,21 @@ def has_salary(job):
     return bool(SALARY_RE.search(text) or extract_pay(text))
 
 def priority_key(job):
-    """스레드 우선순위: 급여 명시 → 정규직 → 마감임박 → 마감일순."""
+    """스레드 우선순위: 급여 명시 → 정규직 → 공무직/기타 → 일용직 → 마감임박 → 마감일순."""
     try:
         left = (datetime.date.fromisoformat(job["deadline"]) - datetime.date.today()).days
     except Exception:
         left = 999
     salary = 0 if has_salary(job) else 1
-    regular = 0 if job.get("type") == "정규직" else 1
+    t = job.get("type", "")
+    if t == "정규직":
+        type_rank = 0
+    elif t == "일용직":
+        type_rank = 3  # 단기노무·한시인력 등은 최하위 (스레드 도배 방지)
+    else:
+        type_rank = 1
     urgent = 0 if 0 <= left <= 3 else 1
-    return (salary, regular, urgent, left, job["deadline"])
+    return (salary, type_rank, urgent, left, job["deadline"])
 
 def load_jobs():
     with open(JOBS_JSON, encoding="utf-8") as f:
@@ -296,9 +317,11 @@ def short_title(title, limit=44):
 
 def thread_hook(job):
     """첫줄 후크 우선순위: 정규직 → 급여 → 서울·수도권 → 마감3일이내 → 없음.
-    기간제는 강조하지 않음 (해당 없으면 첫줄 생략)."""
+    기간제·일용직은 강조하지 않음 (해당 없으면 첫줄 생략)."""
     if job.get("type") == "정규직":
         return "정규직"
+    if job.get("type") == "일용직":
+        return None  # 단기노무·한시인력 등은 "정규직" 오표기 금지 (스킬 규칙)
     if job.get("pay"):
         return job["pay"]
     if job.get("region") in CAPITAL_RE:
