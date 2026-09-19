@@ -37,10 +37,14 @@ body{font-family:Pretendard,-apple-system,"Noto Sans KR",sans-serif;background:v
 .stat{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);border-radius:12px;padding:8px 14px;font-size:.85rem}
 .stat b{font-size:1.05rem;margin-right:4px}
 /* 칩 */
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 6px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:0}
 .chips button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:9px 16px;cursor:pointer;font-size:.88rem;font-family:inherit;color:#344054;transition:.15s}
 .chips button:hover{border-color:var(--brand);color:var(--brand)}
 .chips button.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:18px 0 6px}
+.sort{display:flex;gap:6px;background:#e9edf5;border-radius:999px;padding:4px}
+.sort button{border:0;background:transparent;border-radius:999px;padding:7px 14px;cursor:pointer;font-size:.84rem;font-family:inherit;color:#475569;font-weight:600}
+.sort button.active{background:#fff;color:var(--ink);box-shadow:0 1px 4px rgba(16,24,40,.15)}
 .meta{font-size:.82rem;color:var(--muted);margin:10px 2px 14px}
 .divider{grid-column:1/-1;display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.83rem;margin:10px 2px 2px}
 .divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--line)}
@@ -89,12 +93,18 @@ footer a{color:#98a2b3;margin:0 7px;text-decoration:none}
 </div>
 </section>
 
+<div class="toolbar">
 <div class="chips" id="tabs">
 <button data-f="all" class="active">전체</button>
 <button data-f="청년인턴">청년인턴</button>
 <button data-f="교육청">교육청·교사</button>
 <button data-f="공무직">공무직·기간제</button>
 <button data-f="deadline">마감임박 3일</button>
+</div>
+<div class="sort" id="sortTabs" role="tablist" aria-label="정렬">
+<button data-s="deadline" class="active">마감순</button>
+<button data-s="latest">최신순</button>
+</div>
 </div>
 <div class="meta" id="meta"></div>
 <div class="grid" id="list"></div>
@@ -109,6 +119,7 @@ footer a{color:#98a2b3;margin:0 7px;text-decoration:none}
 <script>
 let JOBS = [];
 let filter = "all";
+let sort = "deadline";
 function dday(deadline){
   const t = new Date(deadline+"T23:59:59+09:00"), now = new Date();
   return Math.ceil((t-now)/86400000);
@@ -120,15 +131,23 @@ function matchFilter(j){
   if(filter==="deadline") return dday(j.deadline)<=3;
   return true;
 }
+function sortJobs(arr, isClosed){
+  if(sort==="latest"){
+    return arr.sort((a,b)=>(b.posted||"").localeCompare(a.posted||"")||a.deadline.localeCompare(b.deadline));
+  }
+  if(isClosed) return arr.sort((a,b)=>b.deadline.localeCompare(a.deadline));
+  return arr.sort((a,b)=>a.deadline.localeCompare(b.deadline));
+}
 function render(){
   const q = document.getElementById("q").value.trim();
   const box = document.getElementById("list");
   let arr = JOBS.filter(matchFilter);
   if(q) arr = arr.filter(j=>(j.title+j.org).includes(q));
-  // 유효 공고(마감일 순) 먼저, 마감된 공고는 뒤로
-  const live = arr.filter(j=>dday(j.deadline)>=0).sort((a,b)=>a.deadline.localeCompare(b.deadline));
-  const closed = arr.filter(j=>dday(j.deadline)<0).sort((a,b)=>b.deadline.localeCompare(a.deadline));
-  document.getElementById("meta").textContent = "진행중 "+live.length+"건 · 마감 "+closed.length+"건 · "+new Date().toLocaleString("ko-KR")+" 기준";
+  // 유효 공고 먼저, 마감된 공고는 뒤로 (정렬: 마감순/최신순)
+  const live = sortJobs(arr.filter(j=>dday(j.deadline)>=0), false);
+  const closed = sortJobs(arr.filter(j=>dday(j.deadline)<0), true);
+  const sortLabel = sort==="latest"?"최신순":"마감순";
+  document.getElementById("meta").textContent = "진행중 "+live.length+"건 · 마감 "+closed.length+"건 · "+sortLabel+" · "+new Date().toLocaleString("ko-KR")+" 기준";
   const card = j=>{
     const d = dday(j.deadline);
     const cls = d<=0?"d0":d<=3?"d3":d<=7?"d7":"rest";
@@ -139,7 +158,7 @@ function render(){
 <div class="body">
 <div class="badges"><span class="badge ${cls}">${label}</span><span class="badge cat">${j.category} · ${j.type}</span></div>
 <h2><a href="articles/${j.id}.html">${j.title}</a></h2>
-<div class="org">${j.org} · ${j.region} · 마감 ${j.deadline}</div>
+<div class="org">${j.org} · ${j.region} · 등록 ${j.posted||"-"} · 마감 ${j.deadline}</div>
 <ul class="sum">${j.summary.map(s=>`<li>${s}</li>`).join("")}</ul>
 <script type="application/ld+json">${JSON.stringify(schema)}<\/script>
 <div class="links"><a class="btn main" href="articles/${j.id}.html">해설 보기</a><a class="btn ghost" href="${j.url}" target="_blank" rel="noopener">원문 ↗</a></div>
@@ -153,6 +172,11 @@ document.getElementById("tabs").addEventListener("click",e=>{
   if(e.target.tagName!=="BUTTON")return;
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.remove("active"));
   e.target.classList.add("active"); filter=e.target.dataset.f; render();
+});
+document.getElementById("sortTabs").addEventListener("click",e=>{
+  if(e.target.tagName!=="BUTTON")return;
+  document.querySelectorAll("#sortTabs button").forEach(b=>b.classList.remove("active"));
+  e.target.classList.add("active"); sort=e.target.dataset.s; render();
 });
 document.getElementById("q").addEventListener("input",render);
 fetch("jobs.json").then(r=>r.json()).then(j=>{
