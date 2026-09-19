@@ -1,0 +1,8 @@
+#!/bin/bash
+cd /root/public-jobs
+git pull --rebase origin main 2>&1 | tail -1
+export THREADS_USER_ID=39460061993584477
+export THREADS_ACCESS_TOKEN=THAATDwBN1pWFBYlp4eWxLS3FNZAndQUGJScGFpaWxhbU5lUUx6SVAxTzdhYU5ROHNadXJWSXZAkTkcwRHFkcmZANTkZAfa1doQlBoMkdSUHhHM21nWi1Ibm9ZAd1dUUVNYM3VhMUJBeFJTRzVTX2t5aVNXNnZAxc0owVE5GcUFENjktY1hVUG9xX25QNy02M3NkTTAZD
+export THREADS_LIVE=1
+python3 send_queue.py 2>&1 | head -10
+echo "EXIT=$?"
