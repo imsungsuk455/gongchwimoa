@@ -40,5 +40,6 @@ jobs:
         run: |
           git config user.name "gongchwimoa-bot"
           git config user.email "gongchwimoa-bot@users.noreply.github.com"
+          git pull --rebase origin main || true
           git add threads_queue.json publish_state.json 2>/dev/null || git add threads_queue.json
           git diff --cached --quiet || (git commit -m "Threads send: $(date -u +%Y-%m-%dT%H:%M)" && git push)

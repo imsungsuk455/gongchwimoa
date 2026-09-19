@@ -116,6 +116,32 @@ def publish_reply(uid, token, reply_to, text):
             time.sleep(30)
     return None
 
+def git_claim(msg):
+    """상태 파일을 커밋/푸시. 실패(충돌) 시 False — 다른 실행이 먼저 점유한 것."""
+    import subprocess
+    for _ in range(3):
+        subprocess.run(["git", "config", "user.name", "gongchwimoa-bot"],
+                       capture_output=True, text=True)
+        subprocess.run(["git", "config", "user.email",
+                        "gongchwimoa-bot@users.noreply.github.com"],
+                       capture_output=True, text=True)
+        r = subprocess.run(["git", "pull", "--rebase", "origin", "main"],
+                           capture_output=True, text=True)
+        if r.returncode != 0:
+            return False
+        r = subprocess.run(["git", "commit", "-m", msg, "--",
+                            QUEUE_JSON, "publish_state.json"],
+                           capture_output=True, text=True)
+        if r.returncode != 0 and "nothing to commit" not in r.stderr:
+            return False
+        r = subprocess.run(["git", "push"], capture_output=True, text=True)
+        if r.returncode == 0:
+            return True
+        if "non-fast-forward" in r.stderr or "fetch first" in r.stderr:
+            continue  # 충돌 → rebase 후 재시도
+        return False
+    return False
+
 def main():
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -134,6 +160,12 @@ def main():
            and s.get("date") == today
            and (s.get("slot") == args.slot if args.slot else s.get("slot", "") <= cur)],
            key=lambda s: s.get("slot", ""))
+    # 중복 방지: 같은 job_id가 오늘 이미 posted면 남은 복제 슬롯은 skip
+    posted_ids = {s.get("job_id") for s in buf.get("slots", [])
+                  if s.get("status") == "posted" and s.get("date") == today}
+    dup = [s for s in due if s.get("job_id") in posted_ids]
+    if dup:
+        due = [s for s in due if s.get("job_id") not in posted_ids]
     over = []
     if not args.slot:
         # 일일 발송 상한: 금일 posted + 이번 발송 합계가 POSTS_PER_DAY를 넘지 않음. 초과분은 skip(영구).
@@ -157,6 +189,13 @@ def main():
     if not uid or not token:
         print("THREADS_USER_ID / THREADS_ACCESS_TOKEN 미설정.", file=sys.stderr)
         sys.exit(2)
+    # 점유(claim): 발송 전 상태를 커밋/푸시. 성공한 실행만 발송 (중복 발송 방지).
+    for s in due:
+        s["status"] = "claiming"
+    save(buf)
+    if not git_claim(f"Threads claim: {', '.join(s['slot'] for s in due)}"):
+        print("점유 실패 (다른 실행이 먼저 진행). 중복 발송 방지로 종료.", file=sys.stderr)
+        sys.exit(0)
     for s in over:
         s["status"] = "skipped"
         print(f"상한 초과 skip: {s['slot']} {s['job_id']}")
@@ -170,8 +209,10 @@ def main():
                 s["comment_id"] = rid
             print(f"발송 완료: {s['slot']} {s['job_id']} post={mid}")
         except Exception as e:
+            s["status"] = "pending"  # 실패 시 재시도 가능하게 복구
             print(f"발송 실패 ({s['slot']} {s['job_id']}): {e}", file=sys.stderr)
     save(buf)
+    git_claim(f"Threads sent: {', '.join(s['slot'] for s in due)}")
 
 if __name__ == "__main__":
     main()
