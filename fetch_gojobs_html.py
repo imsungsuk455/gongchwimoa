@@ -7,7 +7,7 @@ Plan B 수집기: API 키 없이 나라일터 목록 HTML에서 직접 수집.
 - 예의범절: 2시간 간격, 페이지당 10건·최대 3페이지(30건), Verify 실패분은 저장 안 함.
 - robots.txt에서 목록/상세 경로 차단 없음 확인됨 (2026-09-17).
 """
-import json, os, re, sys, datetime, html as htmlmod
+import json, os, re, sys, datetime, html as htmlmod, time
 from urllib.parse import urlencode
 from urllib.request import Request, urlopen
 
@@ -56,16 +56,26 @@ def is_announcement(title):
         return True
     return bool(ANNOUNCE_RE.search(title)) and not bool(KEEP_IF_RE.search(title))
 
-def get(url, timeout=20):
-    raw = urlopen(Request(url, headers=UA), timeout=timeout).read()
-    try:
-        t = raw.decode("utf-8")
-        # 깨짐 감지: 대체문자가 많으면 EUC-KR로 재시도
-        if t.count("\ufffd") > len(t) // 500:
-            raise UnicodeDecodeError("utf-8", b"", 0, 1, "mangled")
-        return t
-    except (UnicodeDecodeError, ValueError):
-        return raw.decode("euc-kr", errors="replace")
+def get(url, timeout=20, retries=3):
+    """GET with retries — GitHub 러너에서의 일시 타임아웃 대비."""
+    last = None
+    for i in range(retries):
+        try:
+            raw = urlopen(Request(url, headers=UA), timeout=timeout).read()
+            try:
+                t = raw.decode("utf-8")
+                # 깨짐 감지: 대체문자가 많으면 EUC-KR로 재시도
+                if t.count("\ufffd") > len(t) // 500:
+                    raise UnicodeDecodeError("utf-8", b"", 0, 1, "mangled")
+                return t
+            except (UnicodeDecodeError, ValueError):
+                return raw.decode("euc-kr", errors="replace")
+        except Exception as e:
+            last = e
+            if i < retries - 1:
+                print(f"  재시도 {i+1}/{retries}: {e}", file=sys.stderr)
+                time.sleep(5 * (i + 1))
+    raise last
 
 ROW_RE = re.compile(
     r'alt="([^"]+)"[^>]*>\s*</div>\s*<a[^>]*?fn_apmView\(\'020\', \'(\d+)\'\)[^>]*?>(.+?)</a>\s*</td>\s*'
