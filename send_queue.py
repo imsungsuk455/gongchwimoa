@@ -117,7 +117,8 @@ def publish_reply(uid, token, reply_to, text):
     return None
 
 def git_claim(msg):
-    """상태 파일을 커밋/푸시. 실패(충돌) 시 False — 다른 실행이 먼저 점유한 것."""
+    """상태 파일을 커밋/푸시. 실패(충돌) 시 False — 다른 실행이 먼저 점유한 것.
+    순서: commit 먼저 → pull --rebase → push. (pull을 먼저 하면 로컬 unstaged 변경 때문에 실패)"""
     import subprocess
     for _ in range(3):
         subprocess.run(["git", "config", "user.name", "gongchwimoa-bot"],
@@ -125,14 +126,14 @@ def git_claim(msg):
         subprocess.run(["git", "config", "user.email",
                         "gongchwimoa-bot@users.noreply.github.com"],
                        capture_output=True, text=True)
-        r = subprocess.run(["git", "pull", "--rebase", "origin", "main"],
-                           capture_output=True, text=True)
-        if r.returncode != 0:
-            return False
         r = subprocess.run(["git", "commit", "-m", msg, "--",
                             QUEUE_JSON, "publish_state.json"],
                            capture_output=True, text=True)
         if r.returncode != 0 and "nothing to commit" not in r.stderr:
+            return False
+        r = subprocess.run(["git", "pull", "--rebase", "origin", "main"],
+                           capture_output=True, text=True)
+        if r.returncode != 0:
             return False
         r = subprocess.run(["git", "push"], capture_output=True, text=True)
         if r.returncode == 0:
