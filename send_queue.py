@@ -194,6 +194,10 @@ def main():
         s["status"] = "claiming"
     save(buf)
     if not git_claim(f"Threads claim: {', '.join(s['slot'] for s in due)}"):
+        # 점유 실패 → claiming 상태를 pending으로 되돌려 다음 실행이 발송 가능하게
+        for s in due:
+            s["status"] = "pending"
+        save(buf)
         print("점유 실패 (다른 실행이 먼저 진행). 중복 발송 방지로 종료.", file=sys.stderr)
         sys.exit(0)
     for s in over:
