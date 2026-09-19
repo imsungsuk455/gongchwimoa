@@ -13,7 +13,7 @@ from urllib.request import Request, urlopen
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE)
-from fetch_jobs import exact_url, priority_key, assign_slots, thread_text, infer_type, prune_expired, is_school_job, extract_pay  # noqa
+from fetch_jobs import exact_url, priority_key, assign_slots, thread_text, infer_type, prune_expired, is_school_job, extract_pay, ymd8  # noqa
 import quota
 
 JOBS_JSON = os.path.join(BASE, "jobs.json")
@@ -23,6 +23,52 @@ MAX_PAGES = int(os.environ.get("GOJOBS_PAGES", "3"))
 ARTICLES_PER_DAY = int(os.environ.get("ARTICLES_PER_DAY", "5"))
 MAX_THREADS_PER_DAY = int(os.environ.get("MAX_THREADS_PER_DAY", "10"))
 UA = {"User-Agent": "Mozilla/5.0"}
+
+# 잡알리오(ALIO) 공공기관 채용공시 API
+ALIO_API = "https://opendata.alio.go.kr/new/v1/recruit/list.do"
+ALIO_KEY = os.environ.get("ALIO_API_KEY", "")
+
+def fetch_alio():
+    """잡알리오 채용공시 목록 → 표준 job dict. 공식 API 데이터라 링크 검증 생략 가능."""
+    if not ALIO_KEY:
+        return []
+    try:
+        params = {"serviceKey": ALIO_KEY, "numOfRows": 100, "pageNo": 1,
+                  "ongoingYn": "Y", "resultType": "json"}
+        req = Request(ALIO_API + "?" + urlencode(params), data=b"", method="POST")
+        with urlopen(req, timeout=40) as r:
+            data = json.loads(r.read().decode("utf-8", "replace"))
+    except Exception as e:
+        print(f"ALIO(잡알리오) 수집 실패: {e}", file=sys.stderr)
+        return []
+    items = []
+    for it in data.get("result", []) or []:
+        sn = it.get("recrutPblntSn")
+        title = it.get("recrutPbancTtl") or ""
+        if not sn or not title or is_announcement(title):
+            continue
+        deadline = ymd8(it.get("pbancEndYmd") or "")
+        if not deadline:
+            continue
+        org = (it.get("instNm") or "").strip()
+        region = (it.get("workRgnNmLst") or "").split(",")[0].strip()
+        qual = (it.get("aplyQlfcCn") or "").strip()
+        items.append({
+            "id": "alio-" + str(sn),
+            "title": title,
+            "org": org,
+            "category": "공공기관",
+            "type": infer_type(title),
+            "region": region or "전국",
+            "posted": ymd8(it.get("pbancBgngYmd") or "") or datetime.date.today().isoformat(),
+            "deadline": deadline,
+            "tags": [],
+            "summary": ["공공기관 채용공시", "세부 조건은 원문 공고문 확인"],
+            "source": "잡알리오",
+            "url": it.get("srcUrl") or f"https://job.alio.go.kr/recruitview.do?idx={sn}",
+            "excerpt": qual[:600] if len(qual) > 20 else None,
+        })
+    return items
 
 ICON_CAT = {"공공": "공공기관", "지자체": "지자체", "국가": "국가기관", "교육": "교육청"}
 
@@ -173,10 +219,18 @@ def main():
             break
         fresh_all += [r for r in rows if r["id"] not in old_ids]
     print(f"목록 수집: 신규 후보 {len(fresh_all)}건")
+    # 잡알리오(ALIO) 병합
+    alio = [a for a in fetch_alio() if a["id"] not in old_ids]
+    if alio:
+        print(f"ALIO(잡알리오): 신규 {len(alio)}건")
+        fresh_all += alio
     today = datetime.date.today().isoformat()
     fresh_all = [x for x in fresh_all if (x.get("deadline") or "") >= today]
     verified, rejected = [], []
     for job in fresh_all:
+        if job["id"].startswith("alio-"):
+            verified.append(job)  # 공식 API 데이터는 검증 생략
+            continue
         ok = enrich_and_verify(job)
         (verified if ok else rejected).append(job["id"] if not ok else ok)
     if rejected:

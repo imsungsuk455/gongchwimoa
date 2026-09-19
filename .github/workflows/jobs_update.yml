@@ -22,6 +22,7 @@ jobs:
           DATA_GO_KR_KEY: ${{ secrets.DATA_GO_KR_KEY }}
           GOJOBS_API_ENDPOINT: ${{ secrets.GOJOBS_API_ENDPOINT }}
           SITE_URL: ${{ secrets.SITE_URL }}
+          ALIO_API_KEY: ${{ secrets.ALIO_API_KEY }}
           MAX_THREADS_PER_DAY: '10'
       - name: 기사+썸네일 생성
         run: python gen_articles.py
