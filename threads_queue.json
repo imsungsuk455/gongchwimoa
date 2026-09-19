@@ -45,8 +45,9 @@
       "org": "인천광역시교육청 인천광역시남부교육지원청 인천주안북초등학교",
       "text": "\"인천 근무\"\n\n(인천주안북초) 2026 기간제특수교사(유,초,중등 특수교사 자격 가능) 채용… 모집중",
       "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-303999.html",
-      "status": "pending",
-      "approved": true
+      "status": "skipped",
+      "approved": true,
+      "skip_reason": "학교 교직 제외규칙(초등 기간제교사)"
     }
   ]
 }
