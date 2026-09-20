@@ -20,18 +20,6 @@
     },
     {
       "date": "2026-09-20",
-      "slot": "20:30",
-      "job_id": "gojobs-303938",
-      "org": "한국국제협력단",
-      "text": "\"이사장 공모\"\n\n한국국제협력단 임원(이사장) 공모 모집중",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-303938.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "18446963545193971",
-      "comment_id": "18114785249008264"
-    },
-    {
-      "date": "2026-09-20",
       "slot": "07:00",
       "job_id": "alio-305125",
       "org": "한전KPS(주)",
@@ -52,6 +40,18 @@
       "status": "skipped",
       "approved": true,
       "skip_reason": "학교 교직 제외규칙(초등 기간제교사)"
+    },
+    {
+      "date": "2026-09-20",
+      "slot": "20:30",
+      "job_id": "gojobs-303938",
+      "org": "한국국제협력단",
+      "text": "\"이사장 공모\"\n\n한국국제협력단 임원(이사장) 공모 모집중",
+      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-303938.html",
+      "status": "posted",
+      "approved": true,
+      "post_id": "18446963545193971",
+      "comment_id": "18114785249008264"
     }
   ]
 }
