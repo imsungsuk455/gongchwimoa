@@ -20,18 +20,6 @@
     },
     {
       "date": "2026-09-20",
-      "slot": "07:00",
-      "job_id": "alio-305125",
-      "org": "한전KPS(주)",
-      "text": "\"정규직\"\n\n한전KPS(주) 서울경기전력지사 성남지점 상주감시자 모집 마감 D-3",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305125.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "18092928836146419",
-      "comment_id": "18115268441066909"
-    },
-    {
-      "date": "2026-09-20",
       "slot": "08:30",
       "job_id": "gojobs-303999",
       "org": "인천광역시교육청 인천광역시남부교육지원청 인천주안북초등학교",
@@ -42,16 +30,74 @@
       "skip_reason": "학교 교직 제외규칙(초등 기간제교사)"
     },
     {
-      "date": "2026-09-20",
-      "slot": "20:30",
-      "job_id": "gojobs-303938",
-      "org": "한국국제협력단",
-      "text": "\"이사장 공모\"\n\n한국국제협력단 임원(이사장) 공모 모집중",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-303938.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "18446963545193971",
-      "comment_id": "18114785249008264"
+      "date": "2026-09-21",
+      "slot": "07:00",
+      "job_id": "gojobs-303965",
+      "org": "국립새만금간척박물관",
+      "text": "\"정규직\"\n\n국립새만금간척박물관 임원(관장) 모집 공고 모집중",
+      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-303965.html",
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-21",
+      "slot": "08:30",
+      "job_id": "alio-305137",
+      "org": "한전KDN",
+      "text": "\"정규직\"\n\n한전KDN(주) 대전충남본부 AMI분야 작업원(장애인) 추가 모집공고 모집중",
+      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305137.html",
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-21",
+      "slot": "10:00",
+      "job_id": "alio-305154",
+      "org": "극지연구소",
+      "text": "\"정규직\"\n\n2026년 하반기 극지연구소 연수생 채용 공고 모집중",
+      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305154.html",
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-21",
+      "slot": "11:30",
+      "job_id": "gojobs-304000",
+      "org": "국가유산청 자연유산국 지질유산팀",
+      "text": "국가유산청 지질유산팀 공무직근로자 채용 공고 모집중",
+      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-304000.html",
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-21",
+      "slot": "13:00",
+      "job_id": "gojobs-303973",
+      "org": "경북대학교",
+      "text": "2026년도 제2회 경북대학교 국제처 글로벌교육센터 기간제 계약직원 공개경쟁… 모집중",
+      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-303973.html",
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-21",
+      "slot": "14:30",
+      "job_id": "gojobs-303717",
+      "org": "서울특별시교육청 송곡관광고등학교",
+      "text": "\"서울 근무\"\n\n송곡관광고등학교 기간제근로자(현장실습보조인력) 채용 공고 모집중",
+      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-303717.html",
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-21",
+      "slot": "16:00",
+      "job_id": "alio-305156",
+      "org": "한국토지주택공사",
+      "text": "한국토지주택공사 대전충남지역본부 기간제근로자 채용공고 모집중",
+      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305156.html",
+      "status": "pending",
+      "approved": true
     }
   ]
 }
