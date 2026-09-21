@@ -44,6 +44,9 @@ def infer_type(title):
         return "기간제"
     if "임기제" in t or "개방형" in t:
         return "임기제"
+    # 임원 공모 계열 (상임/비상임 이사·감사·사장·원장·관장 — 정규직 오표기 금지, 2026-09-22 확정)
+    if any(k in t for k in ["상임", "비상임", "임원", "이사장", "이사", "감사", "사장", "원장", "관장"]):
+        return "임원"
     return "정규직"
 
 def ymd8(s):
@@ -175,7 +178,7 @@ def priority_key(job):
         left = 999
     salary = 0 if has_salary(job) else 1
     t = job.get("type", "")
-    if t == "정규직":
+    if t in ("정규직", "임원"):
         type_rank = 0
     elif t == "일용직":
         type_rank = 3  # 단기노무·한시인력 등은 최하위 (스레드 도배 방지)
@@ -321,6 +324,8 @@ def short_title(title, limit=44):
 def thread_hook(job):
     """첫줄 후크 우선순위: 정규직 → 급여 → 서울·수도권 → 마감3일이내 → 없음.
     기간제·일용직은 강조하지 않음 (해당 없으면 첫줄 생략)."""
+    if job.get("type") == "임원":
+        return "이사장 공모" if "이사장" in (job.get("title") or "") else "임원 공모"
     if job.get("type") == "정규직":
         return "정규직"
     if job.get("type") == "일용직":
