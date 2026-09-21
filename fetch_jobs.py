@@ -37,7 +37,10 @@ def infer_type(title):
         return "일용직"
     if any(k in t for k in ["공무직", "무기계약", "집배원", "시설관리원", "미화", "조리원", "운전원"]):
         return "공무직"
-    if "기간제" in t:
+    # 연수·실습·임시 계열 (정규직 오표기 금지 — 2026-09-21 확정)
+    if any(k in t for k in ["연수생", "연수단원", "실습생", "현장실습", "인턴"]):
+        return "연수/실습"
+    if "기간제" in t or "임시직" in t:
         return "기간제"
     if "임기제" in t or "개방형" in t:
         return "임기제"
