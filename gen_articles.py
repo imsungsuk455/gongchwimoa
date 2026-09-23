@@ -8,7 +8,8 @@ jobs.json -> articles/{id}.html 기사형 페이지 자동생성.
 - 썸네일 기본옵션: PIL 로컬렌더 (카테고리 색상 + 공고제목 텍스트, 1200x630).
   외부 AI 이미지 없이 cron에서 즉시 생성. 비용 0원. thumbnails/{id}.png
 """
-import json, os, datetime, hashlib
+import json, os, re, datetime, hashlib
+import html as htmlmod
 
 # 썸네일: PIL 로컬 렌더가 기본값 (외부 API 불필요, cron 즉시 생성, 비용 0원)
 from PIL import Image, ImageDraw, ImageFont
@@ -311,6 +312,53 @@ def build(job, all_jobs):
     html += body + HTML_TAIL.format(rels=rel_html, source=job["source"])
     return html
 
+SEO_LIST_N = 40  # 홈페이지 정적 SEO 목록 개수
+SEO_JSONLD_N = 20  # 정적 JSON-LD에 넣을 개수
+
+def build_index_seo(jobs, today):
+    """index.html용 정적 SEO 블록: 진행중 공고 링크 목록 + ItemList JSON-LD.
+    JS 렌더 전에도 크롤러가 내부 링크를 발견하도록 (서치콘솔 미색인 대응, 2026-09-23)."""
+    live = sorted([j for j in jobs if (j.get("deadline") or "") >= today],
+                  key=lambda x: (x.get("posted") or "", x["deadline"]), reverse=True)
+    top = live[:SEO_LIST_N]
+    lis = "\n".join(
+        f'<li><a href="articles/{j["id"]}.html">[{htmlmod.escape(j.get("category", ""), quote=False)}] '
+        f'{htmlmod.escape(j.get("title", ""), quote=False)} — 마감 {j.get("deadline", "")}</a></li>'
+        for j in top)
+    items = []
+    for i, j in enumerate(top[:SEO_JSONLD_N], 1):
+        items.append({
+            "@type": "ListItem", "position": i,
+            "item": {"@type": "JobPosting",
+                     "name": j.get("title", ""),
+                     "title": j.get("title", ""),
+                     "url": f"{SITE_URL}articles/{j['id']}.html",
+                     "hiringOrganization": {"@type": "Organization", "name": j.get("org", "")},
+                     "datePosted": j.get("posted", ""),
+                     "validThrough": j.get("deadline", ""),
+                     "employmentType": j.get("type", ""),
+                     "jobLocation": {"@type": "Place", "address": "KR"}}})
+    ld = {"@context": "https://schema.org", "@type": "ItemList",
+          "name": "공취모아 최신 등록 공고", "itemListElement": items}
+    return ("<!-- SEO_STATIC_START -->\n"
+            '<section class="seo-list" aria-label="최신 등록 공고">\n<h2>최신 등록 공고</h2>\n<ul>\n'
+            + lis + "\n</ul>\n</section>\n"
+            + '<script type="application/ld+json">'
+            + json.dumps(ld, ensure_ascii=False) + "</script>\n"
+            + "<!-- SEO_STATIC_END -->")
+
+def refresh_index_seo(jobs, today):
+    """index.html의 SEO 마커 구간을 최신 목록으로 교체. 마커 없으면 삽입."""
+    p = os.path.join(BASE, "index.html")
+    t = open(p, encoding="utf-8").read()
+    block = build_index_seo(jobs, today)
+    if "SEO_STATIC_START" in t:
+        t = re.sub(r"<!-- SEO_STATIC_START -->.*?<!-- SEO_STATIC_END -->",
+                   lambda _: block, t, flags=re.S)
+    else:
+        t = t.replace("</footer>", block + "\n</footer>")
+    open(p, "w", encoding="utf-8").write(t)
+
 def main():
     import sys
     sys.path.insert(0, BASE)
@@ -340,14 +388,18 @@ def main():
         p = os.path.join(ART_DIR, j["id"] + ".html")
         with open(p, "w", encoding="utf-8") as f:
             f.write(build(j, jobs))
-    # sitemap 갱신
+    # sitemap 갱신 — 마감 지난 공고는 제외 (크롤 예산·색인 품질, 2026-09-23 수정)
+    # 파일 자체는 유지 (기존 외부/스레드 링크 404 방지). 제외된 것만 sitemap에서 빠짐.
     today = datetime.date.today().isoformat()
+    live_jobs = [j for j in jobs if (j.get("deadline") or "") >= today]
     urls = [f"  <url><loc>{SITE_URL}</loc><lastmod>{today}</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>"]
-    for j in jobs:
+    for j in live_jobs:
         urls.append(f"  <url><loc>{SITE_URL}articles/{j['id']}.html</loc><lastmod>{today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>")
     with open(os.path.join(BASE, "sitemap.xml"), "w", encoding="utf-8") as f:
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "\n".join(urls) + "\n</urlset>")
-    print(f"신규 기사 {len(targets)}건 + 썸네일 {len(targets)}건 + sitemap 갱신 완료.")
+    # 홈페이지 정적 SEO 블록 갱신 (2시간마다 최신 유지)
+    refresh_index_seo(jobs, today)
+    print(f"신규 기사 {len(targets)}건 + 썸네일 {len(targets)}건 + sitemap {len(live_jobs)}건(진행중) + index SEO 갱신 완료.")
 
 if __name__ == "__main__":
     main()

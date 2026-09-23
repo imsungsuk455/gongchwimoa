@@ -4,13 +4,17 @@
 set -e
 cd /root/public-jobs
 git pull --rebase origin main >/dev/null 2>&1 || true
+# .env 로드 (THREADS 토큰 등)
+if [ -f /root/.hermes/.env ]; then
+  set -a
+  . /root/.hermes/.env
+  set +a
+fi
 SLOT="$1"
 if [ -z "$SLOT" ]; then
   echo "슬롯 시각 필요: send_slot.sh 17:30"
   exit 1
 fi
-export THREADS_USER_ID="${THREADS_USER_ID:-}"
-export THREADS_ACCESS_TOKEN="${THREADS_ACCESS_TOKEN:-}"
 export THREADS_LIVE="1"
 python3 send_queue.py --slot "$SLOT"
 echo "DONE $SLOT"

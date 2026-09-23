@@ -86,7 +86,35 @@ ads = open(os.path.join(BASE, "ads.txt"), encoding="utf-8").read()
 check("ads.txt", "pub-3484572882367046" in ads, "ID 불일치")
 check("robots.txt", os.path.exists(os.path.join(BASE, "robots.txt")), "없음")
 sm = open(os.path.join(BASE, "sitemap.xml"), encoding="utf-8").read()
-check("sitemap", sm.count("<loc>") >= 1 + len(arts), "기사 URL 누락")
+check("sitemap", sm.count("<loc>") >= 1, "URL 없음")
+# sitemap은 진행중 공고만 (마감분 제외 — 2026-09-23 규칙)
+import json as _json, datetime as _dt
+_jobs = _json.load(open(os.path.join(BASE, "jobs.json"), encoding="utf-8"))
+_today = _dt.date.today().isoformat()
+_exp = {j["id"] for j in _jobs if (j.get("deadline") or "") < _today}
+_live = {j["id"] for j in _jobs if (j.get("deadline") or "") >= _today}
+check("sitemap-진행중", not any(f"articles/{i}.html" in sm for i in _exp), f"마감 {len(_exp)}건 중 sitemap 잔존")
+check("sitemap-누락", all(f"articles/{i}.html" in sm for i in _live), "진행중 기사 sitemap 누락")
+# 유형판정 회귀 테스트 (실측 오표기 재발 방지 — 2026-09-23)
+sys.path.insert(0, BASE)
+from fetch_jobs import infer_type
+TYPE_PROBES = {
+    "[한국수자원공사] 전남북부권지사 단기계약근로자(사무관리) 채용 공고": "일용직",
+    "내장산국립공원백암사무소 한시인력(국립공원지킴이) 채용 공고": "일용직",
+    "국회사무처 한시임기제공무원 7호(조경) 채용시험": "임기제",
+    "(재)인천여성가족재단 아이사랑꿈터운영지원단 보육직5급(정규직) 채용 공고": "정규직",
+    "한국마사회 임원(상임이사) 모집 공고": "임원",
+    "한국선원복지고용센터 이사장 모집 공고": "임원",
+    "서울특별시 서초구 시간선택제임기제공무원(교통행정) 채용계획 공고": "임기제",
+    "2026년 PAO 인턴 채용 공고": "연수/실습",
+    "계약직 연구원(데이터기반정책연구팀) 재공고": "기간제",
+}
+for _title, _want in TYPE_PROBES.items():
+    _got = infer_type(_title)
+    check("유형판정", _got == _want, f"'{_title[:22]}...' → {_got} (기대 {_want})")
+# 홈페이지 정적 SEO 블록 (JS 미실행 크롤러용 — 2026-09-23 규칙)
+_idx = open(os.path.join(BASE, "index.html"), encoding="utf-8").read()
+check("index-SEO", "SEO_STATIC_START" in _idx and _idx.count("articles/") >= 20, "정적 공고 링크 20개 미만")
 check("privacy", "애드센스" in open(os.path.join(BASE, "privacy.html"), encoding="utf-8").read(), "광고 쿠키 고지 누락")
 
 print(f"기사 {len(arts)}건 · 최소 한글자수 {min_ko}")

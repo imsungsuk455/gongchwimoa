@@ -7,8 +7,14 @@ COMMENT="$2"
 if [ -z "$TEXT" ]; then
   echo "본문 필요"; exit 1
 fi
-export THREADS_USER_ID=39460061993584477
-export THREADS_ACCESS_TOKEN=THAATDwBN1pWFBYlp4eWxLS3FNZAndQUGJScGFpaWxhbU5lUUx6SVAxTzdhYU5ROHNadXJWSXZAkTkcwRHFkcmZANTkZAfa1doQlBoMkdSUHhHM21nWi1Ibm9ZAd1dUUVNYM3VhMUJBeFJTRzVTX2t5aVNXNnZAxc0owVE5GcUFENjktY1hVUG9xX25QNy02M3NkTTAZD
+# .env 로드 (THREADS 토큰 등)
+if [ -f /root/.hermes/.env ]; then
+  set -a
+  . /root/.hermes/.env
+  set +a
+fi
+export THREADS_USER_ID="${THREADS_USER_ID:-}"
+export THREADS_ACCESS_TOKEN="${THREADS_ACCESS_TOKEN:-}"
 python3 - <<'PY'
 import os, json, sys, time
 from urllib.parse import urlencode
