@@ -47,8 +47,9 @@
       "org": "한국도로공사",
       "text": "\"임원 공모\"\n\n한국도로공사 비상임이사 공모 모집중",
       "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-303936.html",
-      "status": "pending",
-      "approved": true
+      "status": "skipped",
+      "approved": true,
+      "skip_reason": "임원 공모 제외 (취준생 대상 아님, 2026-09-24)"
     },
     {
       "date": "2026-09-24",
@@ -107,8 +108,9 @@
       "org": "한국마사회",
       "text": "\"임원 공모\"\n\n한국마사회 임원(상임이사) 모집 공고 모집중",
       "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-304304.html",
-      "status": "pending",
-      "approved": true
+      "status": "skipped",
+      "approved": true,
+      "skip_reason": "임원 공모 제외 (취준생 대상 아님, 2026-09-24)"
     },
     {
       "date": "2026-09-24",
@@ -117,8 +119,9 @@
       "org": "(재)목포문화재단",
       "text": "\"임원 공모\"\n\n2026년 목포시립도서관장 채용 공고 모집중",
       "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-304233.html",
-      "status": "pending",
-      "approved": true
+      "status": "skipped",
+      "approved": true,
+      "skip_reason": "임원 공모 제외 (취준생 대상 아님, 2026-09-24)"
     },
     {
       "date": "2026-09-24",
@@ -167,8 +170,9 @@
       "org": "한국토지주택공사",
       "text": "\"임원 공모\"\n\n한국토지주택공사 개방형 직위(감사실장, 준법감시관) 공모 모집중",
       "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-304085.html",
-      "status": "pending",
-      "approved": true
+      "status": "skipped",
+      "approved": true,
+      "skip_reason": "임원 공모 제외 (취준생 대상 아님, 2026-09-24)"
     },
     {
       "date": "2026-09-25",
@@ -217,8 +221,9 @@
       "org": "(재)인천광역시부평구문화재단",
       "text": "\"임원 공모\"\n\n(재)인천광역시부평구문화재단 대표이사 채용 공고 모집중",
       "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-304364.html",
-      "status": "pending",
-      "approved": true
+      "status": "skipped",
+      "approved": true,
+      "skip_reason": "임원 공모 제외 (취준생 대상 아님, 2026-09-24)"
     },
     {
       "date": "2026-09-25",
