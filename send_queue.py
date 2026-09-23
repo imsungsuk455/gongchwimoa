@@ -167,6 +167,24 @@ def main():
     dup = [s for s in due if s.get("job_id") in posted_ids]
     if dup:
         due = [s for s in due if s.get("job_id") not in posted_ids]
+    # 에이전트 미작성 기사 가드 (2026-09-23): 마커 없는 기사의 슬롯은 발송하지 않고 skip
+    guarded = []
+    for s in due:
+        ap = os.path.join(BASE, "articles", (s.get("job_id") or "") + ".html")
+        try:
+            ok = "<!-- agent-written -->" in open(ap, encoding="utf-8").read()
+        except Exception:
+            ok = False
+        if not ok:
+            s["status"] = "skipped"
+            s["skip_reason"] = "에이전트 미작성 기사 (노출 규칙)"
+            print(f"가드 skip: {s['date']} {s['slot']} {s['job_id']} (기사 미작성)")
+        else:
+            guarded.append(s)
+    due = guarded
+    if any(s.get("skip_reason") == "에이전트 미작성 기사 (노출 규칙)"
+           for s in buf.get("slots", [])):
+        save(buf)  # 가드 스킵 상태 저장
     over = []
     if not args.slot:
         # 일일 발송 상한: 금일 posted + 이번 발송 합계가 POSTS_PER_DAY를 넘지 않음. 초과분은 skip(영구).

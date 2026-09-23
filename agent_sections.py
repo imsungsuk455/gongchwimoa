@@ -133,6 +133,14 @@ def main():
     out = os.path.join(ART_DIR, job["id"] + ".html")
     with open(out, "w", encoding="utf-8") as f:
         f.write(html)
+    # 에이전트 작성 표시 (목록·사이트맵·스레드 노출 기준)
+    all_jobs2 = json.load(open(JOBS_JSON, encoding="utf-8"))
+    for x in all_jobs2:
+        if x["id"] == job["id"]:
+            x["aw"] = 1
+            break
+    json.dump(all_jobs2, open(JOBS_JSON, "w", encoding="utf-8"),
+              ensure_ascii=False, indent=2)
     print(f"기사 작성 완료: {out} (한글 {ko}자)")
 
 

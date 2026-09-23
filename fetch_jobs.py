@@ -54,6 +54,10 @@ def infer_type(title):
         return "연수/실습"
     if "기간제" in t or "임시직" in t or "계약직" in t or "초빙" in t or "위촉" in t:
         return "기간제"
+    if "비정규직" in t or "비정규" in t:
+        return "기간제"  # 비정규직 명시 공고 (2026-09-24 확정)
+    if "자원봉사" in t or "봉사자" in t:
+        return "기타"  # 자원봉사 모집 - 정규직 오표기 금지 (2026-09-24 확정)
     if "임기제" in t or "개방형" in t:
         return "임기제"
     return "정규직"
@@ -454,21 +458,9 @@ def main():
     if n_school:
         print(f"학교 교직 계열 {n_school}건 제외 (사이트 미반영)")
     save_jobs(merged)
-    # 스레드는 우선순위순으로 발송 버퍼에 적재 (오늘→내일 빈 슬롯). 발송은 send_queue.py가 정시에 처리.
-    # 사이트는 전부 반영, 스레드는 정규직 우선 + 학교 제외 상위 10건만.
-    import quota
-    allow = quota.remaining("threads", MAX_THREADS_PER_DAY)
-    today = datetime.date.today().isoformat()
-    pool = [x for x in verified if (x.get("deadline") or "") >= today and not is_school_job(x)]
-    skipped = len(verified) - len(pool)
-    picks = sorted(pool, key=priority_key)[:allow]
-    if skipped:
-        print(f"스레드 제외(학교) {skipped}건. 사이트에는 반영됨.")
-    quota.consume("threads", len(picks))
-    assigned, dropped = assign_slots(picks)
-    print(f"신규 {len(verified)}건 반영. 스레드 버퍼 배정 {len(assigned)}건" +
-          (f" ({', '.join(s['date']+' '+s['slot'] for s in assigned)})" if assigned else "") +
-          (f". 슬롯 만석으로 탈락 {len(dropped)}건" if dropped else "") + f": {QUEUE_JSON}")
+    # 스레드 슬롯 배정은 아침 에이전트가 담당 (에이전트 작성 기사만 노출 규칙, 2026-09-23).
+    # 수집 단계에서는 배정하지 않는다.
+    print(f"신규 {len(verified)}건 반영. 스레드 배정은 아침 큐 작업에서: {QUEUE_JSON}")
 
 if __name__ == "__main__":
     main()

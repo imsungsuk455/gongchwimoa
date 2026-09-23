@@ -87,14 +87,15 @@ check("ads.txt", "pub-3484572882367046" in ads, "ID 불일치")
 check("robots.txt", os.path.exists(os.path.join(BASE, "robots.txt")), "없음")
 sm = open(os.path.join(BASE, "sitemap.xml"), encoding="utf-8").read()
 check("sitemap", sm.count("<loc>") >= 1, "URL 없음")
-# sitemap은 진행중 공고만 (마감분 제외 — 2026-09-23 규칙)
+# sitemap은 에이전트 작성(aw=1) + 진행중 공고만 (2026-09-23 노출 규칙)
 import json as _json, datetime as _dt
 _jobs = _json.load(open(os.path.join(BASE, "jobs.json"), encoding="utf-8"))
 _today = _dt.date.today().isoformat()
+_aw = {j["id"] for j in _jobs if j.get("aw") == 1}
 _exp = {j["id"] for j in _jobs if (j.get("deadline") or "") < _today}
-_live = {j["id"] for j in _jobs if (j.get("deadline") or "") >= _today}
+_live = {j["id"] for j in _jobs if (j.get("deadline") or "") >= _today and j.get("aw") == 1}
 check("sitemap-진행중", not any(f"articles/{i}.html" in sm for i in _exp), f"마감 {len(_exp)}건 중 sitemap 잔존")
-check("sitemap-누락", all(f"articles/{i}.html" in sm for i in _live), "진행중 기사 sitemap 누락")
+check("sitemap-누락", all(f"articles/{i}.html" in sm for i in _live), "작성済 진행중 기사 sitemap 누락")
 # 유형판정 회귀 테스트 (실측 오표기 재발 방지 — 2026-09-23)
 sys.path.insert(0, BASE)
 from fetch_jobs import infer_type

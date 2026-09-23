@@ -318,7 +318,8 @@ SEO_JSONLD_N = 20  # 정적 JSON-LD에 넣을 개수
 def build_index_seo(jobs, today):
     """index.html용 정적 SEO 블록: 진행중 공고 링크 목록 + ItemList JSON-LD.
     JS 렌더 전에도 크롤러가 내부 링크를 발견하도록 (서치콘솔 미색인 대응, 2026-09-23)."""
-    live = sorted([j for j in jobs if (j.get("deadline") or "") >= today],
+    live = sorted([j for j in jobs if (j.get("deadline") or "") >= today
+                   and j.get("aw") == 1],  # 에이전트 작성분만 노출 (2026-09-23)
                   key=lambda x: (x.get("posted") or "", x["deadline"]), reverse=True)
     top = live[:SEO_LIST_N]
     lis = "\n".join(
@@ -388,10 +389,10 @@ def main():
         p = os.path.join(ART_DIR, j["id"] + ".html")
         with open(p, "w", encoding="utf-8") as f:
             f.write(build(j, jobs))
-    # sitemap 갱신 — 마감 지난 공고는 제외 (크롤 예산·색인 품질, 2026-09-23 수정)
+    # sitemap 갱신 - 에이전트 작성(aw=1) + 진행중 공고만 (2026-09-23 노출 규칙)
     # 파일 자체는 유지 (기존 외부/스레드 링크 404 방지). 제외된 것만 sitemap에서 빠짐.
     today = datetime.date.today().isoformat()
-    live_jobs = [j for j in jobs if (j.get("deadline") or "") >= today]
+    live_jobs = [j for j in jobs if (j.get("deadline") or "") >= today and j.get("aw") == 1]
     urls = [f"  <url><loc>{SITE_URL}</loc><lastmod>{today}</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>"]
     for j in live_jobs:
         urls.append(f"  <url><loc>{SITE_URL}articles/{j['id']}.html</loc><lastmod>{today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>")
