@@ -243,6 +243,11 @@ def main():
     kept = [x for x in kept if not is_school_job(x)]
     if n_school:
         print(f"학교 교직 계열 {n_school}건 제외 (사이트 미반영)")
+    from fetch_jobs import is_exec_job as _is_exec
+    n_exec = sum(1 for x in kept if _is_exec(x))
+    kept = [x for x in kept if not _is_exec(x)]
+    if n_exec:
+        print(f"임원 공모 {n_exec}건 제외 (취준생 대상 아님, 사이트 미반영)")
     json.dump(kept, open(JOBS_JSON, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
     # 스레드 슬롯 배정은 아침 에이전트가 담당 (에이전트 작성 기사만 노출 규칙, 2026-09-23).
     # 수집 단계에서는 배정하지 않는다.

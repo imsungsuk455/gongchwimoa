@@ -136,6 +136,16 @@ def assign_slots(picks):
         json.dump(buf, f, ensure_ascii=False, indent=2)
     return assigned, dropped
 
+# 임원 공모 판정 (수집 단계에서 제외 - 취준생 대상 아님, 2026-09-24)
+# infer_type의 임원 키워드와 동일 기준 (감사관·감사담당은 실무직이라 제외)
+EXEC_RE = re.compile(r"상임|비상임|임원|이사장|이사|사장|원장|관장|감사")
+
+def is_exec_job(job):
+    t = job.get("title", "") or ""
+    if any(k in t for k in ["감사관", "감사담당"]):
+        return False
+    return bool(EXEC_RE.search(t))
+
 # 학교 교직 계열 채용 제외 (시간강사·기간제교원·계약제교원).
 # 교육공무직원(시설관리·배식), 대학 계열(대학교·연구직)은 유지. 사이트·스레드 공통으로 수집 단계에서 거른다.
 SCHOOL_RE = re.compile(r"초등학교|중학교|고등학교|유치원|특수학교|학교\b")
@@ -334,29 +344,45 @@ def short_title(title, limit=44):
         t = (cut[:sp] if sp > 20 else cut).rstrip() + "…"
     return t
 
+PROF_HOOKS = ["임상병리사", "약무직", "간호사", "전문의", "의사", "약사", "변호사",
+              "연구직", "연구원", "보건직", "의료직", "수사관", "노무사", "회계사"]
+
 def thread_hook(job):
-    """첫줄 후크 우선순위: 정규직 → 급여 → 서울·수도권 → 마감3일이내 → 없음.
-    기간제·일용직은 강조하지 않음 (해당 없으면 첫줄 생략)."""
+    """첫줄 후크 우선순위 (2026-09-24 다변화):
+    급여 → 특별고용(청년인턴/보훈) → 수도권 → 마감임박(D0-3) → 전문직종 → 기관명 → 정규직 → 없음.
+    "정규직" 연발 방지: 더 구체적인 후크가 있으면 그걸 쓴다."""
+    title = job.get("title") or ""
     if job.get("type") == "임원":
-        return "이사장 공모" if "이사장" in (job.get("title") or "") else "임원 공모"
-    if job.get("type") == "정규직":
-        return "정규직"
+        return "이사장 공모" if "이사장" in title else "임원 공모"
     if job.get("type") == "일용직":
         return None  # 단기노무·한시인력 등은 "정규직" 오표기 금지 (스킬 규칙)
     if job.get("pay"):
         return job["pay"]
+    if "청년인턴" in title or "체험형" in title:
+        return "청년인턴"
+    if "보훈" in title:
+        return "보훈특별고용"
     if job.get("region") in CAPITAL_RE:
         return job["region"] + " 근무"
     try:
         days = (datetime.date.fromisoformat(job["deadline"]) - datetime.date.today()).days
     except Exception:
-        return None
+        days = 999
     if days <= 0:
         return "오늘 마감"
     if days == 1:
         return "내일 마감"
     if days <= 3:
         return f"마감 D-{days}"
+    for kw in PROF_HOOKS:
+        if kw in title:
+            return kw
+    if job.get("type") == "정규직":
+        org = (job.get("org") or "").replace("(주)", "").replace("주식회사", "").strip()
+        short = org.split()[-1] if org else ""
+        if 2 <= len(short) <= 8:
+            return short
+        return "정규직"
     return None
 
 def thread_text(job):
@@ -457,6 +483,11 @@ def main():
     merged = [x for x in merged if not is_school_job(x)]
     if n_school:
         print(f"학교 교직 계열 {n_school}건 제외 (사이트 미반영)")
+    # 임원 공모(상임/비상임 이사·감사 등)는 취준생 대상 아니라 수집 제외
+    n_exec = sum(1 for x in merged if is_exec_job(x))
+    merged = [x for x in merged if not is_exec_job(x)]
+    if n_exec:
+        print(f"임원 공모 {n_exec}건 제외 (사이트 미반영)")
     save_jobs(merged)
     # 스레드 슬롯 배정은 아침 에이전트가 담당 (에이전트 작성 기사만 노출 규칙, 2026-09-23).
     # 수집 단계에서는 배정하지 않는다.

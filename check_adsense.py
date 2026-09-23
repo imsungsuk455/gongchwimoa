@@ -93,7 +93,7 @@ _jobs = _json.load(open(os.path.join(BASE, "jobs.json"), encoding="utf-8"))
 _today = _dt.date.today().isoformat()
 _aw = {j["id"] for j in _jobs if j.get("aw") == 1}
 _exp = {j["id"] for j in _jobs if (j.get("deadline") or "") < _today}
-_live = {j["id"] for j in _jobs if (j.get("deadline") or "") >= _today and j.get("aw") == 1}
+_live = {j["id"] for j in _jobs if (j.get("deadline") or "") >= _today and j.get("aw") == 1 and j.get("type") != "임원"}
 check("sitemap-진행중", not any(f"articles/{i}.html" in sm for i in _exp), f"마감 {len(_exp)}건 중 sitemap 잔존")
 check("sitemap-누락", all(f"articles/{i}.html" in sm for i in _live), "작성済 진행중 기사 sitemap 누락")
 # 유형판정 회귀 테스트 (실측 오표기 재발 방지 — 2026-09-23)

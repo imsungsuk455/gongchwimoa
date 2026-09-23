@@ -56,6 +56,7 @@ def main():
 
     pool = [j for j in jobs
             if j.get("aw") == 1
+            and j.get("type") != "임원"  # 임원 공모 제외 (2026-09-24)
             and (j.get("deadline") or "") >= days[0]
             and j["id"] not in queued_ids
             and not is_school_job(j)
