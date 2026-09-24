@@ -349,6 +349,10 @@ def short_title(title, limit=44):
         # 그래도 길면 "채용공고" → "채용" 축약
         t = t.replace("채용공고", "채용")
     if len(t) > limit:
+        # 그래도 길면 쉼표 포함 괄호(역할 나열) 제거 → 그래도 길면 단어 자름
+        t = re.sub(r"\([^)]*,[^)]*\)", "", t)
+        t = re.sub(r"\s+", " ", t).strip()
+    if len(t) > limit:
         cut = t[:limit]
         sp = cut.rfind(" ")
         t = (cut[:sp] if sp > 20 else cut).rstrip() + "…"
