@@ -339,6 +339,13 @@ def short_title(title, limit=44):
     t = t.replace("경력경쟁임용시험", "임용시험").replace("공개모집 공고", "공개모집")
     t = re.sub(r"\s+", " ", t).strip()
     if len(t) > limit:
+        # 연도 표기 제거로 먼저 줄이기 (예: "2026년 9월 5차" → "9월 5차")
+        t = re.sub(r"\s*20\d{2}년(도)?\s*", " ", t)
+        t = re.sub(r"\s+", " ", t).strip()
+    if len(t) > limit:
+        # 그래도 길면 대괄호 기관명 제거 (예: "[국가과학기술연구회-...센터] NAIS..." → "NAIS...")
+        t = re.sub(r"^\[[^\]]*\]\s*", "", t).strip()
+    if len(t) > limit:
         cut = t[:limit]
         sp = cut.rfind(" ")
         t = (cut[:sp] if sp > 20 else cut).rstrip() + "…"
