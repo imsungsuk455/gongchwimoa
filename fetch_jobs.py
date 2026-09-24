@@ -399,7 +399,30 @@ def thread_text(job):
             else (f"마감 D-{days}" if days <= 3 else None))
     ending = "모집중" if (hook == urgent and urgent) else (urgent or "모집중")
     title = short_title(job.get("title", ""))
-    body = f"{title} {ending}\n\n전체 공고는 프로필 링크에서 👇"
+    body = f"{title} {ending}"
+    # 추가 정보 (2026-09-24): 데이터 기반 팩트 1~2줄. 급여 → 모집규모/직급 → 마감일 순.
+    extras = []
+    if job.get("pay"):
+        extras.append(f"급여 {job['pay']}")
+    for s in (job.get("summary") or []):
+        s = (s or "").strip()
+        if not s or any(g in s for g in ("세부 조건은", "공공기관 채용공시", "접수 ~")):
+            continue
+        if len(s) > 44:
+            continue
+        extras.append(s)
+        if len(extras) >= 2:
+            break
+    if ending == "모집중":
+        try:
+            left = (datetime.date.fromisoformat(d) - datetime.date.today()).days
+        except Exception:
+            left = 99
+        if 0 <= left <= 7:
+            extras.append(f"서류 마감 {d}까지")
+    if extras:
+        body += "\n" + "\n".join(extras[:2])
+    body += "\n\n전체 공고는 프로필 링크에서 👇"
     return f"\"{hook}\"\n\n{body}" if hook else body
 
 # 결과발표성 공고 제외 (채용速보 정체성 유지).
