@@ -426,7 +426,7 @@ def thread_text(job):
         if len(s) > 40 or s in body or (hook or "") in s:
             continue
         pts.append(s)
-    region = job.get("region") or ""
+    region = (job.get("region") or "").replace("전남광주", "광주·전남")
     if region and region != "전국" and region not in (hook or "") and region not in body:
         pts.append(f"{region} 근무")
     if ending == "모집중":
