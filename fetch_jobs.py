@@ -346,6 +346,9 @@ def short_title(title, limit=44):
         # 그래도 길면 대괄호 기관명 제거 (예: "[국가과학기술연구회-...센터] NAIS..." → "NAIS...")
         t = re.sub(r"^\[[^\]]*\]\s*", "", t).strip()
     if len(t) > limit:
+        # 그래도 길면 "채용공고" → "채용" 축약
+        t = t.replace("채용공고", "채용")
+    if len(t) > limit:
         cut = t[:limit]
         sp = cut.rfind(" ")
         t = (cut[:sp] if sp > 20 else cut).rstrip() + "…"
