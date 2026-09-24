@@ -91,7 +91,7 @@ def main():
             buf["slots"].append({
                 "date": d, "slot": slot, "job_id": j["id"], "org": org,
                 "text": thread_text(j),
-                "comment": f"자세한 사항 확인하러 가기 ▽\n{SITE_URL}articles/{j['id']}.html",
+                "comment": None,  # 댓글 링크 폐지 (2026-09-24, 도달률). 프로필 유도만 본문에.
                 "status": "pending", "approved": True})
             if org:
                 org_day.add(org)

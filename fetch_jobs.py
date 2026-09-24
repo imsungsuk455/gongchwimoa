@@ -386,6 +386,8 @@ def thread_hook(job):
     return None
 
 def thread_text(job):
+    """본문: 후크 + 요약제목 + 마침말 + 프로필 유도 (2026-09-24: 댓글 링크 폐지, 본문에 프로필 유도).
+    링크를 댓글에 달면 저품질 판정으로 도달률이 떨어지므로 댓글은 달지 않는다."""
     """스레드 본문: "후크"(있을 때만) + 빈줄 + 제목+마침말. 후크와 마침말 중복 방지."""
     hook = thread_hook(job)
     d = job["deadline"]
@@ -397,7 +399,7 @@ def thread_text(job):
             else (f"마감 D-{days}" if days <= 3 else None))
     ending = "모집중" if (hook == urgent and urgent) else (urgent or "모집중")
     title = short_title(job.get("title", ""))
-    body = f"{title} {ending}"
+    body = f"{title} {ending}\n\n전체 공고는 프로필 링크에서 👇"
     return f"\"{hook}\"\n\n{body}" if hook else body
 
 # 결과발표성 공고 제외 (채용速보 정체성 유지).
