@@ -1,0 +1,19 @@
+# Cloudflare Pages 캐시 정책 (엣지 HIT으로 TTFB 단축)
+# 주의: HTML/JSON을 엣지에서 HIT시키려면 대시보드 Cache Rules에서
+# "Eligible for cache"도 함께 켜야 함 (기본값은 DYNAMIC 우회)
+
+# id 주소 기사·썸네일: 발행 후 내용이 바뀌지 않음
+/articles/*:
+  Cache-Control: public, max-age=86400, s-maxage=2592000
+/thumbnails/*:
+  Cache-Control: public, max-age=86400, s-maxage=2592000
+
+# 홈·sitemap: 크론이 2시간마다 갱신
+/:
+  Cache-Control: public, max-age=600, s-maxage=3600
+/sitemap.xml:
+  Cache-Control: public, max-age=3600, s-maxage=3600
+
+# 공고 데이터: 2시간마다 갱신 (브라우저는 짧게, 엣지는 1시간)
+/jobs.json:
+  Cache-Control: public, max-age=600, s-maxage=3600
