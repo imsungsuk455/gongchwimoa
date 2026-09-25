@@ -53,66 +53,6 @@
     },
     {
       "date": "2026-09-24",
-      "slot": "10:00",
-      "job_id": "gojobs-304349",
-      "org": "국립소방병원",
-      "text": "\"약무직\"\n\n2026년 국립소방병원 약무직 3차 신규직원 채용 공고 모집중",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-304349.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "18123289006928565",
-      "comment_id": "18097868141640836"
-    },
-    {
-      "date": "2026-09-24",
-      "slot": "11:30",
-      "job_id": "alio-305268",
-      "org": "한국보훈복지의료공단",
-      "text": "\"보훈특별고용\"\n\n[대구보훈병원] 정규직 보건직(임상병리사) 채용 공고 모집중",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305268.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "17993121015043361",
-      "comment_id": "18121548283901441"
-    },
-    {
-      "date": "2026-09-24",
-      "slot": "13:00",
-      "job_id": "gojobs-304232",
-      "org": "우체국금융개발원",
-      "text": "\"서울 근무\"\n\n우체국금융개발원 2026년 9차 공개채용 모집중",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-304232.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "17926909797179913",
-      "comment_id": "18129255625809005"
-    },
-    {
-      "date": "2026-09-24",
-      "slot": "14:30",
-      "job_id": "gojobs-304203",
-      "org": "국방부 국군의무사령부 국군수도병원",
-      "text": "\"경기 근무\"\n\n26-4차 국군수도병원 주관 군무원(정신건강임상심리담당) 채용 공고 모집중",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-304203.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "18107619173186026",
-      "comment_id": "18085032566507049"
-    },
-    {
-      "date": "2026-09-24",
-      "slot": "16:00",
-      "job_id": "alio-305187",
-      "org": "한전KDN",
-      "text": "한전KDN(주) 진주지사 AMI 분야 비정규직(장애인) 모집공고 모집중",
-      "comment": "자세한 사항 확인하러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305187.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "18625538803028794",
-      "comment_id": "18120166097001844"
-    },
-    {
-      "date": "2026-09-24",
       "slot": "17:30",
       "job_id": "gojobs-304304",
       "org": "한국마사회",
@@ -132,50 +72,6 @@
       "status": "skipped",
       "approved": true,
       "skip_reason": "임원 공모 제외 (취준생 대상 아님, 2026-09-24)"
-    },
-    {
-      "date": "2026-09-24",
-      "slot": "20:30",
-      "job_id": "gojobs-304225",
-      "org": "축산물품질평가원",
-      "text": "\"축산물품질평가원\"\n\n2026년 하반기 운영직(사무일반) 채용 모집중\n· 운영직 다급 1명 소수 채용\n· 세종 근무\n· 마감 10-07까지\n\n전체 공고는 프로필 링크에서 👇",
-      "comment": null,
-      "status": "posted",
-      "approved": true,
-      "post_id": "18098473832059489"
-    },
-    {
-      "date": "2026-09-25",
-      "slot": "07:00",
-      "job_id": "gojobs-304228",
-      "org": "우체국금융개발원",
-      "text": "\"보훈특별고용\"\n\n우체국금융개발원 2026년 8차 공개채용(보훈특별고용) 모집중\n· 정규직 2명\n· 보훈 대상만 지원 가능\n· 마감 10-06까지\n\n전체 공고는 프로필 링크에서 👇",
-      "comment": null,
-      "status": "posted",
-      "approved": true,
-      "post_id": "18106271654243770"
-    },
-    {
-      "date": "2026-09-25",
-      "slot": "08:30",
-      "job_id": "alio-305165",
-      "org": "한전KDN",
-      "text": "\"한전KDN\"\n\n한전KDN 목포지사 AMI분야 비정규직 모집공고(재공고) 모집중\n· 재공고로 다시 열림\n· 광주·전남 근무\n· 마감 10-06까지\n\n전체 공고는 프로필 링크에서 👇",
-      "comment": null,
-      "status": "posted",
-      "approved": true,
-      "post_id": "17908986351539277"
-    },
-    {
-      "date": "2026-09-25",
-      "slot": "10:00",
-      "job_id": "alio-305335",
-      "org": "한국보훈복지의료공단",
-      "text": "\"전문의\"\n\n중앙보훈병원 전문의 채용 공고 모집중\n· 서울 근무\n· 마감 10-07까지\n\n전체 공고는 프로필 링크에서 👇",
-      "comment": null,
-      "status": "posted",
-      "approved": true,
-      "post_id": "18116220962058899"
     },
     {
       "date": "2026-09-25",
@@ -201,39 +97,6 @@
     },
     {
       "date": "2026-09-25",
-      "slot": "14:30",
-      "job_id": "gojobs-304210",
-      "org": "한국교원대학교",
-      "text": "\"교육공무원\"\n\n2026학년도 하반기 조교 신규채용 재공고 모집중\n· 조교 1명\n· 충북 근무\n· 마감 10-08까지\n\n전체 공고는 프로필 링크에서 👇",
-      "comment": null,
-      "status": "posted",
-      "approved": true,
-      "post_id": "18081245831338405"
-    },
-    {
-      "date": "2026-09-25",
-      "slot": "16:00",
-      "job_id": "gojobs-304356",
-      "org": "대구교육대학교",
-      "text": "\"국가공무원\"\n\n대구교육대학교 사서서기보 경력경쟁채용 공고 모집중\n· 사서서기보 1명\n· 대구 근무\n· 마감 10-09까지\n\n전체 공고는 프로필 링크에서 👇",
-      "comment": null,
-      "status": "posted",
-      "approved": true,
-      "post_id": "17969790900170602"
-    },
-    {
-      "date": "2026-09-25",
-      "slot": "17:30",
-      "job_id": "gojobs-304347",
-      "org": "국가과학기술연구회",
-      "text": "\"연구직\"\n\nNAIS 3차 정규직 채용 공고 모집중\n· 정규직 29명 대규모\n· 세종 근무\n· 마감 10-12까지\n\n전체 공고는 프로필 링크에서 👇",
-      "comment": null,
-      "status": "posted",
-      "approved": true,
-      "post_id": "17875920996567182"
-    },
-    {
-      "date": "2026-09-25",
       "slot": "19:00",
       "job_id": "gojobs-304364",
       "org": "(재)인천광역시부평구문화재단",
@@ -244,15 +107,204 @@
       "skip_reason": "임원 공모 제외 (취준생 대상 아님, 2026-09-24)"
     },
     {
-      "date": "2026-09-25",
+      "date": "2026-09-26",
+      "slot": "07:00",
+      "job_id": "gojobs-304377",
+      "org": "제주대학교",
+      "text": "\"연구원\"\n\n제주대학교 글로컬대학사업 선임연구원 및 연구원 채용 공고 모집중\n· 마감 10-02까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-26",
+      "slot": "08:30",
+      "job_id": "gojobs-304372",
+      "org": "세종특별자치시",
+      "text": "\"세종특별자치시\"\n\n2026년 세종특별자치시 청원경찰 임용시험 계획 공고 정정 모집중\n· 청원경찰 2명\n· 마감 10-02까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-26",
+      "slot": "10:00",
+      "job_id": "gojobs-304349",
+      "org": "국립소방병원",
+      "text": "\"약무직\"\n\n2026년 국립소방병원 약무직 3차 신규직원 채용 공고 모집중\n· 충북 근무\n· 마감 10-06까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-26",
+      "slot": "11:30",
+      "job_id": "alio-305268",
+      "org": "한국보훈복지의료공단",
+      "text": "\"임상병리사\"\n\n대구보훈병원 임상병리사 채용 공고 모집중\n· 마감 10-06까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-26",
+      "slot": "13:00",
+      "job_id": "gojobs-304232",
+      "org": "우체국금융개발원",
+      "text": "\"서울 근무\"\n\n우체국금융개발원 2026년 9차 공개채용 모집중\n· 정규직 21명 무기계약직 3명\n· 마감 10-06까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-26",
+      "slot": "14:30",
+      "job_id": "gojobs-304203",
+      "org": "국방부 국군의무사령부 국군수도병원",
+      "text": "\"경기 근무\"\n\n26-4차 국군수도병원 주관 군무원(정신건강임상심리담당) 채용 공고 모집중\n· 전문군무경력관 나군 1명\n· 마감 10-06까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-26",
+      "slot": "16:00",
+      "job_id": "gojobs-304225",
+      "org": "축산물품질평가원",
+      "text": "\"축산물품질평가원\"\n\n2026년 하반기 운영직(사무일반) 채용 모집중\n· 운영직(다급) 1명\n· 세종 근무\n· 마감 10-07까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-26",
+      "slot": "17:30",
+      "job_id": "gojobs-304374",
+      "org": "한국교원대학교",
+      "text": "\"한국교원대학교\"\n\n한국교원대학교 육성사업 전담직원(상담심리센터) 채용 공고 모집중\n· 연구원 1명\n· 충북 근무\n· 마감 10-08까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-26",
+      "slot": "19:00",
+      "job_id": "gojobs-304356",
+      "org": "대구교육대학교",
+      "text": "\"대구교육대학교\"\n\n대구교육대학교 국가공무원(사서서기보) 경력경쟁채용 공고 모집중\n· 사서서기보 1명\n· 마감 10-09까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-26",
       "slot": "20:30",
+      "job_id": "gojobs-304347",
+      "org": "국가과학기술연구회",
+      "text": "\"연구직\"\n\nNAIS-제3차 정규직(연구직, 연구기술직) 채용 공고 모집중\n· 정규직 29명\n· 세종 근무\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-27",
+      "slot": "07:00",
+      "job_id": "gojobs-304228",
+      "org": "우체국금융개발원",
+      "text": "\"보훈특별고용\"\n\n우체국금융개발원 2026년 8차 공개채용(보훈특별고용) 모집중\n· 정규직 2명\n· 전남 근무\n· 마감 10-06까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-27",
+      "slot": "08:30",
+      "job_id": "alio-305335",
+      "org": "한국보훈복지의료공단",
+      "text": "\"전문의\"\n\n중앙보훈병원 전문의 채용 공고 모집중\n· 서울 근무\n· 마감 10-07까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-27",
+      "slot": "10:00",
+      "job_id": "gojobs-304210",
+      "org": "한국교원대학교",
+      "text": "\"한국교원대학교\"\n\n2026학년도 하반기 조교(교육공무원) 신규채용 재공고 모집중\n· 조교(교육공무원) 1명\n· 충북 근무\n· 마감 10-08까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-27",
+      "slot": "11:30",
       "job_id": "alio-305272",
       "org": "경북대학교병원",
-      "text": "\"간호사\"\n\n칠곡경북대학교병원 9월 5차 임시직원 채용 모집중\n· 대구 근무\n· 마감 09-28까지 4일 남음\n· 임시직원\n\n전체 공고는 프로필 링크에서 👇",
+      "text": "\"내일 마감\"\n\n칠곡경북대학교병원 9월 5차 임시직원 채용 모집중\n· 대구 근무\n· 마감 09-28까지\n\n전체 공고는 프로필 링크에서 👇",
       "comment": null,
-      "status": "posted",
-      "approved": true,
-      "post_id": "18098386121636721"
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-27",
+      "slot": "13:00",
+      "job_id": "gojobs-304224",
+      "org": "과학기술정보통신부 우정사업본부 강원지방우정청 화천우체국",
+      "text": "\"마감 D-2\"\n\n2026년도 제7회 화천우체국 상시계약집배원(기간제) 채용 재공고(3차) 모집중\n· 강원 근무\n· 마감 09-29까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-27",
+      "slot": "14:30",
+      "job_id": "gojobs-304219",
+      "org": "서울특별시교육청 서울특별시강남서초교육지원청 휘문중학교",
+      "text": "\"서울 근무\"\n\n휘문중학교 교육공무직원(미화원) 초단시간근로자 채용 공고 모집중\n· 미화원(초단시간근로자) 1명\n· 마감 09-29까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-27",
+      "slot": "16:00",
+      "job_id": "gojobs-304037",
+      "org": "문화체육관광부 국립국악원 민속국악원",
+      "text": "\"장애인 제한경쟁\"\n\n(장애인 제한경쟁) 국립민속국악원 시설물관리원 채용 재공고 모집중\n· 전북 근무\n· 마감 09-29까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-27",
+      "slot": "17:30",
+      "job_id": "gojobs-304370",
+      "org": "전북특별자치도 진안군",
+      "text": "\"정년보장\"\n\n2026년 제2회 진안군 공무직근로자(정수시설관리원) 채용계획 재공고 모집중\n· 전북 근무\n· 마감 09-30까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-27",
+      "slot": "19:00",
+      "job_id": "alio-305188",
+      "org": "한국도로교통공단",
+      "text": "\"인천 근무\"\n\n[인천운전면허시험장] 실무계약직(환경관리) 채용 공고 모집중\n· 마감 09-30까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-09-27",
+      "slot": "20:30",
+      "job_id": "gojobs-304235",
+      "org": "문화체육관광부 국립중앙박물관",
+      "text": "\"서울 근무\"\n\n국립중앙박물관 (휴직대체)기간제 근로자(홍보지원) 채용 공고 모집중\n· 기간제 근로자(휴직대체) 1명\n· 마감 10-01까지\n\n전체 공고는 프로필 링크에서 👇",
+      "comment": null,
+      "status": "pending",
+      "approved": true
     }
   ]
 }
