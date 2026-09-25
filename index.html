@@ -76,6 +76,10 @@ body{font-family:Pretendard,-apple-system,"Noto Sans KR",sans-serif;background:v
 .seo-list ul{list-style:none;display:flex;flex-direction:column;gap:7px}
 .seo-list li a{color:#344054;text-decoration:none;font-size:.87rem;line-height:1.55}
 .seo-list li a:hover{color:var(--brand)}
+/* 더보기 */
+#moreWrap{display:none;text-align:center;margin:20px 0 6px}
+#moreBtn{border:1px solid var(--line);background:#fff;border-radius:999px;padding:12px 28px;cursor:pointer;font-size:.92rem;font-weight:700;color:var(--ink);font-family:inherit;box-shadow:var(--shadow)}
+#moreBtn:hover{border-color:var(--brand);color:var(--brand)}
 /* 푸터 */
 footer{margin-top:40px;text-align:center;font-size:.8rem;color:#98a2b3;line-height:2.1}
 footer a{color:#98a2b3;margin:0 7px;text-decoration:none}
@@ -114,6 +118,7 @@ footer a{color:#98a2b3;margin:0 7px;text-decoration:none}
 </div>
 <div class="meta" id="meta"></div>
 <div class="grid" id="list"></div>
+<div id="moreWrap"><button id="moreBtn" type="button">더보기</button></div>
 <!-- SEO_STATIC_START -->
 <section class="seo-list" aria-label="최신 등록 공고">
 <h2>최신 등록 공고</h2>
@@ -174,6 +179,8 @@ footer a{color:#98a2b3;margin:0 7px;text-decoration:none}
 let JOBS = [];
 let filter = "all";
 let sort = "deadline";
+const PAGE_SIZE = 30;
+let visibleCount = PAGE_SIZE;
 function dday(deadline){
   const t = new Date(deadline+"T23:59:59+09:00"), now = new Date();
   return Math.ceil((t-now)/86400000);
@@ -200,13 +207,12 @@ function render(){
   // 유효 공고 먼저, 마감된 공고는 뒤로 (정렬: 마감순/최신순)
   const live = sortJobs(arr.filter(j=>dday(j.deadline)>=0), false);
   const closed = sortJobs(arr.filter(j=>dday(j.deadline)<0), true);
+  const total = live.length + closed.length;
   const sortLabel = sort==="latest"?"최신순":"마감순";
-  document.getElementById("meta").textContent = "진행중 "+live.length+"건 · 마감 "+closed.length+"건 · "+sortLabel+" · "+new Date().toLocaleString("ko-KR")+" 기준";
   const card = j=>{
     const d = dday(j.deadline);
     const cls = d<=0?"d0":d<=3?"d3":d<=7?"d7":"rest";
     const label = d<0?"마감":d===0?"D-DAY":"D-"+d;
-    const schema = {"@context":"https://schema.org","@type":"JobPosting","title":j.title,"hiringOrganization":{"@type":"Organization","name":j.org},"datePosted":j.posted,"validThrough":j.deadline,"employmentType":j.type,"jobLocation":{"@type":"Place","address":"KR"}};
     return `<article class="card">
 <img class="thumb" src="thumbnails/${j.id}.png" alt="${j.title}" loading="lazy">
 <div class="body">
@@ -214,25 +220,41 @@ function render(){
 <h2><a href="articles/${j.id}.html">${j.title}</a></h2>
 <div class="org">${j.org} · ${j.region} · 등록 ${j.posted||"-"} · 마감 ${j.deadline}</div>
 <ul class="sum">${j.summary.map(s=>`<li>${s}</li>`).join("")}</ul>
-<script type="application/ld+json">${JSON.stringify(schema)}<\/script>
 <div class="links"><a class="btn main" href="articles/${j.id}.html">해설 보기</a><a class="btn ghost" href="${j.url}" target="_blank" rel="noopener">원문 ↗</a></div>
 </div></article>`;
   };
-  const html = live.map(card).join("")
-    + (closed.length ? `<div class="divider">▼ 마감된 공고 ${closed.length}건</div>` + closed.map(card).join("") : "");
+  // 페이징: 처음 30건만 렌더, 나머지는 더보기로 추가
+  const liveShown = live.slice(0, visibleCount);
+  let html = liveShown.map(card).join("");
+  let shown = liveShown.length;
+  if(closed.length && shown < visibleCount && liveShown.length >= live.length){
+    const closedShown = closed.slice(0, visibleCount - shown);
+    html += `<div class="divider">▼ 마감된 공고 ${closed.length}건</div>` + closedShown.map(card).join("");
+    shown += closedShown.length;
+  }
+  document.getElementById("meta").textContent = "진행중 "+live.length+"건 · 마감 "+closed.length+"건 · "+shown+"건 표시 · "+sortLabel+" · "+new Date().toLocaleString("ko-KR")+" 기준";
   box.innerHTML = html || "<p>조건에 맞는 공고가 없습니다.</p>";
+  const moreWrap = document.getElementById("moreWrap");
+  const moreBtn = document.getElementById("moreBtn");
+  if(shown < total){
+    moreWrap.style.display = "block";
+    moreBtn.textContent = "더보기 ("+shown+"/"+total+"건 · 남은 "+(total-shown)+"건)";
+  }else{
+    moreWrap.style.display = "none";
+  }
 }
 document.getElementById("tabs").addEventListener("click",e=>{
   if(e.target.tagName!=="BUTTON")return;
   document.querySelectorAll("#tabs button").forEach(b=>b.classList.remove("active"));
-  e.target.classList.add("active"); filter=e.target.dataset.f; render();
+  e.target.classList.add("active"); filter=e.target.dataset.f; visibleCount=PAGE_SIZE; render();
 });
 document.getElementById("sortTabs").addEventListener("click",e=>{
   if(e.target.tagName!=="BUTTON")return;
   document.querySelectorAll("#sortTabs button").forEach(b=>b.classList.remove("active"));
-  e.target.classList.add("active"); sort=e.target.dataset.s; render();
+  e.target.classList.add("active"); sort=e.target.dataset.s; visibleCount=PAGE_SIZE; render();
 });
-document.getElementById("q").addEventListener("input",render);
+document.getElementById("q").addEventListener("input",()=>{visibleCount=PAGE_SIZE;render();});
+document.getElementById("moreBtn").addEventListener("click",()=>{visibleCount+=PAGE_SIZE;render();});
 fetch("jobs.json").then(r=>r.json()).then(j=>{
   JOBS=j.filter(x=>x.aw===1 && x.type!=="임원");  // 에이전트 작성+임원제외만 노출 (2026-09-24 규칙)
   document.getElementById("stAll").textContent = JOBS.length;
