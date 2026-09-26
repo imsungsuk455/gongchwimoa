@@ -21,7 +21,7 @@ QUEUE_JSON = os.path.join(BASE, "threads_queue.json")
 LIST_URL = "https://www.gojobs.go.kr/apmList.do"
 MAX_PAGES = int(os.environ.get("GOJOBS_PAGES", "3"))
 ARTICLES_PER_DAY = int(os.environ.get("ARTICLES_PER_DAY", "5"))
-MAX_THREADS_PER_DAY = int(os.environ.get("MAX_THREADS_PER_DAY", "10"))
+MAX_THREADS_PER_DAY = int(os.environ.get("MAX_THREADS_PER_DAY", "5"))
 UA = {"User-Agent": "Mozilla/5.0"}
 
 # 잡알리오(ALIO) 공공기관 채용공시 API

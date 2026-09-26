@@ -11,11 +11,11 @@ import json, os, sys, datetime
 
 BASE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE)
-from fetch_jobs import (THREAD_SLOTS, priority_key, thread_text, is_school_job,
+from fetch_jobs import (THREAD_SLOTS, CONTENT_SLOT, priority_key, thread_text, is_school_job,
                         load_buffer, SITE_URL, QUEUE_JSON, JOBS_JSON)  # noqa
 
 RESULT_RE = ["합격자발표", "서류전형 합격자", "면접장소", "면접 장소", "최종합격"]
-MAX_PER_DAY = 10
+MAX_PER_DAY = 5  # 5슬롯제 (공고 4 + 콘텐츠 1, 2026-09-26)
 
 
 def is_result(job):
@@ -75,23 +75,34 @@ def main():
         if filled >= MAX_PER_DAY:
             print(f"{d}: 이미 {filled}건, 추가 없음")
             continue
+        # 콘텐츠 슬롯 (11:00): 아침 에이전트가 요일 시리즈로 본문 작성. 여기선 자리만 만든다.
+        used_now = {s.get("slot") for s in buf["slots"]
+                    if s.get("date") == d and s.get("status") in ("pending", "posted")}
+        if CONTENT_SLOT in THREAD_SLOTS and CONTENT_SLOT not in used_now and filled < MAX_PER_DAY:
+            buf["slots"].append({
+                "date": d, "slot": CONTENT_SLOT, "job_id": "editorial",
+                "org": "", "text": "", "comment": None,
+                "status": "pending", "approved": True})
+            used_now.add(CONTENT_SLOT)
+            filled += 1
+            print(f"배정: {d} {CONTENT_SLOT} editorial (본문은 아침에 작성)")
         for j in list(pool):
             if filled >= MAX_PER_DAY:
                 break
             org = (j.get("org") or "").strip()
             if org and org in org_day:
                 continue
-            # 빈 슬롯 찾기
+            # 빈 슬롯 찾기 (콘텐츠 슬롯 제외)
             used = {s.get("slot") for s in buf["slots"]
                     if s.get("date") == d and s.get("status") == "pending"}
-            free = [s for s in THREAD_SLOTS if s not in used]
+            free = [s for s in THREAD_SLOTS if s not in used and s != CONTENT_SLOT]
             if not free:
                 break
             slot = free[0]
             buf["slots"].append({
                 "date": d, "slot": slot, "job_id": j["id"], "org": org,
                 "text": thread_text(j),
-                "comment": None,  # 댓글 링크 폐지 (2026-09-24, 도달률). 프로필 유도만 본문에.
+                "comment": f"자세한 공고 보러 가기 ▽\n{SITE_URL}articles/{j['id']}.html",  # 댓글 링크 부활 (2026-09-26)
                 "status": "pending", "approved": True})
             if org:
                 org_day.add(org)

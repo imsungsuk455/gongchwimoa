@@ -70,8 +70,10 @@ def ymd8(s):
 # 사이트 기사: 하루 5건 (마감일순). 나머지는 다음날로 자동 이월.
 ARTICLES_PER_DAY = int(os.environ.get("ARTICLES_PER_DAY", "5"))
 # 스레드: 하루 5개 슬롯에 1건씩 (수집과 발송 분리. 버퍼에 쌓고 정시에 1건씩 꺼냄).
-MAX_THREADS_PER_DAY = int(os.environ.get("MAX_THREADS_PER_DAY", "10"))
-THREAD_SLOTS = [s.strip() for s in os.environ.get("THREAD_SLOTS", "07:00,08:30,10:00,11:30,13:00,14:30,16:00,17:30,19:00,20:30").split(",") if s.strip()]
+MAX_THREADS_PER_DAY = int(os.environ.get("MAX_THREADS_PER_DAY", "5"))
+THREAD_SLOTS = [s.strip() for s in os.environ.get("THREAD_SLOTS", "08:00,11:00,14:00,18:00,21:00").split(",") if s.strip()]
+# 11:00은 콘텐츠형 고정 슬롯 (공고 4 + 콘텐츠 1, 2026-09-26 5슬롯제)
+CONTENT_SLOT = os.environ.get("THREAD_CONTENT_SLOT", "11:00")
 KST = datetime.timezone(datetime.timedelta(hours=9))
 
 def _today():

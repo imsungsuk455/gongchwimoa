@@ -19,7 +19,7 @@ SITE_URL = os.environ.get("SITE_URL", "https://gongchwimoa.org/")
 KST = datetime.timezone(datetime.timedelta(hours=9))
 API = "https://graph.threads.net/v1.0"
 # 하루 실제 발송 상한 (배정 쿼터와 별개. 어제 밀린 분 포함, 금일 posted+발송 합계 기준)
-POSTS_PER_DAY = int(os.environ.get("MAX_POSTS_PER_DAY", "10"))
+POSTS_PER_DAY = int(os.environ.get("MAX_POSTS_PER_DAY", "5"))
 
 def sunday_digest():
     """일요일 20시 슬롯: 이번 주 마감 TOP5 자동 생성. 없으면 None."""
@@ -97,6 +97,16 @@ def publish_text(uid, token, text):
     cid = api_post(f"/{uid}/threads",
                    {"media_type": "TEXT", "text": text, "access_token": token})["id"]
     time.sleep(5)
+    mid = api_post(f"/{uid}/threads_publish",
+                   {"creation_id": cid, "access_token": token})["id"]
+    return mid
+
+def publish_image(uid, token, text, image_url):
+    """썸네일 첨부 발행 (2026-09-26). 실패하면 호출자가 TEXT로 폴백."""
+    cid = api_post(f"/{uid}/threads",
+                   {"media_type": "IMAGE", "image_url": image_url,
+                    "text": text, "access_token": token})["id"]
+    time.sleep(10)
     mid = api_post(f"/{uid}/threads_publish",
                    {"creation_id": cid, "access_token": token})["id"]
     return mid
@@ -223,8 +233,21 @@ def main():
         s["status"] = "skipped"
         print(f"상한 초과 skip: {s['slot']} {s['job_id']}")
     for s in due:
+        if not (s.get("text") or "").strip():
+            s["status"] = "skipped"
+            s["skip_reason"] = "본문 미작성 (콘텐츠 슬롯 등)"
+            print(f"빈 본문 skip: {s['slot']} {s['job_id']}")
+            continue
         try:
-            mid = publish_text(uid, token, s["text"])
+            jid = s.get("job_id") or ""
+            img = None
+            if jid and not jid.startswith("editorial"):
+                img = f"{SITE_URL}thumbnails/{jid}.png"
+            try:
+                mid = publish_image(uid, token, s["text"], img) if img else publish_text(uid, token, s["text"])
+            except Exception as ie:
+                print(f"  이미지 실패, 텍스트로 폴백: {ie}", file=sys.stderr)
+                mid = publish_text(uid, token, s["text"])
             rid = publish_reply(uid, token, mid, s["comment"]) if s.get("comment") else None
             s["status"] = "posted"
             s["post_id"] = mid
