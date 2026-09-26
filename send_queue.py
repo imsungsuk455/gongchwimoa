@@ -167,10 +167,15 @@ def main():
     today = now_kst().date().isoformat()
     cur = now_kst().strftime("%H:%M")
     due = sorted([s for s in buf.get("slots", [])
-           if s.get("status") == "pending" and s.get("approved", True)
+           if s.get("status") == "pending" and s.get("approved", False)
            and s.get("date") == today
            and (s.get("slot") == args.slot if args.slot else s.get("slot", "") <= cur)],
            key=lambda s: s.get("slot", ""))
+    held = [s for s in buf.get("slots", [])
+            if s.get("status") == "pending" and not s.get("approved", False)
+            and s.get("date") == today]
+    if held:
+        print(f"승인 대기 {len(held)}건: {', '.join(s.get('slot','') for s in held)}")
     # 중복 방지: 같은 job_id가 오늘 이미 posted면 남은 복제 슬롯은 skip
     posted_ids = {s.get("job_id") for s in buf.get("slots", [])
                   if s.get("status") == "posted" and s.get("date") == today}

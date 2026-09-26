@@ -82,7 +82,7 @@ def main():
             buf["slots"].append({
                 "date": d, "slot": CONTENT_SLOT, "job_id": "editorial",
                 "org": "", "text": "", "comment": None,
-                "status": "pending", "approved": True})
+                "status": "pending", "approved": False})  # 승인 후 발행 (2026-09-26)
             used_now.add(CONTENT_SLOT)
             filled += 1
             print(f"배정: {d} {CONTENT_SLOT} editorial (본문은 아침에 작성)")
