@@ -416,32 +416,33 @@ def thread_text(job):
     ending = "모집중" if (hook == urgent and urgent) else (urgent or "모집중")
     title = short_title(job.get("title", ""))
     body = f"{title} {ending}"
-    # 공고 포인트 3개 (2026-09-24): 리드카피 아래 짧고 정확한 팩트 3줄. 순서: 급여 → 규모/직급 → 지역 → 마감.
-    # 후크·제목과 겹치는 내용은 제외.
-    pts = []
+    # 추가 정보 (2026-09-26 복원): 짧은 팩트 1~2줄, 불릿 없음. 순서: 급여 → 규모/직급 → 지역 → 마감.
+    extras = []
     if job.get("pay") and job["pay"] not in (hook or ""):
-        pts.append(f"급여 {job['pay']}")
+        extras.append(f"급여 {job['pay']}")
     for s in (job.get("summary") or []):
         s = (s or "").strip()
         if not s or any(g in s for g in ("세부 조건은", "공공기관 채용공시", "접수 ~")):
             continue
-        if len(s) > 40 or s in body or (hook or "") in s:
+        if len(s) > 44 or s in body or (hook or "") in s:
             continue
-        pts.append(s)
+        extras.append(s)
+        if len(extras) >= 2:
+            break
     region = (job.get("region") or "").replace("전남광주", "광주·전남")
     if region and region != "전국" and region not in (hook or "") and region not in body:
-        pts.append(f"{region} 근무")
+        extras.append(f"{region} 근무")
     if ending == "모집중":
         try:
             left = (datetime.date.fromisoformat(d) - datetime.date.today()).days
         except Exception:
             left = 99
-        if 0 <= left <= 14:
-            pts.append(f"마감 {d[5:]}까지")
+        if 0 <= left <= 7:
+            extras.append(f"서류 마감 {d}까지")
     seen = set()
-    uniq = [p for p in pts if not (p in seen or seen.add(p))][:3]
+    uniq = [p for p in extras if not (p in seen or seen.add(p))][:2]
     if uniq:
-        body += "\n" + "\n".join(f"· {p}" for p in uniq)
+        body += "\n" + "\n".join(uniq)
     body += "\n\n전체 공고는 프로필 링크에서 👇"
     return f"\"{hook}\"\n\n{body}" if hook else body
 
