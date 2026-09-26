@@ -1,3 +1,35 @@
 User-agent: *
 Allow: /
+
+# AI 검색 인용 허용 (GEO): 학습/검색색인/실시간fetch 전부 Allow (인용 유입 목표)
+User-agent: GPTBot
+Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
+User-agent: ChatGPT-User
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: Claude-SearchBot
+Allow: /
+
+User-agent: Claude-User
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: Perplexity-User
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
 Sitemap: https://gongchwimoa.org/sitemap.xml
