@@ -39,12 +39,33 @@ def main():
         datetime.timezone(datetime.timedelta(hours=9))).date()
     days = [today.isoformat(),
             (today + datetime.timedelta(days=1)).isoformat()]
-    # 날짜 지난 posted 정리 + 기존 슬롯 유지
+    # 날짜 지난 posted 정리 + 기존 슬롯 유지.
+    # 정리 전 posted 기록을 posted_log.json에 누적 → 7일 내 발행분 재배정 방지 (2026-09-27)
+    LOG_JSON = os.path.join(BASE, "posted_log.json")
+    try:
+        posted_log = json.load(open(LOG_JSON, encoding="utf-8"))
+    except Exception:
+        posted_log = []
+    pruned = [s for s in buf.get("slots", [])
+              if s.get("status") == "posted" and s.get("date", "") < days[0]]
+    if pruned:
+        seen = {(e.get("job_id"), e.get("date")) for e in posted_log}
+        for s in pruned:
+            key = (s.get("job_id"), s.get("date"))
+            if key not in seen:
+                posted_log.append({"job_id": s.get("job_id"), "date": s.get("date")})
+                seen.add(key)
+        with open(LOG_JSON, "w", encoding="utf-8") as f:
+            json.dump(posted_log, f, ensure_ascii=False, indent=2)
+        print(f"posted 기록 {len(pruned)}건 누적")
     buf["slots"] = [s for s in buf.get("slots", [])
                     if not (s.get("status") == "posted"
                             and s.get("date", "") < days[0])]
     queued_ids = {s.get("job_id") for s in buf["slots"]
                   if s.get("status") in ("pending", "posted")}
+    cutoff = (today - datetime.timedelta(days=7)).isoformat()
+    recent_posted = {e.get("job_id") for e in posted_log
+                     if (e.get("date") or "") >= cutoff}
     art_dir = os.path.join(BASE, "articles")
 
     def has_article(j):
@@ -59,6 +80,7 @@ def main():
             and j.get("type") != "임원"  # 임원 공모 제외 (2026-09-24)
             and (j.get("deadline") or "") >= days[0]
             and j["id"] not in queued_ids
+            and j["id"] not in recent_posted  # 7일 내 발행분 재배정 방지 (2026-09-27)
             and not is_school_job(j)
             and not is_result(j)
             and has_article(j)]
