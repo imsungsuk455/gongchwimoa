@@ -390,6 +390,8 @@ def thread_hook(job):
         return "내일 마감"
     if days <= 3:
         return f"마감 D-{days}"
+    if job.get("type") == "공무직":
+        return "정년보장"
     for kw in PROF_HOOKS:
         if kw in title:
             return kw
