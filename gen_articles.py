@@ -320,7 +320,8 @@ def build_index_seo(jobs, today):
     JS 렌더 전에도 크롤러가 내부 링크를 발견하도록 (서치콘솔 미색인 대응, 2026-09-23)."""
     live = sorted([j for j in jobs if (j.get("deadline") or "") >= today
                    and j.get("aw") == 1  # 에이전트 작성분만 노출 (2026-09-23)
-                   and j.get("type") != "임원"],  # 임원 제외 (2026-09-24)
+                   and j.get("type") != "임원"  # 임원 제외 (2026-09-24)
+                   and not any(k in (j.get("title") or "") for k in ("전문의", "의사", "촉탁의", "공보의"))],  # 의사 관련 제외 (2026-09-27)
                   key=lambda x: (x.get("posted") or "", x["deadline"]), reverse=True)
     top = live[:SEO_LIST_N]
     lis = "\n".join(
@@ -394,7 +395,8 @@ def main():
     # 파일 자체는 유지 (기존 외부/스레드 링크 404 방지). 제외된 것만 sitemap에서 빠짐.
     today = datetime.date.today().isoformat()
     live_jobs = [j for j in jobs if (j.get("deadline") or "") >= today and j.get("aw") == 1
-                 and j.get("type") != "임원"]
+                 and j.get("type") != "임원"
+                 and not any(k in (j.get("title") or "") for k in ("전문의", "의사", "촉탁의", "공보의"))]
     urls = [f"  <url><loc>{SITE_URL}</loc><lastmod>{today}</lastmod><changefreq>hourly</changefreq><priority>1.0</priority></url>"]
     for j in live_jobs:
         urls.append(f"  <url><loc>{SITE_URL}articles/{j['id']}.html</loc><lastmod>{today}</lastmod><changefreq>daily</changefreq><priority>0.8</priority></url>")

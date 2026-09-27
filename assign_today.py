@@ -12,7 +12,7 @@ import json, os, sys, datetime
 BASE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE)
 from fetch_jobs import (THREAD_SLOTS, CONTENT_SLOT, priority_key, thread_text, is_school_job,
-                        load_buffer, SITE_URL, QUEUE_JSON, JOBS_JSON)  # noqa
+                        is_specialist_job, load_buffer, SITE_URL, QUEUE_JSON, JOBS_JSON)  # noqa
 
 RESULT_RE = ["합격자발표", "서류전형 합격자", "면접장소", "면접 장소", "최종합격"]
 MAX_PER_DAY = 5  # 5슬롯제 (공고 4 + 콘텐츠 1, 2026-09-26)
@@ -78,7 +78,7 @@ def main():
     pool = [j for j in jobs
             if j.get("aw") == 1
             and j.get("type") != "임원"  # 임원 공모 제외 (2026-09-24)
-            and "전문의" not in (j.get("title") or "")  # 전문의 제외 (2026-09-27)
+            and not is_specialist_job(j)  # 의사 관련 제외 (2026-09-27)
             and (j.get("deadline") or "") >= days[0]
             and j["id"] not in queued_ids
             and j["id"] not in recent_posted  # 7일 내 발행분 재배정 방지 (2026-09-27)
