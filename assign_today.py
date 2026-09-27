@@ -124,7 +124,7 @@ def main():
             buf["slots"].append({
                 "date": d, "slot": slot, "job_id": j["id"], "org": org,
                 "text": thread_text(j),
-                "comment": f"자세한 공고 보러 가기 ▽\n{SITE_URL}articles/{j['id']}.html",  # 댓글 링크 부활 (2026-09-26)
+                "comment": None,  # 공고 글 댓글 링크 안 함 (2026-09-27 확정)
                 "status": "pending", "approved": True})
             if org:
                 org_day.add(org)
