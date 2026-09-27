@@ -212,8 +212,9 @@
       "org": "한국보훈복지의료공단",
       "text": "\"서울 근무 공공병원 전문의 정규직\"\n\n중앙보훈병원 전문의 채용 공고 모집중\n· 서울 근무\n· 마감 10-07까지\n\n전체 공고는 프로필 링크에서 👇",
       "comment": null,
-      "status": "pending",
-      "approved": true
+      "status": "skipped",
+      "approved": true,
+      "skip_reason": "전문의 제외 (2026-09-27)"
     },
     {
       "date": "2026-09-28",

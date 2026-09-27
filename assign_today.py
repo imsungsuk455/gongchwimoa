@@ -78,6 +78,7 @@ def main():
     pool = [j for j in jobs
             if j.get("aw") == 1
             and j.get("type") != "임원"  # 임원 공모 제외 (2026-09-24)
+            and "전문의" not in (j.get("title") or "")  # 전문의 제외 (2026-09-27)
             and (j.get("deadline") or "") >= days[0]
             and j["id"] not in queued_ids
             and j["id"] not in recent_posted  # 7일 내 발행분 재배정 방지 (2026-09-27)

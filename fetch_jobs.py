@@ -148,6 +148,10 @@ def is_exec_job(job):
         return False
     return bool(EXEC_RE.search(t))
 
+# 전문의 채용 제외 (면허 보유 전문가 시장이라 취준생 대상 아님, 2026-09-27)
+def is_specialist_job(job):
+    return "전문의" in (job.get("title", "") or "")
+
 # 학교 교직 계열 채용 제외 (시간강사·기간제교원·계약제교원).
 # 교육공무직원(시설관리·배식), 대학 계열(대학교·연구직)은 유지. 사이트·스레드 공통으로 수집 단계에서 거른다.
 SCHOOL_RE = re.compile(r"초등학교|중학교|고등학교|유치원|특수학교|학교\b")
@@ -536,6 +540,11 @@ def main():
     merged = [x for x in merged if not is_exec_job(x)]
     if n_exec:
         print(f"임원 공모 {n_exec}건 제외 (사이트 미반영)")
+    # 전문의 채용도 취준생 대상 아니라 수집 제외
+    n_spec = sum(1 for x in merged if is_specialist_job(x))
+    merged = [x for x in merged if not is_specialist_job(x)]
+    if n_spec:
+        print(f"전문의 {n_spec}건 제외 (사이트 미반영)")
     save_jobs(merged)
     # 스레드 슬롯 배정은 아침 에이전트가 담당 (에이전트 작성 기사만 노출 규칙, 2026-09-23).
     # 수집 단계에서는 배정하지 않는다.
