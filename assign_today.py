@@ -86,6 +86,8 @@ def main():
             and not is_result(j)
             and has_article(j)]
     pool = sorted(pool, key=priority_key)
+    # 새 공고 우선 (2026-09-28): posted 최신순을 1순위로. 같은 날짜 안에서는 기존 우선순위 유지 (stable).
+    pool = sorted(pool, key=lambda j: j.get("posted") or "", reverse=True)
     print(f"배정 후보: {len(pool)}건 (에이전트 작성·진행중)")
 
     added = 0
