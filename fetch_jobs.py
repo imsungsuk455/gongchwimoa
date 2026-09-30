@@ -406,7 +406,12 @@ def thread_hook(job):
         if 2 <= len(short) <= 8:
             return short
         return "정규직"
-    return None
+    # 후크 필수 (2026-09-30): 여기까지 못 정해졌으면 기관명으로. 따옴표 없는 글 금지.
+    org = (job.get("org") or "").replace("(주)", "").replace("주식회사", "").strip()
+    short = org.split()[-1] if org else ""
+    if 2 <= len(short) <= 10:
+        return short
+    return "신규 공고"
 
 def thread_text(job):
     """본문: 후크 + 요약제목 + 마침말 + 프로필 유도 (2026-09-24: 댓글 링크 폐지, 본문에 프로필 유도).
