@@ -182,9 +182,13 @@ def main():
     dup = [s for s in due if s.get("job_id") in posted_ids]
     if dup:
         due = [s for s in due if s.get("job_id") not in posted_ids]
-    # 에이전트 미작성 기사 가드 (2026-09-23): 마커 없는 기사의 슬롯은 발송하지 않고 skip
+    # 에이전트 미작성 기사 가드 (2026-09-23): 마커 없는 기사의 슬롯은 발송하지 않고 skip.
+    # 단, editorial(콘텐츠 슬롯)은 기사가 없으므로 승인 플래그만으로 판단 (2026-09-30).
     guarded = []
     for s in due:
+        if (s.get("job_id") or "").startswith("editorial"):
+            guarded.append(s)
+            continue
         ap = os.path.join(BASE, "articles", (s.get("job_id") or "") + ".html")
         try:
             ok = "<!-- agent-written -->" in open(ap, encoding="utf-8").read()

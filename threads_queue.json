@@ -209,9 +209,8 @@
       "org": "병무청 경인지방병무지청 경기북부병무지청",
       "text": "경기 근무 국가공무원 임상심리사\n\n경기북부병무지청 의료기술직 임상심리사 경력경쟁채용 공고 모집중\n의료기술서기 1명 · 경기 근무\n\n전체 공고는 프로필 링크에서 👇",
       "comment": null,
-      "status": "skipped",
-      "approved": true,
-      "skip_reason": "에이전트 미작성 기사 (노출 규칙)"
+      "status": "pending",
+      "approved": true
     },
     {
       "date": "2026-09-30",
@@ -220,8 +219,9 @@
       "org": "",
       "text": "공공기관 NCS 컷넘기. [공통] 응용수리 버리는 게 합격 지름길이야\n\n1. 자료해석만 매일 10문제씩 2주\n2. 안 풀리면 20초 안에 스킵\n3. 아낀 시간 의사소통에 몰빵\n\nNCS는 다 맞는 시험이 아니라 빨리 푸는 시험이야",
       "comment": null,
-      "status": "pending",
-      "approved": true
+      "status": "skipped",
+      "approved": true,
+      "skip_reason": "에이전트 미작성 기사 (노출 규칙)"
     },
     {
       "date": "2026-09-30",
