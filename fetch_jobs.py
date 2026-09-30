@@ -406,11 +406,14 @@ def thread_hook(job):
         if 2 <= len(short) <= 8:
             return short
         return "정규직"
-    # 후크 필수 (2026-09-30): 여기까지 못 정해졌으면 기관명으로. 따옴표 없는 글 금지.
-    org = (job.get("org") or "").replace("(주)", "").replace("주식회사", "").strip()
-    short = org.split()[-1] if org else ""
-    if 2 <= len(short) <= 10:
-        return short
+    # 후크 필수 (2026-09-30): 여기까지 못 정해졌으면 마감일로. 따옴표 없는 글 금지.
+    # 기관명 토막("유성구" 등)은 핵심 문구가 아니라서 쓰지 않는다.
+    try:
+        dd = (job.get("deadline") or "")[5:]
+        if dd:
+            return f"마감 {dd}까지"
+    except Exception:
+        pass
     return "신규 공고"
 
 def thread_text(job):
