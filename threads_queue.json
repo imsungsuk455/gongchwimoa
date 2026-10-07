@@ -175,10 +175,10 @@
       "slot": "11:00",
       "job_id": "editorial",
       "org": "",
-      "text": "",
+      "text": "공공기관 면접관 속마음. [공통] 답변이 끝나자마자 점수가 먼저 지워졌다\n1. 모르는 질문에 아는 척 얼버무리면\n2. 면접관은 속으로 신뢰를 지운다\n3. 모른다 밝히고 배우는 방식을 붙여라",
       "comment": null,
       "status": "pending",
-      "approved": false
+      "approved": true
     },
     {
       "date": "2026-10-07",
