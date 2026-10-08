@@ -124,8 +124,9 @@
       "org": "",
       "text": "",
       "comment": null,
-      "status": "pending",
-      "approved": false
+      "status": "skipped",
+      "approved": false,
+      "skip_reason": "오래된 미승인 슬롯 정리"
     },
     {
       "date": "2026-09-28",
@@ -134,8 +135,9 @@
       "org": "",
       "text": "",
       "comment": null,
-      "status": "pending",
-      "approved": false
+      "status": "skipped",
+      "approved": false,
+      "skip_reason": "오래된 미승인 슬롯 정리"
     },
     {
       "date": "2026-09-28",
@@ -155,8 +157,9 @@
       "org": "",
       "text": "",
       "comment": null,
-      "status": "pending",
-      "approved": false
+      "status": "skipped",
+      "approved": false,
+      "skip_reason": "오래된 미승인 슬롯 정리"
     },
     {
       "date": "2026-10-07",
