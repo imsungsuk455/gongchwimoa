@@ -33,4 +33,6 @@ jobs:
           git config user.name "gongchwimoa-bot"
           git config user.email "gongchwimoa-bot@users.noreply.github.com"
           git add -A
-          git diff --cached --quiet || (git commit -m "Auto update: $(date -u +%Y-%m-%dT%H:%M)" && git push)
+          git diff --cached --quiet || git commit -m "Auto update: $(date -u +%Y-%m-%dT%H:%M)"
+git pull --rebase origin main || true
+git push || (git pull --rebase origin main && git push)
