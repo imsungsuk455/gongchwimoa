@@ -88,6 +88,16 @@ def main():
     pool = sorted(pool, key=priority_key)
     # 새 공고 우선 (2026-09-28): posted 최신순을 1순위로. 같은 날짜 안에서는 기존 우선순위 유지 (stable).
     pool = sorted(pool, key=lambda j: j.get("posted") or "", reverse=True)
+    # mopy식 선별 (2026-10-08): 기사에 연봉 수치 있는 공고를 최우선. 숫자가 후크가 된다.
+    import re as _re
+    def _has_salary(j):
+        try:
+            t = open(os.path.join(art_dir, j["id"] + ".html"), encoding="utf-8").read()
+            nums = _re.findall(r"(\d[\d,]*)\s*만원", t)
+            return any(int(x.replace(",", "")) >= 100 for x in nums)
+        except Exception:
+            return False
+    pool = sorted(pool, key=_has_salary, reverse=True)
     print(f"배정 후보: {len(pool)}건 (에이전트 작성·진행중)")
 
     added = 0
