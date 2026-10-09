@@ -28,6 +28,37 @@ def is_result(job):
     return False
 
 
+def article_pay_point(j):
+    """기사의 급여 섹션에서 첫 연봉 수치 읽기 (2026-10-09: 배정 시 자동 주입용).
+    반환: (표기, 주의딱지) — 주의딱지가 있으면 본문 포인트로만 쓰고 후크에는 안 쓴다."""
+    import re as _re
+    try:
+        t = open(os.path.join(BASE, "articles", j["id"] + ".html"), encoding="utf-8").read()
+    except Exception:
+        return None, False
+    m = _re.search(r"<h2>급여·근무조건 읽는 법</h2>\s*<p>(.*?)</p>", t, flags=_re.S)
+    if not m:
+        return None, False
+    para = _re.sub(r"<[^>]+>", "", m.group(1))
+    cands = list(_re.finditer(r"((?:초봉|평균\s*연봉|평균연봉|신입\s*초봉|연봉|월급|월|일급)\s*(?:은|는|이)?\s*\d[\d,]*\s*만원)", para))
+    if not cands:
+        return None, False
+    def _rank(m):
+        s = m.group(1)
+        if "초봉" in s or "신입" in s:
+            return 0
+        if "월급" in s or s.strip().startswith("월") or "일급" in s:
+            return 1
+        if "평균" in s:
+            return 3
+        return 2
+    pm = sorted(cands, key=_rank)[0]
+    label = _re.sub(r"\s+", " ", pm.group(1)).strip()
+    ctx = para[max(0, pm.start() - 60):pm.end() + 10]
+    caveat = any(k in ctx for k in ["유사", "참고", "집계", "추정", "원문에서 확인", "원문 확인"])
+    return label, caveat
+
+
 def main():
     try:
         sys.stdout.reconfigure(encoding="utf-8")
@@ -134,9 +165,22 @@ def main():
             if not free:
                 break
             slot = free[0]
+            text = thread_text(j)
+            pay_label, pay_caveat = article_pay_point(j)
+            if pay_label:
+                import re as _re2
+                lines = text.split("\n")
+                if lines and not _re2.search(r"\d", lines[0]):
+                    org_short = (org.split()[-1] if org else "") or (j.get("type") or "")
+                    if not pay_caveat:
+                        lines[0] = f'"{pay_label} {org_short}"'
+                        text = "\n".join(lines)
+                    elif len(lines) > 2 and not _re2.search(r"\d+\s*만원", text):
+                        lines.insert(2, pay_label + " 수준 (참고치, 원문 확인)")
+                        text = "\n".join(lines)
             buf["slots"].append({
                 "date": d, "slot": slot, "job_id": j["id"], "org": org,
-                "text": thread_text(j),
+                "text": text,
                 "comment": f"자세한 공고 보러 가기 ▽\n{SITE_URL}articles/{j['id']}.html",  # 공고 글 댓글 링크 (2026-10-02 확정)
                 "status": "pending", "approved": True})
             if org:
