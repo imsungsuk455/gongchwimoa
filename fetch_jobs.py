@@ -369,9 +369,8 @@ PROF_HOOKS = ["임상병리사", "약무직", "간호사", "전문의", "의사"
               "연구직", "연구원", "보건직", "의료직", "수사관", "노무사", "회계사"]
 
 def thread_hook(job):
-    """첫줄 후크 우선순위 (2026-09-24 다변화):
-    급여 → 특별고용(청년인턴/보훈) → 수도권 → 마감임박(D0-3) → 전문직종 → 기관명 → 정규직 → 없음.
-    "정규직" 연발 방지: 더 구체적인 후크가 있으면 그걸 쓴다."""
+    """첫줄 후크 우선순위 (2026-10-09 확정): 연봉수치 > 정년보장 > 무기계약직 > 기업속성(기관명).
+    숫자 없으면 정년, 그것도 없으면 무기계약, 그것도 없으면 기관명으로. 마감일 단독 후크 금지(최후 fallback만)."""
     title = job.get("title") or ""
     if job.get("type") == "임원":
         return "이사장 공모" if "이사장" in title else "임원 공모"
@@ -379,32 +378,20 @@ def thread_hook(job):
         return None  # 단기노무·한시인력 등은 "정규직" 오표기 금지 (스킬 규칙)
     if job.get("pay"):
         return job["pay"]
+    if job.get("type") == "공무직" or "무기계약" in title:
+        return "정년보장"
     if "청년인턴" in title or "체험형" in title:
         return "청년인턴"
     if "보훈" in title:
         return "보훈특별고용"
-    if job.get("region") in CAPITAL_RE:
-        return job["region"] + " 근무"
-    try:
-        days = (datetime.date.fromisoformat(job["deadline"]) - datetime.date.today()).days
-    except Exception:
-        days = 999
-    if days <= 0:
-        return "오늘 마감"
-    if days == 1:
-        return "내일 마감"
-    if days <= 3:
-        return f"마감 D-{days}"
-    if job.get("type") == "공무직":
-        return "정년보장"
     for kw in PROF_HOOKS:
         if kw in title:
             return kw
+    org = (job.get("org") or "").replace("(주)", "").replace("주식회사", "").strip()
+    short = org.split()[-1] if org else ""
+    if 2 <= len(short) <= 8:
+        return short
     if job.get("type") == "정규직":
-        org = (job.get("org") or "").replace("(주)", "").replace("주식회사", "").strip()
-        short = org.split()[-1] if org else ""
-        if 2 <= len(short) <= 8:
-            return short
         return "정규직"
     # 후크 필수 (2026-09-30): 여기까지 못 정해졌으면 마감일로. 따옴표 없는 글 금지.
     # 기관명 토막("유성구" 등)은 핵심 문구가 아니라서 쓰지 않는다.
