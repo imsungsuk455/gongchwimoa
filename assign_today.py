@@ -166,24 +166,11 @@ def main():
             if not free:
                 break
             slot = free[0]
-            text = thread_text(j)
-            pay_label, pay_caveat = article_pay_point(j)
-            if pay_label:
-                import re as _re2
-                lines = text.split("\n")
-                if lines and not _re2.search(r"\d", lines[0]):
-                    org_short = (org.split()[-1] if org else "") or (j.get("type") or "")
-                    if not pay_caveat:
-                        lines[0] = f'"{pay_label} {org_short}"'
-                        text = "\n".join(lines)
-                    elif len(lines) > 2 and not _re2.search(r"\d+\s*만원", text):
-                        lines.insert(2, pay_label + " 수준 (참고치, 원문 확인)")
-                        text = "\n".join(lines)
             buf["slots"].append({
                 "date": d, "slot": slot, "job_id": j["id"], "org": org,
-                "text": text,
+                "text": "",  # 본문은 아침 에이전트가 직접 작성 (2026-10-09, 자동초안 폐지)
                 "comment": f"자세한 공고 보러 가기 ▽\n{SITE_URL}articles/{j['id']}.html",  # 공고 글 댓글 링크 (2026-10-02 확정)
-                "status": "pending", "approved": True})
+                "status": "pending", "approved": False})  # 에이전트 작성 후 승인 (2026-10-09)
             if org:
                 org_day.add(org)
             pool.remove(j)
