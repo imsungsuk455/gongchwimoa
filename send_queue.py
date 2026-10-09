@@ -230,6 +230,8 @@ def main():
             reason = f"마감 지남 ({j.get('deadline')})"
         elif (j.get("type") or "") == "임원" or is_exec_job(j) or is_specialist_job(j) or is_school_job(j) or is_result(j):
             reason = "제외 유형 혼입 (임원/학교/결과성/면허전문직)"
+        elif "전입" in (j.get("title") or ""):
+            reason = "전입희망자 (현직공무원 대상)"
         elif (j.get("org") or "").strip() in posted_orgs:
             reason = f"기관 중복 ({j.get('org')})"
         if reason:
