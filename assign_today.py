@@ -54,6 +54,7 @@ def article_pay_point(j):
         return 2
     pm = sorted(cands, key=_rank)[0]
     label = _re.sub(r"\s+", " ", pm.group(1)).strip()
+    label = _re.sub(r"^(초봉|평균\s*연봉|평균연봉|신입\s*초봉|연봉|월급|월|일급)[은는이]\s*", r"\1 ", label).strip()
     ctx = para[max(0, pm.start() - 60):pm.end() + 10]
     caveat = any(k in ctx for k in ["유사", "참고", "집계", "추정", "원문에서 확인", "원문 확인"])
     return label, caveat
