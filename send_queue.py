@@ -201,6 +201,48 @@ def main():
         else:
             guarded.append(s)
     due = guarded
+    # 발행 전 검증 게이트 (2026-10-09): 마감 지남·기관 중복·오표기(임원/학교/결과성/전문의·간호계열) 자동 차단.
+    try:
+        from fetch_jobs import is_school_job, is_specialist_job, is_exec_job
+        from assign_today import is_result
+    except Exception:
+        is_school_job = is_specialist_job = is_exec_job = is_result = lambda j: False
+    try:
+        jobs_by_id = {j.get("id"): j for j in json.load(open(os.path.join(BASE, "jobs.json"), encoding="utf-8"))}
+    except Exception:
+        jobs_by_id = {}
+    posted_orgs = set()
+    for s in buf.get("slots", []):
+        if s.get("status") == "posted" and s.get("date") == today:
+            j = jobs_by_id.get(s.get("job_id") or "")
+            if j and (j.get("org") or "").strip():
+                posted_orgs.add((j.get("org") or "").strip())
+    gated = []
+    for s in due:
+        if (s.get("job_id") or "").startswith("editorial"):
+            gated.append(s)
+            continue
+        j = jobs_by_id.get(s.get("job_id") or "")
+        reason = ""
+        if not j:
+            reason = "jobs.json에 없음"
+        elif (j.get("deadline") or "") < today:
+            reason = f"마감 지남 ({j.get('deadline')})"
+        elif (j.get("type") or "") == "임원" or is_exec_job(j) or is_specialist_job(j) or is_school_job(j) or is_result(j):
+            reason = "제외 유형 혼입 (임원/학교/결과성/면허전문직)"
+        elif (j.get("org") or "").strip() in posted_orgs:
+            reason = f"기관 중복 ({j.get('org')})"
+        if reason:
+            s["status"] = "skipped"
+            s["skip_reason"] = "발행 게이트 차단: " + reason
+            print(f"게이트 skip: {s['date']} {s['slot']} {s['job_id']} ({reason})")
+        else:
+            gated.append(s)
+            if j and (j.get("org") or "").strip():
+                posted_orgs.add((j.get("org") or "").strip())
+    due = gated
+    if any((s.get("skip_reason") or "").startswith("발행 게이트 차단") for s in buf.get("slots", [])):
+        save(buf)  # 게이트 스킵 상태 저장
     if any(s.get("skip_reason") == "에이전트 미작성 기사 (노출 규칙)"
            for s in buf.get("slots", [])):
         save(buf)  # 가드 스킵 상태 저장
