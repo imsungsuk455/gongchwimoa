@@ -73,7 +73,7 @@ ARTICLES_PER_DAY = int(os.environ.get("ARTICLES_PER_DAY", "5"))
 MAX_THREADS_PER_DAY = int(os.environ.get("MAX_THREADS_PER_DAY", "5"))
 THREAD_SLOTS = [s.strip() for s in os.environ.get("THREAD_SLOTS", "08:00,11:00,14:00,18:00,21:00").split(",") if s.strip()]
 # 11:00은 콘텐츠형 고정 슬롯 (공고 4 + 콘텐츠 1, 2026-09-26 5슬롯제)
-CONTENT_SLOT = os.environ.get("THREAD_CONTENT_SLOT", "11:00")
+CONTENT_SLOT = os.environ.get("THREAD_CONTENT_SLOT", "21:00")  # 블로그 요약 스레드는 21:00 (2026-10-13)
 KST = datetime.timezone(datetime.timedelta(hours=9))
 
 def _today():
