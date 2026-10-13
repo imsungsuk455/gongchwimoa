@@ -254,7 +254,7 @@
       "slot": "08:00",
       "job_id": "alio-305910",
       "org": "(재)한국통계정보원",
-      "text": "",
+      "text": "\"초봉 2,784만원대, 대전 통계기관 무기계약직\"\n\n한국통계정보원 2026-10 경력직 채용 모집중\n· 전산·데이터 분야 무기계약직, 경력 3년 이상\n· 학력·나이 제한 없음, 정년 보장, 대전 근무\n· 초봉 수치는 플랫폼 집계 참고치, 마감 10-26까지\n\n전체 공고는 프로필 링크에서 👇",
       "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305910.html",
       "status": "pending",
       "approved": false
@@ -264,8 +264,8 @@
       "slot": "11:00",
       "job_id": "editorial",
       "org": "",
-      "text": "",
-      "comment": null,
+      "text": "공공기관 면접관 속마음. [행정직] 면접 탈락 부르는 실수 TOP3\n1. 지원동기에 기관 사업명이 없음\n2. 마지막 한마디가 길어질수록 감점\n3. 모르는 질문에 둘러대면 바로 티남\n모른다고 말하고 배울 계획을 덧붙이세요",
+      "comment": "https://gongchwimoa.org/",
       "status": "pending",
       "approved": false
     },
@@ -274,7 +274,7 @@
       "slot": "14:00",
       "job_id": "alio-305918",
       "org": "대한법률구조공단",
-      "text": "",
+      "text": "\"나이만 맞으면 지원 가능, 법률구조공단 청년인턴\"\n\n대한법률구조공단 원주출장소 청년인턴 채용 모집중\n· 체험형, 만 18~34세, 전공·학력·거주지 제한 없음\n· 원주 근무, 공공기관 실무 경험+수료증 경력\n· 마감 10-27까지\n\n전체 공고는 프로필 링크에서 👇",
       "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305918.html",
       "status": "pending",
       "approved": false
@@ -284,7 +284,7 @@
       "slot": "18:00",
       "job_id": "gojobs-305394",
       "org": "경찰청 서울특별시경찰청 서울서초경찰서",
-      "text": "",
+      "text": "\"마감 5일뿐인 서초경찰서 시설관리 무기계약직\"\n\n서울서초경찰서 시설관리 공무직 채용 모집중\n· 무기계약직이라 정년 보장, 서울 근무\n· 유사 공고 연봉 3,126만원 참고치, 원문 확인\n· 마감 10-19까지, 서두르세요\n\n전체 공고는 프로필 링크에서 👇",
       "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-305394.html",
       "status": "pending",
       "approved": false
@@ -294,8 +294,58 @@
       "slot": "21:00",
       "job_id": "alio-305738",
       "org": "건강보험심사평가원",
-      "text": "",
+      "text": "\"스펙 안 보는 심평원 운영직 하반기 채용\"\n\n건강보험심사평가원 하반기 운영직 채용 모집중\n· 일반사무원 자격·경력 제한 없음, 보훈 전형 포함\n· 서울·부산·창원·수원 등 지역본부 배치\n· 마감 10-21까지\n\n전체 공고는 프로필 링크에서 👇",
       "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305738.html",
+      "status": "pending",
+      "approved": false
+    },
+    {
+      "date": "2026-10-15",
+      "slot": "08:00",
+      "job_id": "alio-305904",
+      "org": "기초과학연구원",
+      "text": "",
+      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305904.html",
+      "status": "pending",
+      "approved": false
+    },
+    {
+      "date": "2026-10-15",
+      "slot": "11:00",
+      "job_id": "alio-305955",
+      "org": "동남권원자력의학원",
+      "text": "",
+      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305955.html",
+      "status": "pending",
+      "approved": false
+    },
+    {
+      "date": "2026-10-15",
+      "slot": "14:00",
+      "job_id": "alio-305973",
+      "org": "한전KPS(주)",
+      "text": "",
+      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-305973.html",
+      "status": "pending",
+      "approved": false
+    },
+    {
+      "date": "2026-10-15",
+      "slot": "18:00",
+      "job_id": "gojobs-305532",
+      "org": "행정안전부 정부청사관리본부",
+      "text": "",
+      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-305532.html",
+      "status": "pending",
+      "approved": false
+    },
+    {
+      "date": "2026-10-15",
+      "slot": "21:00",
+      "job_id": "editorial",
+      "org": "",
+      "text": "",
+      "comment": null,
       "status": "pending",
       "approved": false
     }
