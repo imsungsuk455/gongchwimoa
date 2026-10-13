@@ -37,6 +37,9 @@ body{font-family:Pretendard,-apple-system,"Noto Sans KR",sans-serif;background:v
 .search{margin-left:auto;flex:0 1 340px;display:flex}
 .search input{width:100%;padding:10px 14px;border:1px solid var(--line);border-radius:999px;font-size:.92rem;background:#f8fafc;font-family:inherit}
 .search input:focus{outline:2px solid var(--brand);background:#fff}
+.navtab{display:flex;align-items:center}
+.navtab a{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 14px;font-size:.84rem;font-weight:700;color:#344054;text-decoration:none;transition:.15s}
+.navtab a:hover{border-color:var(--brand);color:var(--brand)}
 /* 히어로 */
 .hero{margin:22px 0 6px;background:linear-gradient(135deg,#0a2472 0%,#0b5fff 70%,#38bdf8 130%);border-radius:22px;color:#fff;padding:34px 28px;position:relative;overflow:hidden}
 .hero::after{content:"";position:absolute;right:-70px;top:-70px;width:260px;height:260px;border-radius:50%;background:rgba(255,255,255,.12)}
@@ -99,6 +102,7 @@ footer a{color:#98a2b3;margin:0 7px;text-decoration:none}
 <div class="topbar"><div class="wrap">
 <a class="logo" href="./">공<b>취</b>모아</a>
 <span class="tagline">공공기관 채용速보</span>
+<nav class="navtab"><a href="blog.html">블로그</a></nav>
 <div class="search"><input id="q" type="search" placeholder="기관명·공고명 검색 (예: 우체국, 인턴, 영양)" aria-label="검색"></div>
 </div></div>
 
