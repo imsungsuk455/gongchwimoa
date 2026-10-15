@@ -360,8 +360,9 @@
       "org": "",
       "text": "공고문은 세 군데만 보세요\n\n급여표·우대사항·마감, 이 3가지만 확인하면 됩니다\n1. 적힌 금액은 기본급인 경우 많음\n2. 우대 1개면 체감 경쟁률 절반\n자세한 내용은 아래 글에서 확인",
       "comment": null,
-      "status": "claiming",
-      "approved": true
+      "status": "posted",
+      "approved": true,
+      "post_id": "18119446796284498"
     }
   ]
 }
