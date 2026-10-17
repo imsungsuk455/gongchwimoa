@@ -138,7 +138,7 @@ def main():
                      if s.get("date") == d
                      and s.get("status") in ("pending", "posted"))
         org_day = {s.get("org") for s in buf["slots"]
-                   if s.get("date") == d and s.get("status") == "pending"}
+                   if s.get("date") == d and s.get("status") in ("pending", "posted")}
         if filled >= MAX_PER_DAY:
             print(f"{d}: 이미 {filled}건, 추가 없음")
             continue

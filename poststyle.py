@@ -66,9 +66,14 @@ def org_short(job):
     return short if len(short) <= 14 else short[:14]
 
 
+GENERIC_ROLES = {"장애인", "채용", "모집", "직원", "공고", "정규직", "신입", "경력", "인턴"}
+
+
 def role_of(job):
     """제목에서 직무명만 뽑는다. 괄호 안 직무가 있으면 그것을 우선."""
     title = job.get("title") or ""
+    if "인턴" in title:
+        return "청년인턴"
     for w in NOISE_WORDS:
         title = title.replace(w, " ")
     title = YEAR_RE.sub(" ", title)
@@ -76,13 +81,17 @@ def role_of(job):
     # 기관명 토큰 제거
     org_tokens = set((job.get("org") or "").split())
     title = " ".join(t for t in title.split() if t not in org_tokens)
+    org = org_short(job)
     # 괄호 직무 우선 (예: (행정직), (시설관리원)). 중첩 괄호는 안쪽부터.
     for b in re.findall(r"\(([^()]{2,18})\)", title) + BRACKET_RE.findall(title):
         cand = b.strip("[]()（） ").strip()
         cand = re.sub(r"(신입|경력|정규직|기간제|재공고|기간연장)", "", cand)
         cand = re.sub(r"\s+", " ", cand).strip(" ,·/")
-        if 2 <= len(cand) <= 18:
-            return cand
+        if not (2 <= len(cand) <= 18):
+            continue
+        if cand in GENERIC_ROLES or cand in org:
+            continue
+        return cand
     title = re.sub(r"[\[\]()（）]", " ", title)
     title = re.sub(r"\s+", " ", title).strip(" -·/,")
     toks = [t for t in title.split() if len(t) >= 2 and not re.fullmatch(r"[\d,.]+", t)]
@@ -92,6 +101,8 @@ def role_of(job):
     role = re.sub(r"(직원채용|직원|채용|모집|공고|시험|분야|임용)$", "", role).strip()
     if len(role) < 2 and len(toks) >= 2:
         role = toks[-2]
+    if role in GENERIC_ROLES or role in org:
+        return ""
     return role[:18]
 
 
@@ -132,15 +143,17 @@ def comment_of(job):
     return f"자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/{job['id']}.html"
 
 
-def fill_queue(target_date=None, only_empty=True, approve=True):
-    """큐의 빈 본문 슬롯을 새 포맷으로 채운다. approve=True면 승인 처리(자동 발행용)."""
+def fill_queue(target_date=None, only_empty=True, approve=True, dates=None):
+    """큐의 빈 본문 슬롯을 새 포맷으로 채운다. approve=True면 승인 처리(자동 발행용).
+    dates=[...] 를 주면 그 날짜들만 처리한다. only_empty=False면 기존 본문도 새 포맷으로 덮는다."""
     jobs = {j["id"]: j for j in json.load(open(JOBS_JSON, encoding="utf-8"))}
     buf = json.load(open(QUEUE_JSON, encoding="utf-8"))
     today = target_date or datetime.datetime.now(
         datetime.timezone(datetime.timedelta(hours=9))).date().isoformat()
+    targets = set(dates) if dates else {today}
     filled = 0
     for s in buf.get("slots", []):
-        if s.get("date") != today or s.get("status") != "pending":
+        if s.get("date") not in targets or s.get("status") != "pending":
             continue
         jid = s.get("job_id") or ""
         if jid.startswith("editorial") or jid.startswith("blog"):
