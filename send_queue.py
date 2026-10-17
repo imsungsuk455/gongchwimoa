@@ -137,7 +137,7 @@ def git_claim(msg):
                         "gongchwimoa-bot@users.noreply.github.com"],
                        capture_output=True, text=True)
         r = subprocess.run(["git", "commit", "-m", msg, "--",
-                            QUEUE_JSON, "publish_state.json"],
+                            QUEUE_JSON, "publish_state.json", "posted_log.json"],
                            capture_output=True, text=True)
         if r.returncode != 0 and "nothing to commit" not in r.stderr:
             return False
