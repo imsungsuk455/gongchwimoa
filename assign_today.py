@@ -15,7 +15,7 @@ from fetch_jobs import (THREAD_SLOTS, CONTENT_SLOT, priority_key, thread_text, i
                         is_specialist_job, load_buffer, SITE_URL, QUEUE_JSON, JOBS_JSON)  # noqa
 
 RESULT_RE = ["합격자발표", "서류전형 합격자", "면접장소", "면접 장소", "최종합격"]
-MAX_PER_DAY = 5  # 5슬롯제 (공고 4 + 콘텐츠 1, 2026-09-26)
+MAX_PER_DAY = 6  # 6슬롯제 (공고 6건, 08/10/12/14/16/18시 — 2026-10-17 확정)
 
 
 def is_result(job):
@@ -159,10 +159,14 @@ def main():
             org = (j.get("org") or "").strip()
             if org and org in org_day:
                 continue
-            # 빈 슬롯 찾기 (콘텐츠 슬롯 제외)
+            # 빈 슬롯 찾기 (콘텐츠 슬롯 제외, 오늘 기준 지난 시각 제외)
             used = {s.get("slot") for s in buf["slots"]
                     if s.get("date") == d and s.get("status") == "pending"}
-            free = [s for s in THREAD_SLOTS if s not in used and s != CONTENT_SLOT]
+            now_hm = datetime.datetime.now(
+                datetime.timezone(datetime.timedelta(hours=9))).strftime("%H:%M")
+            free = [s for s in THREAD_SLOTS
+                    if s not in used and s != CONTENT_SLOT
+                    and not (d == days[0] and s < now_hm)]
             if not free:
                 break
             slot = free[0]
