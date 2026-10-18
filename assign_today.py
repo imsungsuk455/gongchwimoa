@@ -13,6 +13,7 @@ BASE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, BASE)
 from fetch_jobs import (THREAD_SLOTS, CONTENT_SLOT, priority_key, thread_text, is_school_job,
                         is_specialist_job, load_buffer, SITE_URL, QUEUE_JSON, JOBS_JSON)  # noqa
+import dedupe  # 중복 발행 차단 (2026-10-18)
 
 RESULT_RE = ["합격자발표", "서류전형 합격자", "면접장소", "면접 장소", "최종합격"]
 MAX_PER_DAY = 6  # 6슬롯제 (공고 6건, 08/10/12/14/16/18시 — 2026-10-17 확정)
@@ -130,6 +131,18 @@ def main():
         except Exception:
             return False
     pool = sorted(pool, key=_has_salary, reverse=True)
+    # 중복 발행 차단 (2026-10-18): 이미 발행한 id·같은 제목 지문·기관 쿨다운 제외
+    didx = dedupe.build_index()
+    blocked, kept_pool = [], []
+    for j in pool:
+        reason = dedupe.check(j, days[0], didx)
+        if reason:
+            blocked.append((j["id"], reason))
+        else:
+            kept_pool.append(j)
+    pool = kept_pool
+    if blocked:
+        print(f"중복 차단 {len(blocked)}건 (이미 발행·제목 중복·기관 쿨다운)")
     print(f"배정 후보: {len(pool)}건 (에이전트 작성·진행중)")
 
     added = 0
@@ -178,6 +191,7 @@ def main():
             if org:
                 org_day.add(org)
             pool.remove(j)
+            dedupe.register(j, d, didx)  # 같은 배정에서 지문 중복 방지
             filled += 1
             added += 1
             print(f"배정: {d} {slot} {j['id']}")

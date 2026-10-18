@@ -234,6 +234,16 @@ def main():
             reason = "전입희망자 (현직공무원 대상)"
         elif (j.get("org") or "").strip() in posted_orgs:
             reason = f"기관 중복 ({j.get('org')})"
+        else:
+            # 중복 발행 차단 (2026-10-18): 같은 공고 재발행 금지
+            try:
+                import dedupe as _dd
+                _idx = _dd.build_index(exclude_ids=[s.get("job_id")])
+                _r = _dd.check(j, today, _idx)
+                if _r:
+                    reason = _r
+            except Exception:
+                pass
         if reason:
             s["status"] = "skipped"
             s["skip_reason"] = "발행 게이트 차단: " + reason
