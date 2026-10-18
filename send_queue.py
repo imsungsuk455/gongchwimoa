@@ -303,14 +303,8 @@ def main():
             continue
         try:
             jid = s.get("job_id") or ""
-            img = None
-            if jid and not jid.startswith("editorial"):
-                img = f"{SITE_URL}thumbnails/{jid}.png"
-            try:
-                mid = publish_image(uid, token, s["text"], img) if img else publish_text(uid, token, s["text"])
-            except Exception as ie:
-                print(f"  이미지 실패, 텍스트로 폴백: {ie}", file=sys.stderr)
-                mid = publish_text(uid, token, s["text"])
+            # 썸네일 이미지 미사용 (2026-10-18 사용자 지시) — 항상 텍스트로 발행
+            mid = publish_text(uid, token, s["text"])
             rid = publish_reply(uid, token, mid, s["comment"]) if s.get("comment") else None
             s["status"] = "posted"
             s["post_id"] = mid

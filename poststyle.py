@@ -127,7 +127,8 @@ def hook_line(job):
 
 
 def make_post(job):
-    """3줄 고정 포맷 (2026-10-17 사용자 확정). 마지막 줄에 아래쪽 손가락으로 댓글 유도."""
+    """3줄 고정 포맷 (2026-10-18 확정): 후크 / 빈줄 / 마감 / 빈줄 / 댓글 유도.
+    썸네일 이미지는 쓰지 않는다(텍스트 전용)."""
     d = (job.get("deadline") or "")[5:]
     line2 = f"접수마감 {d}까지" if d else "접수기간 원문 확인"
     try:
@@ -136,7 +137,7 @@ def make_post(job):
             line2 += f" · D-{left}" if left else " · 오늘"
     except Exception:
         pass
-    return f"{hook_line(job)}\n{line2}\n⬇️ 전체 공고는 아래 댓글에서"
+    return f"{hook_line(job)}\n\n{line2}\n\n⬇️ 전체 공고는 아래 댓글에서"
 
 
 def comment_of(job):
