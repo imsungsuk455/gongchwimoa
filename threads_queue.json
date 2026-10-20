@@ -272,78 +272,6 @@
       "skip_reason": "리셋 (크론 발송 폐지·미발송 정리, 2026-10-16 사용자 지시)"
     },
     {
-      "date": "2026-10-20",
-      "slot": "08:00",
-      "job_id": "gojobs-305977",
-      "org": "충남대학교",
-      "text": "충남대학교 AI부트캠프사업단 전담직원 채용 모집중\n\n접수마감 10-25까지\n\n⬇️ 전체 공고는 아래 댓글에서",
-      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-305977.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "18636790111051987",
-      "comment_id": "18016382240975236"
-    },
-    {
-      "date": "2026-10-20",
-      "slot": "10:00",
-      "job_id": "alio-306061",
-      "org": "신용보증기금",
-      "text": "신용보증기금 시간선택제 대체인력 채용 모집중\n\n접수마감 11-02까지\n\n⬇️ 전체 공고는 아래 댓글에서",
-      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306061.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "18077598557740914",
-      "comment_id": "18110328377231881"
-    },
-    {
-      "date": "2026-10-20",
-      "slot": "12:00",
-      "job_id": "alio-306059",
-      "org": "(주)한국가스기술공사",
-      "text": "한국가스기술공사 육아휴직 대체인력 채용 모집중\n\n접수마감 11-02까지\n\n⬇️ 전체 공고는 아래 댓글에서",
-      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306059.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "18149959504523916",
-      "comment_id": "18117838652319345"
-    },
-    {
-      "date": "2026-10-20",
-      "slot": "14:00",
-      "job_id": "alio-306093",
-      "org": "서울올림픽기념국민체육진흥공단",
-      "text": "서울올림픽기념국민체육진흥공단 분석연구원 채용 모집중\n\n접수마감 11-02까지\n\n⬇️ 전체 공고는 아래 댓글에서",
-      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306093.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "18106781123577260",
-      "comment_id": "18101549150378663"
-    },
-    {
-      "date": "2026-10-20",
-      "slot": "16:00",
-      "job_id": "gojobs-305859",
-      "org": "대법원 법원행정처",
-      "text": "정년보장 법원행정처 시설관리원-영선 채용 모집중\n\n접수마감 10-27까지\n\n⬇️ 전체 공고는 아래 댓글에서",
-      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-305859.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "18135748948642582",
-      "comment_id": "18113232242157140"
-    },
-    {
-      "date": "2026-10-20",
-      "slot": "18:00",
-      "job_id": "gojobs-305989",
-      "org": "대구광역시 달성군",
-      "text": "대구 달성군 디자인 분야 임기제공무원 채용 모집중\n\n접수마감 10-29까지\n\n⬇️ 전체 공고는 아래 댓글에서",
-      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-305989.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "18221235643345976",
-      "comment_id": "18077788127452444"
-    },
-    {
       "date": "2026-10-21",
       "slot": "08:00",
       "job_id": "alio-306130",
@@ -402,6 +330,66 @@
       "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306136.html",
       "status": "pending",
       "approved": true
+    },
+    {
+      "date": "2026-10-22",
+      "slot": "08:00",
+      "job_id": "alio-306142",
+      "org": "무역안보관리원",
+      "text": "무역안보관리원 청년인턴 모집중\n\n접수마감 11-03까지\n\n⬇️ 전체 공고는 아래 댓글에서",
+      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306142.html",
+      "status": "pending",
+      "approved": false
+    },
+    {
+      "date": "2026-10-22",
+      "slot": "10:00",
+      "job_id": "gojobs-306111",
+      "org": "한국체육대학교",
+      "text": "정년보장 한국체육대학교 미화원 1명 채용 모집중\n\n접수마감 10-30까지\n\n⬇️ 전체 공고는 아래 댓글에서",
+      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-306111.html",
+      "status": "pending",
+      "approved": false
+    },
+    {
+      "date": "2026-10-22",
+      "slot": "12:00",
+      "job_id": "gojobs-306015",
+      "org": "여성기업종합지원센터",
+      "text": "여성기업종합지원센터 영남권 지역센터 운영관리 채용 모집중\n\n접수마감 11-03까지\n\n⬇️ 전체 공고는 아래 댓글에서",
+      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-306015.html",
+      "status": "pending",
+      "approved": false
+    },
+    {
+      "date": "2026-10-22",
+      "slot": "14:00",
+      "job_id": "gojobs-306041",
+      "org": "국가정보원",
+      "text": "국가정보원 특정직 5~7급 채용 모집중\n\n접수마감 11-16까지\n\n⬇️ 전체 공고는 아래 댓글에서",
+      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-306041.html",
+      "status": "pending",
+      "approved": false
+    },
+    {
+      "date": "2026-10-22",
+      "slot": "16:00",
+      "job_id": "alio-306137",
+      "org": "근로복지공단",
+      "text": "정년보장 근로복지공단 전기·기계·통신기사 채용 모집중\n\n접수마감 10-26까지\n\n⬇️ 전체 공고는 아래 댓글에서",
+      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306137.html",
+      "status": "pending",
+      "approved": false
+    },
+    {
+      "date": "2026-10-22",
+      "slot": "18:00",
+      "job_id": "gojobs-306045",
+      "org": "문화체육관광부 국립현대미술관 과천관운영부",
+      "text": "국립현대미술관 과천관 안내·관람지원 채용 모집중\n\n접수마감 10-26까지\n\n⬇️ 전체 공고는 아래 댓글에서",
+      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-306045.html",
+      "status": "pending",
+      "approved": false
     }
   ]
 }
