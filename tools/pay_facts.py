@@ -7,8 +7,26 @@
 """
 
 SRC = "알리오(공공기관 경영정보 공개시스템) 2025년 결산 경영공시"
+BM = ("알리오 2025년 결산 공시 기준 공공기관 전체 일반정규직 1인당 평균보수는 7,376만 9천원, "
+      "신입사원 평균초임은 4,031만 6천원입니다(무기계약직 미포함).")
 
 FACTS = [
+    (r"한국토지주택공사", dict(avg="8,408만원", start="4,118만원", contract=None)),
+    (r"한국개발연구원", dict(avg="8,635만원", start="4,995만원", contract=None)),
+    (r"대외경제정책연구원", dict(avg="7,775만원", start="3,855만원", contract=None)),
+    (r"건강보험심사평가원", dict(avg="7,334만원", start="4,201만원", contract=None)),
+    (r"국립암센터", dict(avg="8,242만원", start="4,324만원", contract=None)),
+    (r"독립기념관", dict(avg="6,832만원", start="3,738만원", contract=None)),
+    (r"한국기계연구원", dict(avg="8,293만원", start="4,700만원", contract=None)),
+    (r"국립부산과학관", dict(avg="6,698만원", start="4,186만원", contract=None)),
+    (r"한국환경연구원", dict(avg="8,516만원", start="4,083만원", contract=None)),
+    (r"오송첨단의료산업진흥재단", dict(avg="6,283만원", start="3,720만원", contract=None)),
+    (r"우체국물류지원단", dict(avg="6,067만원", start="4,353만원", contract=None)),
+    (r"한국관광공사", dict(avg="8,335만원", start="3,780만원", contract=None)),
+    (r"중소기업은행", dict(avg="1억 1,544만원", start="5,820만원", contract=None)),
+    (r"국토안전관리원", dict(avg="7,121만원", start="4,203만원", contract=None)),
+    (r"한국보훈복지의료공단", dict(avg="7,172만원", start="4,170만원", contract=None)),
+    (r"분당서울대학교병원", dict(avg=None, start="4,459만원", contract=None)),
     (r"한국도로공사", dict(avg="9,069만원", start="4,237만원", contract="5,411만원")),
     (r"국민연금공단", dict(avg="7,646만원", start="4,105만원", contract="3,451만원")),
     (r"국민건강보험공단", dict(avg="7,041만원", start="4,321만원", contract="3,505만원")),
