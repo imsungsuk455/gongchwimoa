@@ -11,6 +11,20 @@ BM = ("알리오 2025년 결산 공시 기준 공공기관 전체 일반정규�
       "신입사원 평균초임은 4,031만 6천원입니다(무기계약직 미포함).")
 
 FACTS = [
+    (r"한국교통안전공단", dict(avg="8,021만원", start="4,433만원", contract="4,105만원")),
+    (r"기초과학연구원", dict(avg="8,863만원", start="4,297만원", contract=None)),
+    (r"기술보증기금", dict(avg="1억 18만원", start="5,349만원", contract="4,602만원")),
+    (r"한국장애인고용공단", dict(avg="6,132만원", start="3,280만원", contract="3,296만원")),
+    (r"한국농어촌공사", dict(avg="7,419만원", start="3,724만원", contract=None)),
+    (r"한국교육개발원", dict(avg="9,584만원", start="4,605만원", contract="5,002만원")),
+    (r"국립중앙의료원", dict(avg="7,865만원", start="3,751만원", contract=None)),
+    (r"과학기술사업화진흥원", dict(avg="6,380만원", start="3,745만원", contract="3,220만원")),
+    (r"민주화운동기념사업회", dict(avg="6,049만원", start="3,365만원", contract="4,182만원")),
+    (r"근로복지공단", dict(avg="6,828만원", start="3,664만원", contract=None)),
+    (r"한국청소년정책연구원", dict(avg="7,479만원", start="4,232만원", contract="4,106만원")),
+    (r"한국과학기술기획평가원", dict(avg="8,963만원", start="4,336만원", contract=None)),
+    (r"한국기술교육대학교", dict(avg="8,392만원", start="4,130만원", contract="4,229만원")),
+    (r"경북대학교치과병원", dict(avg="6,717만원", start="4,451만원", contract=None)),
     (r"한국토지주택공사", dict(avg="8,408만원", start="4,118만원", contract=None)),
     (r"한국개발연구원", dict(avg="8,635만원", start="4,995만원", contract=None)),
     (r"대외경제정책연구원", dict(avg="7,775만원", start="3,855만원", contract=None)),

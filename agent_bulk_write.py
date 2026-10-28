@@ -359,10 +359,10 @@ def find_inst(job):
 def parse_people(title, summary):
     for s in summary or []:
         m = re.search(r"(\d+)\s*명", s)
-        if m:
+        if m and int(m.group(1)) > 0:
             return m.group(1)
     m = re.search(r"(\d+)\s*명", title)
-    return m.group(1) if m else None
+    return m.group(1) if m and int(m.group(1)) > 0 else None
 
 
 def parse_role_label(title):

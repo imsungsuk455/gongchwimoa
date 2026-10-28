@@ -32,8 +32,22 @@ B.INSTS = ER.EXTRA_INSTS + B.INSTS
 MIN_WAGE = B.MIN_WAGE
 
 # 제외: 학교 교원(교수초빙), 면허 전문직(간호) — 사이트·스레드 노출 제외 규칙
-SKIP_IDS = {"gojobs-306642", "alio-306328",
-            "gojobs-306808"}  # 화성동탄우체국 서류전형 결과·면접 안내(결과성 공고)
+SKIP_IDS = {
+    "gojobs-306642", "alio-306328",
+    "gojobs-306808",  # 화성동탄우체국 서류전형 결과·면접 안내(결과성 공고)
+    # 2026-10-29 추가
+    "gojobs-306921",  # 충청지방데이터청 통계조사관 최종결과 공고(적격자 없음) — 결과성
+    "alio-306461",    # 분당서울대병원 진료교수요원(핵의학과) — 의사면허·전문의 필수
+    "alio-306441",    # 국립암센터 업무직 — 간호조무사 직종 포함(간호 제외 규칙)
+    # 나라일터·잡알리오 중복 게시 → 나라일터 원문(발췌 풍부)만 작성
+    "alio-306463",    # 북한산도봉 녹색순찰대(6차) ↔ gojobs-306962
+    "alio-306453",    # 한국교통안전공단 실무직 ↔ gojobs-306941
+    "alio-306454",    # 지리산경남 국립공원지킴이 2차 ↔ gojobs-306938
+    "alio-306451",    # 북한산 국립공원지킴이(6차) ↔ gojobs-306937
+    "alio-306442",    # 다도해서부 한시인력 환경관리 ↔ gojobs-306935
+    "alio-306446",    # 지리산경남 산불감시원 ↔ gojobs-306931
+    "alio-306432",    # 월악산 국립공원지킴이 ↔ gojobs-306891
+}
 
 # 유형 오표기 정정 (제목에 '기간제'가 명시된 공고가 공무직/정규직으로 분류된 건)
 TYPE_FIX = {
@@ -58,6 +72,17 @@ TYPE_FIX = {
     "alio-306398": "기간제",     # 분당서울대병원 계약업무지원직
     "alio-306397": "기간제",     # 분당서울대병원 계약보건·계약기술직
     "alio-306395": "기간제",     # 국토안전관리원 위촉 1~3급 수시채용
+    # 2026-10-29 정정: 제목·원문에 기간제/한시인력/대체/계약기간이 명시된 건
+    "alio-306456": "기간제",     # KISTEP 육아휴직 대체인력
+    "alio-306450": "기간제",     # 도로공사 수도권본부 제설 기간제(운전원)
+    "alio-306429": "기간제",     # 도로공사 서울경기본부 제설 기간제(운전원)
+    "alio-306413": "기간제",     # 도로공사 광주전남본부 제설 기간제(운전원)
+    "gojobs-306950": "기간제",   # 화천우체국 상시계약집배원(기간제), 채용시~11.30
+    "gojobs-306937": "기간제",   # 북한산 국립공원지킴이, 2026.12.1~12.31 기간제근로자
+    "gojobs-306938": "기간제",   # 지리산경남 국립공원지킴이 2차, 2026.12.1~12.31
+    "gojobs-306868": "기간제",   # 석포초 통학차량안전도우미, 2026.12.1~2027.2.28
+    "gojobs-306892": "기간제",   # 두원공고 사무직원 결원 대체
+    "gojobs-306965": "임기제",   # 화천군 전문임기제 나급·시간선택제임기제 가급·다급만 모집
 }
 
 CONTRACT_NOTE = {
@@ -101,6 +126,10 @@ def excerpt_facts(job, limit=3):
         if not REQ_HINT.search(s):
             continue
         if s.count(" ") < 2:
+            continue
+        if re.search(r"바랍니다|참고하시기|첨부파일|붙임|문의|안내드립니다", s):
+            continue
+        if not re.search(r"명|면허|자격|경력|학위|소지|이수|우대|제한", s):
             continue
         cands.append(re.sub(r"\s+", " ", s))
         if len(cands) >= limit:
@@ -159,15 +188,47 @@ CLUSTER_LEAD = [
 ]
 
 
+GENERIC_SUMMARY = ("공공기관 채용공시", "세부 조건은 원문 공고문 확인", "원문 공고문 확인 필수")
+
+
+def enrich_summary(job):
+    """알리오 요약이 껍데기인 공고는 원문 발췌에서 모집분야·요건 문구를 뽑아 채운다."""
+    summ = [x for x in (job.get("summary") or []) if x and x not in GENERIC_SUMMARY]
+    if len(summ) >= 2:
+        return job
+    raw = (job.get("excerpt") or "").replace("\r", "\n")
+    picked = []
+    for seg in re.split(r"[\n\u2028]|(?<=[.。])\s+", raw):
+        cand = seg.strip(" -○ㅇ□*·\t")
+        cand = re.sub(r"\s+", " ", cand)
+        if not (10 <= len(cand) <= 90):
+            continue
+        if not (re.search(r"명|자격|면허|경력|학위|소지|기간|근무", cand)):
+            continue
+        picked.append(cand)
+        if len(picked) >= 3:
+            break
+    if not picked:
+        return job
+    new = dict(job)
+    new["summary"] = picked
+    return new
+
+
 def pay_section(job):
     org, jtype = job["org"], job.get("type", "")
     fact, src = PF.lookup(org)
     role_pay = B.find_role(job["title"])["pay"]
     parts = []
     if fact:
+        bits = []
+        if fact.get("avg"):
+            bits.append(f"일반정규직 1인당 평균보수액은 {fact['avg']}")
+        if fact.get("start"):
+            bits.append(f"공시된 신입사원 초임은 {fact['start']}")
+        lead_txt = f"{src} 기준으로 {org} " + ", ".join(bits) + "입니다. " if bits else ""
         parts.append(
-            f"{src} 기준으로 {org} 일반정규직 1인당 평균보수액은 {fact['avg']}, "
-            f"공시된 신입사원 초임은 {fact['start']}입니다. "
+            lead_txt
             + (f"무기계약직 1인당 평균보수액은 {fact['contract']}으로 공시되어 정규직과 차이가 납니다. "
                if fact.get("contract") else "")
             + "평균보수액은 기본급에 고정수당·실적수당·성과상여금·급여성 복리후생비를 모두 합산한 값이라 "
@@ -182,7 +243,8 @@ def pay_section(job):
             "공시 자료로 확인되지 않은 금액은 이 글에서 추정해 제시하지 않습니다. "
             + PF.BM
         )
-    role_pay = re.sub(r"[^.]*최저임금[^.]*\.\s*", "", role_pay).replace("  ", " ").strip()
+    role_pay = re.sub(r"[^.]*최저임금[^.]*\.\s*", "", role_pay)
+    role_pay = re.sub(r"([가-힣])\.([가-힣])", r"\1. \2", role_pay).replace("  ", " ").strip()
     parts.append(role_pay)
     parts.append(MIN_WAGE)
     parts.append(B.PAY_TAIL_V[0])
@@ -212,7 +274,7 @@ def build(job, peers, cluster_idx=None, cluster_n=1):
         sec["iv"] = (role["iv"] + " " + B.POOL_IV[(s >> 11) % len(B.POOL_IV)]
                      + " " + B.POOL_IV[(s >> 17) % len(B.POOL_IV)])
         sec["qual"] = (B.TYPES.get(job["type"], B.TYPES["기간제"])["text"]
-                       + f" 이번 공고는 {job['org']}가 직접 진행하는 자체 전형입니다. " + role["qual"]
+                       + f" 이번 공고는 {job['org']}{B.josa(job['org'], '이', '가')} 직접 진행하는 자체 전형입니다. " + role["qual"]
                        + " " + EXTRA_QUAL[cluster_idx % len(EXTRA_QUAL)]
                        + " " + B.POOL_QUAL[(s >> 13) % len(B.POOL_QUAL)]
                        + " " + B.POOL_QUAL[(s >> 19) % len(B.POOL_QUAL)])
@@ -280,8 +342,9 @@ def main():
     for j in tg:
         peers = dls.get(role_of[j["id"]]) if len(dls.get(role_of[j["id"]], [])) > 1 else None
         grp = orgs[j["org"]]
+        jj = enrich_summary(j)
         sec = build(j, peers, cluster_idx=grp.index(j["id"]), cluster_n=len(grp))
-        html = AS.build_agent(j, sec, jobs)
+        html = AS.build_agent(jj, sec, jobs)
         text = re.sub(r"<[^>]+>", "", html)
         ko = len(re.findall(r"[가-힣]", text))
         banned = [w for w in AS.BANNED if re.search(w, html)]
