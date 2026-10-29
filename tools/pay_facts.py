@@ -11,6 +11,13 @@ BM = ("알리오 2025년 결산 공시 기준 공공기관 전체 일반정규�
       "신입사원 평균초임은 4,031만 6천원입니다(무기계약직 미포함).")
 
 FACTS = [
+    (r"한국의료분쟁조정중재원", dict(avg="7,714만원", start="3,777만원", contract=None)),
+    (r"제주국제자유도시개발센터|JDC", dict(avg="6,638만원", start="3,721만원", contract="4,156만원")),
+    (r"한국노동연구원", dict(avg="7,426만원", start="4,426만원", contract=None)),
+    (r"정보통신정책연구원", dict(avg="9,525만원", start="4,963만원", contract="4,533만원")),
+    (r"중소벤처기업연구원", dict(avg="7,570만원", start="3,944만원", contract=None)),
+    (r"전쟁기념사업회", dict(avg="6,916만원", start="3,292만원", contract=None)),
+    (r"경상국립대학교병원", dict(avg="6,912만원", start="4,068만원", contract=None)),
     (r"한국교통안전공단", dict(avg="8,021만원", start="4,433만원", contract="4,105만원")),
     (r"기초과학연구원", dict(avg="8,863만원", start="4,297만원", contract=None)),
     (r"기술보증기금", dict(avg="1억 18만원", start="5,349만원", contract="4,602만원")),
