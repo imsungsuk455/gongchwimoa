@@ -24,10 +24,12 @@ import agent_bulk_write as B  # noqa
 import agent_sections as AS  # noqa
 import pay_facts as PF  # noqa
 import extra_roles as ER  # noqa
+import role_fixes as RF  # noqa
 
 # 기본값 직무로 떨어지지 않도록 추가 직무를 앞쪽에 배치
 B.ROLES = ER.EXTRA_ROLES + B.ROLES
 B.INSTS = ER.EXTRA_INSTS + B.INSTS
+B.INSTS = RF.INST_FIX + B.INSTS
 
 MIN_WAGE = B.MIN_WAGE
 
@@ -59,6 +61,19 @@ SKIP_IDS = {
     "alio-306487",    # 창원경상국립대병원 업무지원직(요약본) ↔ alio-306505
     "alio-306471",    # 농어촌공사 금강사업단 청소원 ↔ gojobs-306685
     "alio-306507",    # 창원경상국립대병원 계약직 — 뇌졸중코디네이터 등 간호면허 직종 포함
+    # 2026-10-31 추가: 테스트 공고·학교 교직·면허 전문직·결과성·중복 정리
+    "gojobs-307120",  # 제목 '테스트' — 수집 오류 잡음 공고
+    "gojobs-307177",  # 양정고 정교사(국어·미술·일반사회) — 학교 교직 제외 규칙
+    "gojobs-307079",  # 경찰병원 채용분야 의무직·약무직·간호직·간호조무직 — 면허 전문직 제외
+    "gojobs-307159",  # 국립소방연구원 조리원 '원서접수 결과 공고' — 결과성
+    "gojobs-307113",  # 국립현대미술관 장애인 제한경쟁 '서류전형 결과 공고' — 결과성
+    "gojobs-307089",  # 국무조정실 전문임기제 원공고 → 변경공고(gojobs-307191)로 대체
+    "alio-306547",    # 북한산도봉 산불감시원 ↔ gojobs-307166
+    "alio-306534",    # 팔공산서부 국립공원지킴이 ↔ gojobs-307135
+    "alio-306533",    # 지리산전남 산불감시원 ↔ gojobs-307119
+    "alio-306530",    # 경주 국립공원 산불감시 ↔ gojobs-307111
+    "alio-306528",    # 덕유산 산불감시원 ↔ gojobs-307104
+    "alio-306526",    # 안전보건공단 개방형 직위 ↔ gojobs-307106
 }
 
 
@@ -129,6 +144,13 @@ TYPE_FIX = {
     "gojobs-307048": "기간제",   # 부산대 산학협력단 사무원(계약직)
     "alio-306494": "기간제",     # 경상국립대병원 단시간제 편의점 점원(계약직)
     "alio-306513": "공무직",     # 청소년상담복지개발원 공무직 일반직 4·5급
+    # 2026-10-31 정정: 원문에 기간제·한시적·무기계약이 명시된 건
+    "gojobs-307125": "기간제",   # 울산북부경찰서 구내식당 영양사, 원문 고용형태 '기간제'
+    "gojobs-307144": "기간제",   # 양주우체국 별정우체국 기간제 집배원
+    "gojobs-307115": "기간제",   # 서울연신초 기간제 교육실무사(늘봄)
+    "gojobs-307135": "기간제",   # 팔공산서부 국립공원지킴이(4차), 한시인력 사업
+    "gojobs-307178": "공무직",   # 육군 BCTP 예비역 장성관찰관, 원문 공고유형 '공무직근로자'
+    "alio-306551": "기간제",     # 대한적십자사 비정규직(한시적) 장애인 에스코트
 }
 
 CONTRACT_NOTE = {
@@ -357,7 +379,7 @@ def build(job, peers, cluster_idx=None, cluster_n=1):
             + W_POOL[(cluster_idx or 0) % len(W_POOL)]
         )
     else:
-        role = B.find_role(job["title"])
+        role = RF.OVERRIDE.get(job["id"]) or B.find_role(job["title"])
         if role is B.DEFAULT_ROLE or role["label"] in GENERIC_LABELS:
             # 제목에 직무가 없거나 일반 사무로 떨어지면 원문 발췌에서 직무를 찾는다
             # (예: '(강진) 대체 기간제근로자' → 발췌의 '통계조사원')
@@ -414,6 +436,9 @@ def build(job, peers, cluster_idx=None, cluster_n=1):
         sec["point"] = (f"이 건은 {job['org']}{B.josa(job['org'], '이', '가')} 같은 시기에 낸 {cluster_n}개 모집분야 가운데 "
                         f"{role['label']} 직무입니다. 다른 직무 공고와 요건이 다르므로 지원 전에 모집분야 표를 대조해야 합니다. "
                         + sec["point"])
+    if job["id"] in RF.LEAD_FIX:
+        sec["lead"] = "핵심만 먼저: " + RF.LEAD_FIX[job["id"]].format(
+            dl=job["deadline"], region=job["region"], posted=job["posted"])
     sec["pay"] = pay_section(job)
     return dedupe_sections(sec)
 
@@ -451,7 +476,13 @@ def main():
             fixed.append((jid, j.get("type"), newtype))
             j["type"] = newtype
 
+    only = None
+    for a in sys.argv[1:]:
+        if a.startswith("--only="):
+            only = set(a.split("=", 1)[1].split(","))
     tg = [j for j in B.targets(jobs, regen=regen) if j["id"] not in SKIP_IDS]
+    if only:
+        tg = [j for j in tg if j["id"] in only]
     role_of = {j["id"]: B.find_role(j["title"])["label"] for j in tg}
     dls = {}
     for j in tg:

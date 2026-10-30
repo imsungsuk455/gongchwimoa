@@ -67,6 +67,11 @@ FACTS = [
     (r"한전KPS", dict(avg="8,803만원", start="4,457만원", contract=None)),
     (r"대한적십자사", dict(avg="6,937만원", start="3,869만원", contract="4,017만원")),
     (r"한국청소년상담복지개발원", dict(avg="5,572만원", start="3,536만원", contract=None)),
+    (r"한국산업안전보건공단|안전보건공단", dict(avg="7,233만원", start="3,699만원", contract="3,459만원")),
+    (r"한국교육과정평가원", dict(avg="9,652만원", start="4,842만원", contract="4,235만원")),
+    (r"한국문화예술위원회", dict(avg="6,462만원", start="3,774만원", contract="4,839만원")),
+    (r"산업연구원", dict(avg="8,150만원", start="4,440만원", contract="4,586만원")),
+    (r"한전KDN", dict(avg="8,276만원", start="3,730만원", contract="6,298만원")),
     (r"한국등산[·\s]?트레킹지원센터", dict(avg="5,170만원", start="3,342만원", contract=None)),
 ]
 
