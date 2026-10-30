@@ -382,8 +382,9 @@
       "org": "한국토지주택공사",
       "text": "한국토지주택공사 토지주택연구원 채용 모집중\n\n접수마감 11-12까지\n\n⬇️ 전체 공고는 아래 댓글에서",
       "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306415.html",
-      "status": "pending",
-      "approved": true
+      "status": "skipped",
+      "approved": true,
+      "skip_reason": "발행 게이트 차단: 기관 쿨다운 (최근 3일 내 발행: 2026-10-29)"
     },
     {
       "date": "2026-10-30",
