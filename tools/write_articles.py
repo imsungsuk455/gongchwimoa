@@ -74,6 +74,23 @@ SKIP_IDS = {
     "alio-306530",    # 경주 국립공원 산불감시 ↔ gojobs-307111
     "alio-306528",    # 덕유산 산불감시원 ↔ gojobs-307104
     "alio-306526",    # 안전보건공단 개방형 직위 ↔ gojobs-307106
+    # 2026-11-03 추가: 면허 전문직·학교 교직·중복 게시 정리
+    "gojobs-307313",  # 수성구 임기제 '한의약 진료 및 상담(한의사)' — 한의사 면허 필수
+    "gojobs-307342",  # 아산시 보건소장 개방형 — 의사면허 소지자 요건
+    "gojobs-307231",  # 파주시 보건소장 개방형 — 의사면허 소지자 요건
+    "gojobs-307320",  # 산업통상부 임기제 '노무' — 노무사 자격 직위
+    "alio-306582",    # 국민연금공단 의학적평가 — 간호사·물리치료사 등 면허 필수
+    "alio-306566",    # 폴리텍 충주 산학협력중점교수 — 교원(교수) 채용
+    "gojobs-307279",  # 광운중 핸드볼부 전임코치 — 학교 운동부 지도자(교직 계열)
+    "gojobs-307284",  # 관광공사 개방형 ↔ alio-306588 (원문 발췌 있는 잡알리오만 작성)
+    "alio-306612",    # 해양조사협회 일반직 ↔ gojobs-307319 (전체 분야 담은 원문 사용)
+    "alio-306613",    # 해양조사협회 계약직 ↔ gojobs-307319
+    "alio-306560",    # 특허정보원 인턴 ↔ gojobs-307243
+    "alio-306587",    # 치악산 산불감시 ↔ gojobs-307280
+    "alio-306574",    # 월출산 산불감시 ↔ gojobs-307255
+    "alio-306571",    # 주왕산 산불감시 ↔ gojobs-307264
+    "alio-306611",    # 한려동부 산불감시 ↔ gojobs-307323
+    "alio-306597",    # 국민건강보험공단 업무지원직 ↔ gojobs-307315
 }
 
 
@@ -151,6 +168,16 @@ TYPE_FIX = {
     "gojobs-307135": "기간제",   # 팔공산서부 국립공원지킴이(4차), 한시인력 사업
     "gojobs-307178": "공무직",   # 육군 BCTP 예비역 장성관찰관, 원문 공고유형 '공무직근로자'
     "alio-306551": "기간제",     # 대한적십자사 비정규직(한시적) 장애인 에스코트
+    # 2026-11-03 정정: 원문에 휴직대체·계약직·기간제·공무직이 명시된 건
+    "gojobs-307339": "기간제",   # KIST 2026-5차 휴직 대체인력, 원문 고용형태 '휴직대체'
+    "alio-306629": "기간제",     # 폴리텍 진주캠퍼스 행정지원직(사무직원 휴직 대체인력)
+    "gojobs-307273": "기간제",   # 경상국립대 산학협력단 사무원(계약직/대체인력)
+    "gojobs-307250": "기간제",   # 경남연구원 위촉연구원 나급, 원문 고용형태 '기간제'
+    "gojobs-307211": "기간제",   # 강남서초교육지원청 지방공무원 대체직원 인력풀
+    "gojobs-307259": "기간제",   # 양주우체국 주관 기간제 근로자(상시계약집배원)
+    "gojobs-307216": "기간제",   # 지식재산처 연수원 조리원(기간제근로자)
+    "alio-306568": "공무직",     # 국립청소년인터넷드림마을 공무직 일반직 4급·5급
+    "gojobs-307229": "기간제",   # 사회보장정보원 기간제(전산·행정·상담)·육아휴직대체
 }
 
 CONTRACT_NOTE = {
@@ -296,11 +323,18 @@ def enrich_summary(job):
     return new
 
 
-def pay_section(job):
+def pay_section(job, role=None, is_override=False):
     org, jtype = job["org"], job.get("type", "")
-    fact, src = PF.lookup(org)
-    role_pay = B.find_role(job["title"])["pay"]
+    role_pay = (role or B.find_role(job["title"]))["pay"]
+    # 공고별 보정(OVERRIDE) pay는 기관·직종 사실을 이미 담고 있으므로 공시 문장을 겹치지 않는다
+    fact, src = (None, None) if is_override else PF.lookup(org)
     parts = []
+    if is_override:
+        # 보정 pay는 기관·직종 사실을 담고 있으므로 공시 일반론을 붙이지 않는다
+        parts.append(role_pay)
+        parts.append(MIN_WAGE)
+        parts.append(B.PAY_TAIL_V[0])
+        return " ".join(parts)
     if fact:
         bits = []
         if fact.get("avg"):
@@ -319,14 +353,17 @@ def pay_section(job):
         if note:
             parts.append(note)
     else:
+        # 공시 매칭이 없으면 직무별 보수 서술을 먼저 두고, 공시 부재는 뒤에서 밝힌다.
+        parts.append(role_pay)
         parts.append(
-            f"{org}의 구체적인 보수 수치는 이 공고 원문의 처우 항목과 보수표에서 확인해야 합니다. "
-            "공시 자료로 확인되지 않은 금액은 이 글에서 추정해 제시하지 않습니다. "
+            f"다만 {org}의 보수 수치는 이 글에서 확인된 공시 자료가 없어 추정해 제시하지 않았습니다. "
+            "공고문 처우 항목과 첨부된 보수표를 기준으로 확인하십시오. "
             + PF.BM
         )
     role_pay = re.sub(r"[^.]*최저임금[^.]*\.\s*", "", role_pay)
     role_pay = re.sub(r"([가-힣])\.([가-힣])", r"\1. \2", role_pay).replace("  ", " ").strip()
-    parts.append(role_pay)
+    if fact:
+        parts.append(role_pay)
     parts.append(MIN_WAGE)
     parts.append(B.PAY_TAIL_V[0])
     return " ".join(parts)
@@ -352,8 +389,14 @@ def dedupe_sections(sec):
     return out
 
 
-def build(job, peers, cluster_idx=None, cluster_n=1):
-    B.parse_role_label = safe_role_label
+def build(job, peers, cluster_idx=None, cluster_n=1, shift=0):
+    _ovr = RF.OVERRIDE.get(job["id"])
+    if _ovr:
+        # 보정 직무가 있으면 제목 괄호 라벨(예: '(국방부근무지원단)')이 직무명을 덮지 않게 고정.
+        # '(직종별)' 류 묶음 표기는 lead에서 기관명과 겹치므로 괄호를 떼고 쓴다.
+        B.parse_role_label = lambda t, _l=_ovr["label"].split("(")[0].strip(): _l
+    else:
+        B.parse_role_label = safe_role_label
     multi = bool(MULTI_PAT.search(job["title"] or "")) and job.get("type") in (
         "임기제", "공무직", "기간제", "정규직")
     if multi:
@@ -407,7 +450,7 @@ def build(job, peers, cluster_idx=None, cluster_n=1):
     if cluster_n > 1:
         # 형제 공고는 문단 풀을 시프트해 문장 구성이 겹치지 않게 한다
         import hashlib
-        s = int(hashlib.md5(job["id"].encode()).hexdigest(), 16) + cluster_idx * 7
+        s = int(hashlib.md5(job["id"].encode()).hexdigest(), 16) + (shift or cluster_idx or 0) * 7
         sec["proc"] = B.PROC_V[s % len(B.PROC_V)] + " " + B.POOL_PROC[(s >> 5) % len(B.POOL_PROC)]
         sec["sched"] = B.SCHED_V[(s >> 3) % len(B.SCHED_V)].format(
             posted=job["posted"], dl=job["deadline"],
@@ -429,17 +472,29 @@ def build(job, peers, cluster_idx=None, cluster_n=1):
                        + B.POOL_DUTY[(s >> 7) % len(B.POOL_DUTY)])
         if uniq:
             sec["duty"] = sec["duty"] + " " + " ".join(uniq) + "."
-        sec["pay"] = pay_section(job).replace(
+        sec["pay"] = pay_section(job, role, is_override=job["id"] in RF.OVERRIDE).replace(
             B.PAY_TAIL_V[0], B.PAY_TAIL_V[(s >> 21) % len(B.PAY_TAIL_V)], 1)
         intro = CLUSTER_LEAD[cluster_idx % len(CLUSTER_LEAD)].format(role=role["label"])
-        sec["lead"] = intro + " " + sec["lead"]
-        sec["point"] = (f"이 건은 {job['org']}{B.josa(job['org'], '이', '가')} 같은 시기에 낸 {cluster_n}개 모집분야 가운데 "
-                        f"{role['label']} 직무입니다. 다른 직무 공고와 요건이 다르므로 지원 전에 모집분야 표를 대조해야 합니다. "
-                        + sec["point"])
+        if shift:
+            # 같은 직무가 여러 기관에 흩어진 경우 — 기관 묶음 문장을 쓰면 사실과 달라진다.
+            # lead는 그대로 두고(기관명 중복 방지) 문단 풀만 시프트한다.
+            pass
+        else:
+            sec["lead"] = intro + " " + sec["lead"]
+            sec["point"] = (f"이 건은 {job['org']}{B.josa(job['org'], '이', '가')} 같은 시기에 낸 {cluster_n}개 모집분야 가운데 "
+                            f"{role['label']} 직무입니다. 다른 직무 공고와 요건이 다르므로 지원 전에 모집분야 표를 대조해야 합니다. "
+                            + sec["point"])
+    if job["id"] in RF.OVERRIDE and not multi:
+        # 보정 직무 서술은 기관 설명을 이미 포함하므로 B.find_inst 문장을 겹치지 않게 다시 조립
+        role_o = RF.OVERRIDE[job["id"]]
+        import hashlib as _hl
+        _s = int(_hl.md5(job["id"].encode()).hexdigest(), 16)
+        sec["duty"] = (role_o["duty"] + " "
+                       + B.POOL_DUTY[(_s >> 12) % len(B.POOL_DUTY)])
     if job["id"] in RF.LEAD_FIX:
         sec["lead"] = "핵심만 먼저: " + RF.LEAD_FIX[job["id"]].format(
             dl=job["deadline"], region=job["region"], posted=job["posted"])
-    sec["pay"] = pay_section(job)
+    sec["pay"] = pay_section(job, role, is_override=job["id"] in RF.OVERRIDE)
     return dedupe_sections(sec)
 
 
@@ -491,12 +546,19 @@ def main():
     orgs = {}
     for j in tg:
         orgs.setdefault(j["org"], []).append(j["id"])
+    # 같은 기관이 아니어도 같은 직무(예: 우체국 집배원)가 여러 건이면 문단 풀을 시프트해
+    # 기사 간 문장이 겹치지 않게 한다 (cookie-cutter 판정 방지).
+    role_groups = {}
+    for j in tg:
+        role_groups.setdefault(role_of[j["id"]], []).append(j["id"])
     ok, short, bad = [], [], []
     for j in tg:
         peers = dls.get(role_of[j["id"]]) if len(dls.get(role_of[j["id"]], [])) > 1 else None
         grp = orgs[j["org"]]
+        rgrp = role_groups[role_of[j["id"]]]
+        shift = rgrp.index(j["id"]) if len(rgrp) > 1 else 0
         jj = enrich_summary(j)
-        sec = build(j, peers, cluster_idx=grp.index(j["id"]), cluster_n=len(grp))
+        sec = build(j, peers, cluster_idx=grp.index(j["id"]), cluster_n=len(grp), shift=shift)
         html = AS.build_agent(jj, sec, jobs)
         text = re.sub(r"<[^>]+>", "", html)
         ko = len(re.findall(r"[가-힣]", text))
