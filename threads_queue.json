@@ -499,18 +499,6 @@
     },
     {
       "date": "2026-11-03",
-      "slot": "10:00",
-      "job_id": "gojobs-307110",
-      "org": "서울특별시 서대문구",
-      "text": "서울 서대문구 공공디자인 채용 모집중\n\n접수마감 11-18까지\n\n⬇️ 전체 공고는 아래 댓글에서",
-      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-307110.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "17935216317415240",
-      "comment_id": "18116391416037641"
-    },
-    {
-      "date": "2026-11-03",
       "slot": "12:00",
       "job_id": "alio-306540",
       "org": "한국보훈복지의료공단",
@@ -521,42 +509,6 @@
       "skip_reason": "발행 게이트 차단: 기관 쿨다운 (최근 3일 내 발행: 2026-11-02)"
     },
     {
-      "date": "2026-11-03",
-      "slot": "14:00",
-      "job_id": "gojobs-307160",
-      "org": "경상남도 하동군",
-      "text": "연봉 5049만원대 하동군 축제전문요원 채용 모집중\n\n접수마감 11-13까지\n\n⬇️ 전체 공고는 아래 댓글에서",
-      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-307160.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "17956383645037260",
-      "comment_id": "18135080422589087"
-    },
-    {
-      "date": "2026-11-03",
-      "slot": "16:00",
-      "job_id": "alio-306464",
-      "org": "한국토지주택공사",
-      "text": "초임 4118만원대 한국토지주택공사 사업관리 채용 모집중\n\n접수마감 11-16까지\n\n⬇️ 전체 공고는 아래 댓글에서",
-      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306464.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "18143506147614671",
-      "comment_id": "18028596656861338"
-    },
-    {
-      "date": "2026-11-03",
-      "slot": "18:00",
-      "job_id": "alio-306436",
-      "org": "(재)우체국물류지원단",
-      "text": "시급 15000원 우체국물류지원단 우편물구분 채용 모집중\n\n접수마감 11-30까지\n\n⬇️ 전체 공고는 아래 댓글에서",
-      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306436.html",
-      "status": "posted",
-      "approved": true,
-      "post_id": "17946778770361924",
-      "comment_id": "18133750307497628"
-    },
-    {
       "date": "2026-11-04",
       "slot": "08:00",
       "job_id": "gojobs-307315",
@@ -564,7 +516,7 @@
       "text": "초임 4321만원대 국민건강보험공단 업무지원직 채용 모집중\n\n접수마감 11-16까지\n\n⬇️ 전체 공고는 아래 댓글에서",
       "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-307315.html",
       "status": "pending",
-      "approved": false
+      "approved": true
     },
     {
       "date": "2026-11-04",
@@ -574,7 +526,7 @@
       "text": "초임 4324만원대 국립암센터 업무직 채용 모집중\n\n접수마감 11-17까지\n\n⬇️ 전체 공고는 아래 댓글에서",
       "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306601.html",
       "status": "pending",
-      "approved": false
+      "approved": true
     },
     {
       "date": "2026-11-04",
@@ -584,7 +536,7 @@
       "text": "초임 4297만원대 기초과학연구원 선임연구원 채용 모집중\n\n접수마감 12-09까지\n\n⬇️ 전체 공고는 아래 댓글에서",
       "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306455.html",
       "status": "pending",
-      "approved": false
+      "approved": true
     },
     {
       "date": "2026-11-04",
@@ -594,7 +546,7 @@
       "text": "초임 3664만원대 근로복지공단 시설미화원 채용 모집중\n\n접수마감 11-09까지\n\n⬇️ 전체 공고는 아래 댓글에서",
       "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306584.html",
       "status": "pending",
-      "approved": false
+      "approved": true
     },
     {
       "date": "2026-11-04",
@@ -604,7 +556,7 @@
       "text": "초임 3751만원대 국립중앙의료원 물류팀 채용 모집중\n\n접수마감 11-16까지\n\n⬇️ 전체 공고는 아래 댓글에서",
       "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306608.html",
       "status": "pending",
-      "approved": false
+      "approved": true
     },
     {
       "date": "2026-11-04",
@@ -613,6 +565,66 @@
       "org": "한국토지주택공사",
       "text": "초임 4118만원대 한국토지주택공사 정비사업지원역 채용 모집중\n\n접수마감 11-16까지\n\n⬇️ 전체 공고는 아래 댓글에서",
       "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306598.html",
+      "status": "pending",
+      "approved": true
+    },
+    {
+      "date": "2026-11-05",
+      "slot": "08:00",
+      "job_id": "alio-306659",
+      "org": "한전KDN",
+      "text": "초임 3730만원대 한전KDN 배전자동화 채용 모집중\n\n접수마감 11-18까지\n\n⬇️ 전체 공고는 아래 댓글에서",
+      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306659.html",
+      "status": "pending",
+      "approved": false
+    },
+    {
+      "date": "2026-11-05",
+      "slot": "10:00",
+      "job_id": "alio-306637",
+      "org": "근로복지공단",
+      "text": "초임 3664만원대 근로복지공단 산업위생사 4급 채용 모집중\n\n접수마감 11-13까지\n\n⬇️ 전체 공고는 아래 댓글에서",
+      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306637.html",
+      "status": "pending",
+      "approved": false
+    },
+    {
+      "date": "2026-11-05",
+      "slot": "12:00",
+      "job_id": "alio-306644",
+      "org": "한국국토정보공사",
+      "text": "초임 4687만원대 한국국토정보공사 분석 채용 모집중\n\n접수마감 11-17까지\n\n⬇️ 전체 공고는 아래 댓글에서",
+      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306644.html",
+      "status": "pending",
+      "approved": false
+    },
+    {
+      "date": "2026-11-05",
+      "slot": "14:00",
+      "job_id": "alio-306635",
+      "org": "한국장애인고용공단",
+      "text": "초임 3280만원대 한국장애인고용공단 서울남부지사 교사직 채용 모집중\n\n접수마감 11-11까지\n\n⬇️ 전체 공고는 아래 댓글에서",
+      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306635.html",
+      "status": "pending",
+      "approved": false
+    },
+    {
+      "date": "2026-11-05",
+      "slot": "16:00",
+      "job_id": "gojobs-307389",
+      "org": "한국농어촌공사",
+      "text": "초임 3724만원대 한국농어촌공사 육아휴직 대체인력 채용 모집중\n\n접수마감 11-17까지\n\n⬇️ 전체 공고는 아래 댓글에서",
+      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/gojobs-307389.html",
+      "status": "pending",
+      "approved": false
+    },
+    {
+      "date": "2026-11-05",
+      "slot": "18:00",
+      "job_id": "alio-306657",
+      "org": "국립공원공단",
+      "text": "초임 3781만원대 국립공원공단 수익시설 채용 모집중\n\n접수마감 11-08까지\n\n⬇️ 전체 공고는 아래 댓글에서",
+      "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306657.html",
       "status": "pending",
       "approved": false
     }
