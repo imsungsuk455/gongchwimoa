@@ -37,6 +37,12 @@ MIN_WAGE = B.MIN_WAGE
 SKIP_IDS = {
     "gojobs-306642", "alio-306328",
     "gojobs-306808",  # 화성동탄우체국 서류전형 결과·면접 안내(결과성 공고)
+    # 2026-11-04: 나라일터·잡알리오 중복 게시 → 나라일터 원문(모집분야·요건 풍부)만 작성
+    "alio-306649",    # 대한석탄공사 팀원급 ↔ gojobs-307419
+    "alio-306647",    # 대한석탄공사 부장급 ↔ gojobs-307417
+    "alio-306646",    # 대한석탄공사 팀장급 ↔ gojobs-307416
+    "alio-306636",    # 농어촌공사 경남 육아휴직 대체 ↔ gojobs-307389
+    "alio-306633",    # 해양과학기술원 전문계약직기술원 ↔ gojobs-307378
     # 2026-10-29 추가
     "gojobs-306921",  # 충청지방데이터청 통계조사관 최종결과 공고(적격자 없음) — 결과성
     "alio-306461",    # 분당서울대병원 진료교수요원(핵의학과) — 의사면허·전문의 필수
@@ -178,6 +184,22 @@ TYPE_FIX = {
     "gojobs-307216": "기간제",   # 지식재산처 연수원 조리원(기간제근로자)
     "alio-306568": "공무직",     # 국립청소년인터넷드림마을 공무직 일반직 4급·5급
     "gojobs-307229": "기간제",   # 사회보장정보원 기간제(전산·행정·상담)·육아휴직대체
+    # 2026-11-04 정정: 원문에 대체·한시·기간제가 명시된 건
+    "alio-306635": "기간제",     # 장애인고용공단 교사직 대체근로자
+    "alio-306656": "기간제",     # 적십자사 강원혈액원 대체인력(임상병리사)
+    "gojobs-307369": "기간제",   # 전남대 5.18연구소 조교 육아휴직 대체인력
+    "gojobs-307437": "기간제",   # 서울북부지청 기간제 통계조사관(11.16~12.17)
+    "alio-306615": "기간제",     # 폴리텍 남대구 행정지원직(휴직대체)
+    "gojobs-307395": "기간제",   # 서울개원초 조리실무사 대체직원
+    "gojobs-307422": "기간제",   # 동명여중 조리실무사(채용시~2027.2.28)
+    "gojobs-307345": "기간제",   # 계성고 영양사 한시적 대체근로자(9개월)
+    "alio-306654": "기간제",     # 적십자사 강원혈액원 한시적근로자(사무보조)
+    "gojobs-307419": "기간제",   # 대한석탄공사 팀원급, 원문 고용형태 '기간제'
+    "gojobs-307417": "기간제",   # 대한석탄공사 부장급
+    "gojobs-307416": "기간제",   # 대한석탄공사 팀장급
+    "alio-306649": "기간제",     # 대한석탄공사 팀원급(잡알리오)
+    "alio-306647": "기간제",     # 대한석탄공사 부장급(잡알리오)
+    "alio-306646": "기간제",     # 대한석탄공사 팀장급(잡알리오)
 }
 
 CONTRACT_NOTE = {
@@ -389,6 +411,37 @@ def dedupe_sections(sec):
     return out
 
 
+# 한 공고에 여러 직종·직급이 담긴 건 (lead에 첫 직종 인원만 나가 오표기가 되는 것을 막는다)
+MULTI_IDS = {
+    "gojobs-307442",  # 구미시 임기제 9개 분야
+    "gojobs-307441",  # 진안군 정수시설관리사·보건관리자
+    "gojobs-307398",  # 송파구시설관리공단 공무직·청년인턴
+    "gojobs-307386",  # 서산시 시간선택제임기제 라급·마급
+    "gojobs-307373",  # 경인지방데이터청 통계조사관·청사미화원
+    "gojobs-307361",  # 금천구 시간선택제임기제 다급·라급
+    "gojobs-307445",  # 경기도교육청 임기제 3개 분야
+}
+
+
+def multi_lead(job):
+    """묶음 공고 lead — summary의 직종·인원을 그대로 나열한다."""
+    fields = []
+    for s in (job.get("summary") or []):
+        if "명" in s and "마감" not in s:
+            f = re.sub(r"\s+", " ", s).strip()
+            f = f.replace("(청사미화원", "(청사미화원)").replace("청사미화원 1명", "청사미화원 1명")
+            if f.count("(") > f.count(")"):
+                f += ")"
+            fields.append(f)
+    tail = f" 모집분야는 {' / '.join(fields)}입니다." if fields else ""
+    return (f"핵심만 먼저: {job['org']}{B.josa(job['org'], '이', '가')} 한 장의 공고문에 "
+            f"여러 모집분야를 담아 채용을 진행합니다.{tail} "
+            f"접수 마감은 {job['deadline']}이고 근무지는 {job['region']}입니다. "
+            f"고용형태는 {B.TYPES.get(job['type'], B.TYPES['기간제'])['label']}"
+            f"{B.josa(B.TYPES.get(job['type'], B.TYPES['기간제'])['label'], '이며', '며')} "
+            f"공고는 {job['posted']}에 게시되었습니다.")
+
+
 def build(job, peers, cluster_idx=None, cluster_n=1, shift=0):
     _ovr = RF.OVERRIDE.get(job["id"])
     if _ovr:
@@ -397,8 +450,8 @@ def build(job, peers, cluster_idx=None, cluster_n=1, shift=0):
         B.parse_role_label = lambda t, _l=_ovr["label"].split("(")[0].strip(): _l
     else:
         B.parse_role_label = safe_role_label
-    multi = bool(MULTI_PAT.search(job["title"] or "")) and job.get("type") in (
-        "임기제", "공무직", "기간제", "정규직")
+    multi = ((bool(MULTI_PAT.search(job["title"] or "")) or job["id"] in MULTI_IDS)
+             and job.get("type") in ("임기제", "공무직", "기간제", "정규직", "일용직"))
     if multi:
         _orig = B.find_role
         B.find_role = lambda t: MULTI_ROLE
@@ -408,11 +461,7 @@ def build(job, peers, cluster_idx=None, cluster_n=1, shift=0):
             B.find_role = _orig
         role = MULTI_ROLE
         # 묶음 공고는 단일 직무 전제 문장이 어긋나므로 lead·point를 다시 쓴다
-        sec["lead"] = (
-            f"핵심만 먼저: {job['org']}가 한 장의 공고문에 여러 모집분야를 담아 채용을 진행합니다. "
-            f"접수 마감은 {job['deadline']}이고 근무지는 {job['region']}입니다. "
-            f"고용형태는 {B.TYPES.get(job['type'], B.TYPES['기간제'])['label']}이며 공고는 {job['posted']}에 게시되었습니다."
-        )
+        sec["lead"] = multi_lead(job)
         sec["point"] = (
             f"이 공고의 첫 번째 포인트는 분야가 나뉘어 있다는 점입니다. 같은 공고라도 지원하는 분야에 따라 "
             f"직급·자격요건·근무기간이 모두 달라지므로, 공고문의 모집분야 표에서 본인 분야 행을 먼저 확정해야 합니다. "
