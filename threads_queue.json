@@ -516,8 +516,9 @@
       "org": "한국보훈복지의료공단",
       "text": "부산보훈병원 청년인턴 채용 모집중\n\n접수마감 11-12까지\n\n⬇️ 전체 공고는 아래 댓글에서",
       "comment": "자세한 공고 보러 가기 ▽\nhttps://gongchwimoa.org/articles/alio-306540.html",
-      "status": "pending",
-      "approved": true
+      "status": "skipped",
+      "approved": true,
+      "skip_reason": "발행 게이트 차단: 기관 쿨다운 (최근 3일 내 발행: 2026-11-02)"
     },
     {
       "date": "2026-11-03",
